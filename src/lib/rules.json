@@ -1,0 +1,352 @@
+{
+  "version": "2026-10-24",
+  "clock": "HPD correction windows run from service of an HPD Notice of Violation, not from a tenant's photo or letter. HPD considers a mailed notice served five days after mailing; heat and hot water notices are served at inspection.",
+  "clockSourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/clear-violations.page",
+  "classTable": [
+    { "class": "A", "label": "Non-hazardous", "window": "90 days from date of service" },
+    { "class": "B", "label": "Hazardous", "window": "30 days from date of service" },
+    { "class": "C", "label": "Immediately hazardous — lead-based paint, window guards, mold, mice/cockroaches, rats", "window": "21 days from date of service" },
+    { "class": "C", "label": "Immediately hazardous — self-closing doors", "window": "14 days from date of service" },
+    { "class": "C", "label": "Immediately hazardous — heat and hot water", "window": "No time" },
+    { "class": "C", "label": "Immediately hazardous — all other", "window": "24 hours from date of service" }
+  ],
+  "issues": {
+    "leak": {
+      "label": "Leak / water damage",
+      "short": "Leak",
+      "complaintUrl": "https://portal.311.nyc.gov/article/?kanumber=KA-01074",
+      "hpdUrl": "https://www.nyc.gov/site/hpd/services-and-information/report-a-maintenance-issue.page",
+      "facts": [
+        {
+          "factId": "activeLeak",
+          "prompt": "Is water actively dripping or flowing right now?",
+          "help": "A stain or damp patch with no water coming through counts as \"no\".",
+          "options": [
+            { "value": "yes", "label": "Yes, it's dripping or flowing" },
+            { "value": "no", "label": "No, it's a stain or damage" }
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "ruleId": "leak-active",
+          "when": { "activeLeak": "yes" },
+          "hazardClass": "C",
+          "classLabel": "Immediately hazardous",
+          "window": { "hours": 24, "text": "24 hours" },
+          "citation": "NYC Admin. Code §27-2005(a), §27-2026",
+          "sourceUrl": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/certification-of-corrections-cy25.pdf",
+          "quote": "All other class C (e.g. … active leaks …) — 24 hours",
+          "plainEnglish": "The owner must keep the building and its plumbing in good repair. HPD lists active leaks among its 24-hour Class C examples.",
+          "note": "HPD's inspector assigns the class. About 11% of leak violations issued since 2025 were Class C."
+        },
+        {
+          "ruleId": "leak-damage",
+          "when": { "activeLeak": "no" },
+          "hazardClass": "B",
+          "classLabel": "Hazardous",
+          "window": { "days": 30, "text": "30 days" },
+          "citation": "NYC Admin. Code §27-2005(a), §27-2026",
+          "sourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/clear-violations.page",
+          "quote": "Class B Hazardous — 30 Days from date of service",
+          "plainEnglish": "The owner must keep the building and its plumbing in good repair, which includes finding the source of the water and fixing the damage.",
+          "note": "HPD's inspector assigns the class. About 80% of leak violations issued since 2025 were Class B."
+        }
+      ]
+    },
+    "mold": {
+      "label": "Mold",
+      "short": "Mold",
+      "complaintUrl": "https://portal.311.nyc.gov/article/?kanumber=KA-02262",
+      "hpdUrl": "https://www.nyc.gov/site/hpd/services-and-information/indoor-allergen-hazards-mold-and-pests.page",
+      "facts": [
+        {
+          "factId": "moldArea",
+          "prompt": "About how much visible mold is in this room?",
+          "help": "A standard door is about 20 sq ft. Mold only on tile or grout isn't covered by this rule.",
+          "options": [
+            { "value": "lt10", "label": "Less than 10 sq ft (smaller than half a door)" },
+            { "value": "10to29", "label": "10 to 29 sq ft (about a door)" },
+            { "value": "gte30", "label": "30 sq ft or more (a big patch of wall)" }
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "ruleId": "mold-lt10",
+          "when": { "moldArea": "lt10" },
+          "hazardClass": "A",
+          "classLabel": "Non-hazardous",
+          "window": { "days": 90, "text": "90 days" },
+          "citation": "NYC Admin. Code §27-2017.3(a)(1) (Local Law 55 of 2018)",
+          "sourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/indoor-allergen-hazards-mold-and-pests.page",
+          "lawUrl": "https://www.nyc.gov/assets/buildings/local_laws/ll55of2018.pdf",
+          "quote": "less than ten square feet in a room … non-hazardous",
+          "plainEnglish": "Under 10 sq ft of mold in one room is a Class A violation. The owner must also fix the cause, like a leak.",
+          "note": "An uncorrected Class A mold violation can be upgraded to Class B."
+        },
+        {
+          "ruleId": "mold-10to29",
+          "when": { "moldArea": "10to29" },
+          "hazardClass": "B",
+          "classLabel": "Hazardous",
+          "window": { "days": 30, "text": "30 days" },
+          "citation": "NYC Admin. Code §27-2017.3(a)(2) (Local Law 55 of 2018)",
+          "sourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/indoor-allergen-hazards-mold-and-pests.page",
+          "lawUrl": "https://www.nyc.gov/assets/buildings/local_laws/ll55of2018.pdf",
+          "quote": "between ten square feet and thirty square feet … hazardous",
+          "plainEnglish": "10 to 29 sq ft of mold in one room is a Class B violation. The owner must also fix the cause, like a leak.",
+          "note": "An uncorrected Class B mold violation can be upgraded to Class C."
+        },
+        {
+          "ruleId": "mold-gte30",
+          "when": { "moldArea": "gte30" },
+          "hazardClass": "C",
+          "classLabel": "Immediately hazardous",
+          "window": { "days": 21, "text": "21 days" },
+          "citation": "NYC Admin. Code §27-2017.3(a)(4), (c)(2) (Local Law 55 of 2018)",
+          "sourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/indoor-allergen-hazards-mold-and-pests.page",
+          "lawUrl": "https://www.nyc.gov/assets/buildings/local_laws/ll55of2018.pdf",
+          "quote": "greater than or equal to thirty square feet in a room … immediately hazardous",
+          "plainEnglish": "30 sq ft or more of mold in one room is a Class C violation with a 21-day window. The owner must also fix the cause.",
+          "note": "HPD can postpone a Class C mold deadline by up to 14 days."
+        }
+      ]
+    },
+    "heat_hot_water": {
+      "label": "No heat / hot water",
+      "short": "Heat / hot water",
+      "complaintUrl": "https://portal.311.nyc.gov/article/?kanumber=KA-01036",
+      "hpdUrl": "https://www.nyc.gov/site/hpd/services-and-information/heat-and-hot-water-information.page",
+      "facts": [
+        {
+          "factId": "problem",
+          "prompt": "What's missing?",
+          "options": [
+            { "value": "no_heat", "label": "Heat" },
+            { "value": "no_hot_water", "label": "Hot water" },
+            { "value": "both", "label": "Both" }
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "ruleId": "hot-water",
+          "when": { "problem": ["no_hot_water", "both"] },
+          "hazardClass": "C",
+          "classLabel": "Immediately hazardous",
+          "window": { "hours": 24, "text": "No time — immediately" },
+          "citation": "NYC Admin. Code §27-2031",
+          "sourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/heat-and-hot-water-information.page",
+          "quote": "Class C Heat and Hot Water — No time",
+          "plainEnglish": "Hot water must be at least 120°F, 365 days a year. HPD gives no time to correct it, so the notice asks for repair within 24 hours."
+        },
+        {
+          "ruleId": "heat-in-season",
+          "when": { "problem": "no_heat", "heatSeason": "yes" },
+          "hazardClass": "C",
+          "classLabel": "Immediately hazardous",
+          "window": { "hours": 24, "text": "No time — immediately" },
+          "citation": "NYC Admin. Code §27-2029(a) (as amended by Local Law 86 of 2017)",
+          "sourceUrl": "https://portal.311.nyc.gov/article/?kanumber=KA-01036",
+          "lawUrl": "https://www.nyc.gov/assets/buildings/local_laws/ll86of2017.pdf",
+          "quote": "Class C Heat and Hot Water — No time",
+          "plainEnglish": "Oct 1 to May 31: at least 68°F from 6 AM to 10 PM when it's below 55°F outside, and at least 62°F overnight. HPD gives no time to correct it, so the notice asks for repair within 24 hours."
+        },
+        {
+          "ruleId": "heat-off-season",
+          "when": { "problem": "no_heat", "heatSeason": "no" },
+          "outcome": "not_applicable",
+          "reason": "Heat is only required from October 1 to May 31, so there's no heat violation outside heat season. Hot water is required all year.",
+          "sourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/heat-and-hot-water-information.page"
+        }
+      ]
+    },
+    "pests": {
+      "label": "Pests",
+      "short": "Pests",
+      "complaintUrl": "https://portal.311.nyc.gov/article/?kanumber=KA-02278",
+      "hpdUrl": "https://www.nyc.gov/site/hpd/services-and-information/indoor-allergen-hazards-mold-and-pests.page",
+      "facts": [
+        {
+          "factId": "pest",
+          "prompt": "Which pest is it?",
+          "options": [
+            { "value": "mice_roaches_rats", "label": "Mice, cockroaches or rats" },
+            { "value": "bedbugs_other", "label": "Bedbugs or another pest" }
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "ruleId": "pests-mice-roaches-rats",
+          "when": { "pest": "mice_roaches_rats" },
+          "hazardClass": "C",
+          "classLabel": "Immediately hazardous",
+          "window": { "days": 21, "text": "21 days" },
+          "citation": "NYC Admin. Code §27-2017.4(b), (c) (Local Law 55 of 2018)",
+          "sourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/indoor-allergen-hazards-mold-and-pests.page",
+          "lawUrl": "https://www.nyc.gov/assets/buildings/local_laws/ll55of2018.pdf",
+          "quote": "the presence of cockroaches, mice or rats … shall constitute an immediately hazardous violation",
+          "plainEnglish": "Mice, cockroaches or rats in an apartment or common area are a Class C violation with a 21-day window. The owner must also seal the ways they get in.",
+          "note": "HPD can postpone a Class C pest deadline by up to 14 days."
+        },
+        {
+          "ruleId": "pests-other",
+          "when": { "pest": "bedbugs_other" },
+          "hazardClass": "B",
+          "classLabel": "Hazardous",
+          "window": { "days": 30, "text": "30 days" },
+          "citation": "NYC Admin. Code §27-2017.4(a); bedbugs also §27-2018",
+          "sourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/indoor-allergen-hazards-mold-and-pests.page",
+          "lawUrl": "https://www.nyc.gov/assets/buildings/local_laws/ll55of2018.pdf",
+          "quote": "pests other than cockroaches, mice, or rats … shall be a hazardous violation",
+          "plainEnglish": "Pests other than mice, cockroaches or rats, such as bedbugs, are a Class B violation."
+        }
+      ]
+    },
+    "lock_door": {
+      "label": "Broken lock / door",
+      "short": "Lock / door",
+      "complaintUrl": "https://portal.311.nyc.gov/article/?kanumber=KA-01074",
+      "hpdUrl": "https://www.nyc.gov/site/hpd/services-and-information/report-a-maintenance-issue.page",
+      "facts": [
+        {
+          "factId": "door",
+          "prompt": "Which door, and what's wrong?",
+          "options": [
+            { "value": "apartment_cannot_lock", "label": "My apartment door can't be locked" },
+            { "value": "apartment_lock_damaged", "label": "My apartment door locks, but the lock is damaged" },
+            { "value": "building_entrance", "label": "The building's entrance door won't lock" },
+            { "value": "not_self_closing", "label": "A door that should close by itself doesn't" }
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "ruleId": "lock-apartment-cannot-lock",
+          "when": { "door": "apartment_cannot_lock" },
+          "hazardClass": "C",
+          "classLabel": "Immediately hazardous",
+          "window": { "hours": 24, "text": "24 hours" },
+          "citation": "NYC Admin. Code §27-2043(a)",
+          "sourceUrl": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/certification-of-corrections-cy25.pdf",
+          "quote": "All other class C (e.g. … defective door locks …) — 24 hours",
+          "plainEnglish": "The owner must provide a working key lock on every apartment's entrance door — in most apartment buildings, a heavy-duty latch and dead bolt.",
+          "note": "HPD's inspector assigns the class; HPD lists defective door locks among its 24-hour Class C examples."
+        },
+        {
+          "ruleId": "lock-apartment-damaged",
+          "when": { "door": "apartment_lock_damaged" },
+          "hazardClass": "B",
+          "classLabel": "Hazardous",
+          "window": { "days": 30, "text": "30 days" },
+          "citation": "NYC Admin. Code §27-2043(a), §27-2005(a)",
+          "sourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/clear-violations.page",
+          "quote": "Class B Hazardous — 30 Days from date of service",
+          "plainEnglish": "The owner must keep the apartment entrance lock in good repair.",
+          "note": "HPD's inspector assigns the class. Apartment door-lock repair violations since 2025 were mostly Class B."
+        },
+        {
+          "ruleId": "lock-building-entrance",
+          "when": { "door": "building_entrance" },
+          "hazardClass": "C",
+          "classLabel": "Immediately hazardous",
+          "window": { "hours": 24, "text": "24 hours" },
+          "citation": "NYC Admin. Code §27-2005(a)",
+          "sourceUrl": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/certification-of-corrections-cy25.pdf",
+          "quote": "All other class C (e.g. … defective door locks …) — 24 hours",
+          "plainEnglish": "The owner must keep the building's entrance door and its lock in good repair.",
+          "note": "HPD's inspector assigns the class. Building-entrance lock violations since 2025 were mostly Class C."
+        },
+        {
+          "ruleId": "door-self-closing",
+          "when": { "door": "not_self_closing" },
+          "hazardClass": "C",
+          "classLabel": "Immediately hazardous",
+          "window": { "days": 14, "text": "14 days" },
+          "citation": "NYC Housing Maintenance Code §27-2041.1",
+          "sourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/self-closing-doors.page",
+          "quote": "Class C Self-Closing Doors — 14 Days from date of service",
+          "plainEnglish": "Apartment entrance and stairwell doors must close and latch by themselves, to slow a fire."
+        }
+      ]
+    },
+    "peeling_paint": {
+      "label": "Peeling paint",
+      "short": "Peeling paint",
+      "complaintUrl": "https://portal.311.nyc.gov/article/?kanumber=KA-02134",
+      "hpdUrl": "https://www.nyc.gov/site/hpd/services-and-information/lead-based-paint.page",
+      "facts": [
+        {
+          "factId": "builtBefore1960",
+          "prompt": "Was your building built before 1960?",
+          "help": "Habitable fills this in from the city's building records when it can.",
+          "options": [
+            { "value": "yes", "label": "Yes, before 1960" },
+            { "value": "no", "label": "No, 1960 or later" }
+          ]
+        },
+        {
+          "factId": "childUnder6",
+          "prompt": "Does a child under 6 live here, or spend 10+ hours a week here?",
+          "help": "In older buildings this makes peeling paint a presumed lead hazard. Habitable remembers your answer for this case.",
+          "options": [
+            { "value": "yes", "label": "Yes" },
+            { "value": "no", "label": "No" }
+          ]
+        },
+        {
+          "factId": "plasterDamage",
+          "prompt": "Is the plaster underneath cracked or broken too?",
+          "options": [
+            { "value": "yes", "label": "Yes, the plaster is damaged" },
+            { "value": "no", "label": "No, just the paint" }
+          ]
+        }
+      ],
+      "variants": [
+        {
+          "ruleId": "paint-lead-presumed",
+          "when": { "builtBefore1960": "yes", "childUnder6": "yes" },
+          "hazardClass": "C",
+          "classLabel": "Immediately hazardous",
+          "window": { "days": 21, "text": "21 days" },
+          "citation": "NYC Admin. Code §27-2056.6 (Local Law 1 of 2004)",
+          "sourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/lead-based-paint-violations-correct-certify-corrections.page",
+          "quote": "These violations are all Class \"C\" immediately hazardous violations",
+          "plainEnglish": "In a building built before 1960 where a child under 6 lives, peeling paint is presumed to be lead paint. It's a Class C violation and must be fixed with lead-safe work practices.",
+          "note": "Lead paint is especially dangerous for young children. NYC Health: call 311 for free inspection help."
+        },
+        {
+          "ruleId": "paint-plaster",
+          "when": { "plasterDamage": "yes" },
+          "hazardClass": "B",
+          "classLabel": "Hazardous",
+          "window": { "days": 30, "text": "30 days" },
+          "citation": "NYC Admin. Code §27-2005(a), §27-2013",
+          "sourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/clear-violations.page",
+          "quote": "Class B Hazardous — 30 Days from date of service",
+          "plainEnglish": "Broken or defective plaster with peeling paint is usually written as a Class B violation.",
+          "note": "HPD's inspector assigns the class. \"Broken or defective plastered surfaces and paint\" violations are mostly Class B."
+        },
+        {
+          "ruleId": "paint-ordinary",
+          "when": { "plasterDamage": "no" },
+          "hazardClass": "A",
+          "classLabel": "Non-hazardous",
+          "window": { "days": 90, "text": "90 days" },
+          "citation": "NYC Admin. Code §27-2013",
+          "sourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/clear-violations.page",
+          "quote": "Class A Non-Hazardous — 90 Days from date of service",
+          "plainEnglish": "Ordinary peeling paint is a Class A violation. Owners must also repaint apartments every three years.",
+          "note": "In NYC data, every ordinary peeling-paint violation (§27-2013) since 2025 was Class A."
+        }
+      ]
+    }
+  },
+  "notCovered": {
+    "reason": "This doesn't look like one of the six conditions Habitable covers. You can still pick one yourself, or log it as a general note with no class.",
+    "sourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/report-a-maintenance-issue.page"
+  }
+}

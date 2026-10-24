@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+<defs>
+  <filter id="wob" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.018 0.02" numOctaves="2" seed="4" result="a"/>
+    <feDisplacementMap in="SourceGraphic" in2="a" scale="12" xChannelSelector="R" yChannelSelector="G" result="b"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.07" numOctaves="1" seed="9" result="c"/>
+    <feDisplacementMap in="b" in2="c" scale="3.5" xChannelSelector="G" yChannelSelector="B"/>
+  </filter>
+  <filter id="grain" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" seed="3"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 0.25  0 0 0 0 0.2  0 0 0 0 0.12  0 0 0 0.9 -0.35"/>
+  </filter>
+  <radialGradient id="vig" cx="50%" cy="50%" r="75%">
+    <stop offset="0.55" stop-color="#46321c" stop-opacity="0"/>
+    <stop offset="1" stop-color="#46321c" stop-opacity="0.28"/>
+  </radialGradient>
+  <clipPath id="blanket">
+    <path d="M800,384 C860,362 1000,362 1078,388 L1090,520 C1094,580 1090,622 1070,648 C1030,672 990,642 950,664 C912,678 892,662 886,702 C882,742 886,772 872,792 C842,802 812,786 796,772 C788,722 802,692 800,642 C806,562 796,470 800,384 Z"/>
+  </clipPath>
+  <g id="fern" fill="none" stroke="#6f97aa" stroke-width="2.5" stroke-linecap="round">
+    <path d="M0,0 L0,-78 M0,-10 l-15,-15 M0,-10 l15,-15 M0,-26 l-15,-15 M0,-26 l15,-15 M0,-42 l-13,-13 M0,-42 l13,-13 M0,-58 l-10,-10 M0,-58 l10,-10 M0,-70 l-6,-6 M0,-70 l6,-6"/>
+  </g>
+</defs>
+<style>
+  .k{fill:none;stroke:#1a1a1a;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+  .t{fill:none;stroke:#1a1a1a;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+  .o{stroke:#1a1a1a;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<g filter="url(#wob)">
+  <!-- wall, baseboard, floor -->
+  <rect x="-40" y="-40" width="1280" height="840" fill="#e4e2d6"/>
+  <path class="t" opacity=".3" d="M720,120 l26,12 M760,200 l26,12 M1100,160 l26,12 M1130,240 l26,12 M60,700 l26,12 M730,640 l26,12 M1120,520 l26,12"/>
+  <path class="o" fill="#d6cdb8" d="M-40,790 H1240 V840 H-40 Z"/>
+  <rect class="o" x="-40" y="840" width="1280" height="120" fill="#b08a5a"/>
+  <path class="t" opacity=".7" d="M-40,870 H1240 M-40,905 H1240 M200,840 V870 M640,840 V870 M1000,840 V870 M90,870 V905 M420,870 V905 M820,870 V905 M1120,870 V905"/>
+
+  <!-- window -->
+  <rect class="o" x="170" y="70" width="520" height="540" fill="#f2efe6"/>
+  <g class="o">
+    <rect x="194" y="94" width="226" height="236" fill="#c7dbe3"/>
+    <rect x="440" y="94" width="226" height="236" fill="#c7dbe3"/>
+    <rect x="194" y="352" width="226" height="234" fill="#c7dbe3"/>
+    <rect x="440" y="352" width="226" height="234" fill="#c7dbe3"/>
+  </g>
+  <!-- bare tree and snow outside -->
+  <path fill="none" stroke="#8b9a9f" stroke-width="5" stroke-linecap="round" d="M300,330 C302,260 298,200 310,140 M306,200 C340,180 372,170 400,120 M304,240 C270,222 246,200 226,160 M312,150 C330,130 340,112 342,96 M540,330 C546,270 540,210 552,140 M548,190 C590,170 610,140 628,104 M546,240 C510,214 488,190 468,150"/>
+  <g fill="#ffffff" stroke="#1a1a1a" stroke-width="1.5"><circle cx="240" cy="130" r="5"/><circle cx="380" cy="230" r="5"/><circle cx="330" cy="290" r="4"/><circle cx="500" cy="120" r="5"/><circle cx="610" cy="250" r="5"/><circle cx="470" cy="300" r="4"/><circle cx="590" cy="190" r="4"/><circle cx="270" cy="210" r="4"/></g>
+  <!-- frost creeping up the glass -->
+  <g class="o" fill="#f5fbfd" stroke-width="3">
+    <path d="M194,586 V470 L206,480 L212,458 L226,486 L240,470 L252,500 L270,488 L284,516 L306,500 L322,526 L346,512 L362,540 L388,528 L404,556 L420,548 V586 Z"/>
+    <path d="M440,586 V548 L456,556 L472,528 L492,542 L508,514 L528,528 L546,498 L566,512 L584,484 L604,500 L618,470 L636,486 L650,458 L666,470 V586 Z"/>
+    <path d="M194,330 V300 L212,304 L222,284 L240,300 L256,288 L272,304 L290,292 L306,308 L326,296 L342,310 L362,300 L378,314 L398,306 L420,316 V330 Z"/>
+    <path d="M440,330 V314 L460,304 L474,314 L494,296 L510,308 L530,290 L548,304 L568,286 L586,300 L606,284 L624,300 L644,288 L666,298 V330 Z"/>
+  </g>
+  <g class="o" fill="#f5fbfd" stroke-width="3">
+    <path d="M194,94 H262 L248,108 L252,126 L232,120 L222,146 L208,128 L194,150 Z"/>
+    <path d="M666,94 H600 L614,106 L610,128 L630,118 L640,146 L654,126 L666,150 Z"/>
+    <path d="M194,352 H250 L240,368 L246,384 L226,380 L214,404 L204,388 L194,408 Z"/>
+    <path d="M666,352 H610 L622,366 L616,386 L636,380 L646,404 L656,388 L666,408 Z"/>
+  </g>
+  <use href="#fern" transform="translate(300,470) rotate(32) scale(1.1)"/>
+  <use href="#fern" transform="translate(560,462) rotate(-30) scale(1.0)"/>
+  <use href="#fern" transform="translate(230,200) rotate(28) scale(.9)"/>
+  <use href="#fern" transform="translate(640,210) rotate(-26) scale(.8)"/>
+  <use href="#fern" transform="translate(235,580) rotate(-8) scale(1.4)"/>
+  <use href="#fern" transform="translate(320,584) rotate(6) scale(1.6)"/>
+  <use href="#fern" transform="translate(390,584) rotate(-10) scale(1.1)"/>
+  <use href="#fern" transform="translate(480,584) rotate(8) scale(1.2)"/>
+  <use href="#fern" transform="translate(560,584) rotate(-5) scale(1.8)"/>
+  <use href="#fern" transform="translate(640,584) rotate(10) scale(1.4)"/>
+  <use href="#fern" transform="translate(250,326) rotate(-6) scale(.9)"/>
+  <use href="#fern" transform="translate(350,326) rotate(5) scale(.8)"/>
+  <use href="#fern" transform="translate(520,326) rotate(-4) scale(.9)"/>
+  <use href="#fern" transform="translate(620,326) rotate(7) scale(.7)"/>
+  <path class="t" stroke="#6f97aa" d="M200,420 l30,-14 l14,22 M660,430 l-30,-14 l-12,24 M200,360 l16,10 M660,372 l-16,10"/>
+  <!-- sill -->
+  <path class="o" fill="#f2efe6" d="M150,610 H710 V642 H150 Z"/>
+
+  <!-- radiator (cold: blue-grey metal) -->
+  <ellipse cx="430" cy="838" rx="240" ry="14" fill="#8d7249" opacity=".6"/>
+  <path class="o" fill="#8f9ca4" d="M222,652 H638 Q650,652 650,664 V670 Q650,676 638,676 H222 Q210,676 210,670 V664 Q210,652 222,652 Z"/>
+  <g class="o" fill="#a4b0b7">
+    <rect x="228" y="676" width="28" height="116" rx="12"/><rect x="268" y="676" width="28" height="116" rx="12"/>
+    <rect x="308" y="676" width="28" height="116" rx="12"/><rect x="348" y="676" width="28" height="116" rx="12"/>
+    <rect x="388" y="676" width="28" height="116" rx="12"/><rect x="428" y="676" width="28" height="116" rx="12"/>
+    <rect x="468" y="676" width="28" height="116" rx="12"/><rect x="508" y="676" width="28" height="116" rx="12"/>
+    <rect x="548" y="676" width="28" height="116" rx="12"/><rect x="588" y="676" width="28" height="116" rx="12"/>
+  </g>
+  <path class="t" opacity=".6" d="M236,690 v90 M276,690 v90 M316,690 v90 M356,690 v90 M396,690 v90 M436,690 v90 M476,690 v90 M516,690 v90 M556,690 v90 M596,690 v90"/>
+  <path class="o" fill="#8f9ca4" d="M222,790 H638 Q650,790 650,800 V804 Q650,812 638,812 H222 Q210,812 210,804 V800 Q210,790 222,790 Z"/>
+  <path class="o" fill="#8f9ca4" d="M240,812 v22 h26 v-22 M584,812 v22 h26 v-22"/>
+  <!-- valve and pipe -->
+  <path class="o" fill="#8f9ca4" d="M650,768 H684 V786 H650 Z"/>
+  <rect class="o" x="684" y="756" width="22" height="42" rx="6" fill="#6f97aa"/>
+  <circle class="o" cx="716" cy="777" r="14" fill="#6f97aa"/>
+  <path class="o" fill="#8f9ca4" d="M598,812 V840"/>
+  <!-- frost speckles on the radiator -->
+  <g fill="#f5fbfd" stroke="#1a1a1a" stroke-width="1.5"><circle cx="250" cy="700" r="4"/><circle cx="330" cy="740" r="3"/><circle cx="470" cy="710" r="4"/><circle cx="560" cy="750" r="3"/></g>
+
+  <!-- mug, no steam -->
+  <path class="o" fill="#b5654a" d="M590,556 H646 V600 Q646,610 636,610 H600 Q590,610 590,600 Z"/>
+  <path class="k" d="M646,568 C672,566 672,596 646,594"/>
+  <ellipse class="o" cx="618" cy="556" rx="28" ry="7" fill="#6e4a38" stroke-width="3"/>
+  <path class="t" d="M618,556 C612,540 604,534 598,528"/>
+  <path class="o" fill="#f4f1e8" stroke-width="2.5" d="M598,528 h14 v16 h-14 Z"/>
+
+  <!-- wall thermometer reading 58F -->
+  <circle class="o" cx="880" cy="230" r="102" fill="#6b4b2d"/>
+  <circle class="o" cx="880" cy="230" r="86" fill="#f4f1e8" stroke-width="3"/>
+  <path class="t" d="M880,150 v12 M840,160 l6,10 M806,190 l10,6 M796,230 h12 M806,270 l10,-6 M920,160 l-6,10 M954,190 l-10,6 M964,230 h-12 M954,270 l-10,-6"/>
+  <path fill="none" stroke="#6f97aa" stroke-width="9" stroke-linecap="round" d="M820,262 A74,74 0 0 1 806,208"/>
+  <path class="k" stroke-width="5" d="M880,236 L846,190"/>
+  <circle cx="880" cy="236" r="7" fill="#1a1a1a"/>
+  <text x="880" y="294" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-weight="700" font-size="40" fill="#1a1a1a">58°F</text>
+
+  <!-- chair with blanket -->
+  <path class="o" fill="#b08a5a" d="M815,625 H1055 L1085,672 H785 Z"/>
+  <path class="o" fill="#a07b4c" d="M785,672 H1085 V692 H785 Z"/>
+  <path class="o" fill="#a07b4c" d="M790,692 V838 H812 V692 M1060,692 V838 H1082 V692"/>
+  <path class="o" fill="#a07b4c" d="M822,360 V632 H840 V360 Z M1030,360 V632 H1048 V360 Z"/>
+  <path class="o" fill="#a07b4c" d="M815,350 H1055 V376 H815 Z"/>
+  <g clip-path="url(#blanket)">
+    <rect x="780" y="350" width="330" height="460" fill="#a2594c"/>
+    <path fill="none" stroke="#2f4a5a" stroke-width="22" opacity=".65" d="M820,340 V820 M880,340 V820 M940,340 V820 M1000,340 V820 M1060,340 V820 M780,420 H1100 M780,480 H1100 M780,540 H1100 M780,600 H1100 M780,660 H1100 M780,720 H1100 M780,780 H1100"/>
+    <path fill="none" stroke="#e0d2a8" stroke-width="3" d="M850,340 V820 M910,340 V820 M970,340 V820 M1030,340 V820 M780,450 H1100 M780,510 H1100 M780,570 H1100 M780,630 H1100 M780,690 H1100 M780,750 H1100"/>
+  </g>
+  <path class="o" fill="none" d="M800,384 C860,362 1000,362 1078,388 L1090,520 C1094,580 1090,622 1070,648 C1030,672 990,642 950,664 C912,678 892,662 886,702 C882,742 886,772 872,792 C842,802 812,786 796,772 C788,722 802,692 800,642 C806,562 796,470 800,384 Z"/>
+  <path class="t" d="M880,400 C892,480 880,580 892,700 M980,396 C990,480 984,600 974,740 M1038,404 C1034,480 1044,580 1040,690"/>
+</g>
+<rect width="1200" height="900" filter="url(#grain)" opacity=".5"/>
+<rect width="1200" height="900" fill="url(#vig)"/>
+</svg>

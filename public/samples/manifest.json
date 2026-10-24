@@ -1,0 +1,51 @@
+[
+  {
+    "id": "leak-ceiling",
+    "file": "/samples/leak-ceiling.jpg",
+    "label": "Ceiling stain with drips",
+    "expectedIssue": "leak",
+    "capturedAt": "2026-10-15T07:42:10-04:00"
+  },
+  {
+    "id": "mold-bathroom",
+    "file": "/samples/mold-bathroom.jpg",
+    "label": "Black mold above the tub",
+    "expectedIssue": "mold",
+    "capturedAt": "2026-10-12T19:05:33-04:00"
+  },
+  {
+    "id": "cold-radiator",
+    "file": "/samples/cold-radiator.jpg",
+    "label": "Cold radiator and frosted window",
+    "expectedIssue": "heat_hot_water",
+    "capturedAt": "2026-10-20T06:58:02-04:00"
+  },
+  {
+    "id": "mice-kitchen",
+    "file": "/samples/mice-kitchen.jpg",
+    "label": "Mouse, droppings and chewed cereal box",
+    "expectedIssue": "pests",
+    "capturedAt": "2026-10-18T22:14:47-04:00"
+  },
+  {
+    "id": "broken-lock",
+    "file": "/samples/broken-lock.jpg",
+    "label": "Broken deadbolt and splintered door frame",
+    "expectedIssue": "lock_door",
+    "capturedAt": "2026-10-21T23:31:09-04:00"
+  },
+  {
+    "id": "peeling-paint",
+    "file": "/samples/peeling-paint.jpg",
+    "label": "Peeling paint on window sill",
+    "expectedIssue": "peeling_paint",
+    "capturedAt": "2026-10-09T16:20:55-04:00"
+  },
+  {
+    "id": "ambiguous-stain",
+    "file": "/samples/ambiguous-stain.jpg",
+    "label": "Faint stain on wall by window",
+    "expectedIssue": "ambiguous",
+    "capturedAt": "2026-10-22T12:03:40-04:00"
+  }
+]

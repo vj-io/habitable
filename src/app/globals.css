@@ -1,0 +1,267 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ tokens
+   Doodle palette. Text-safe variants (-ink, muted) are >= 4.5:1 on paper and
+   on every tint; base hues (violet, red, amber) are for strokes and large type. */
+@theme static {
+  --color-paper: #f0ede8;
+  --color-paper-2: #faf8f4;
+  --color-ink: #0a0a0a;
+  --color-muted: #65625c; /* 5.2:1 on paper */
+
+  --color-lime: #c8ff00;
+  --color-lime-tint: #f1ffc2;
+
+  --color-violet: #6b4eff;
+  --color-violet-ink: #5534e6; /* 5.9:1 on paper */
+  --color-violet-tint: #e8e2ff;
+
+  --color-red: #d63a2a;
+  --color-red-ink: #b3261a; /* 5.6:1 on paper */
+  --color-red-tint: #ffe1dc;
+
+  --color-amber: #b85c00;
+  --color-amber-ink: #9c4c00; /* 5.2:1 on paper */
+  --color-amber-tint: #ffedd1;
+
+  --color-yellow-tint: #fff4a8;
+}
+
+@theme inline {
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-hand: var(--font-patrick-hand), "Comic Sans MS", cursive;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+
+/* ------------------------------------------------------------------ base */
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    min-height: 100dvh;
+    color: var(--color-ink);
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--color-paper);
+    /* static grain, then a 28px grid at 7% ink */
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .25 0 0 0 0 .22 0 0 0 0 .18 .32 0 0 0 -.1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+      linear-gradient(rgb(10 10 10 / 0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(10 10 10 / 0.07) 1px, transparent 1px);
+    background-size: 220px 220px, 28px 28px, 28px 28px;
+    background-attachment: fixed;
+  }
+
+  .font-display {
+    letter-spacing: -0.03em;
+  }
+
+  ::selection {
+    background: var(--color-lime);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-violet-ink);
+    outline-offset: 4px;
+    border-radius: 3px;
+  }
+}
+
+/* ------------------------------------------------------------------ doodle kit
+   Every element's resting style is its final state; motion only lives inside
+   the no-preference block, so reduced motion renders the finished drawing. */
+
+/* highlighter: sits low on the text, slanted ends, wraps across lines */
+.hl {
+  --hl: var(--color-lime);
+  color: inherit;
+  background-color: transparent;
+  background-image: linear-gradient(
+    100deg,
+    transparent 0.08em,
+    var(--hl) 0.08em,
+    var(--hl) calc(100% - 0.08em),
+    transparent calc(100% - 0.08em)
+  );
+  background-repeat: no-repeat;
+  background-position: 0 92%;
+  background-size: 100% 0.62em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding: 0 0.12em;
+  margin: 0 -0.12em;
+}
+.hl-violet { --hl: #d6ccff; }
+.hl-red { --hl: #ffc9c0; }
+.hl-yellow { --hl: #ffec6e; }
+
+.stamp {
+  display: inline-block;
+  transform: rotate(var(--rot, -6deg));
+}
+.stamp-ink {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -14 0 0 0 9.7'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  mask-size: 140px 140px;
+}
+
+.sk-shadow {
+  transform: translate(4px, 4px);
+  transition: transform 90ms ease-out;
+}
+.doodle-btn {
+  transition: transform 90ms ease-out;
+  -webkit-tap-highlight-color: transparent;
+}
+.doodle-btn:not(:disabled):active {
+  transform: translate(3px, 3px);
+}
+.doodle-btn:not(:disabled):active > svg .sk-shadow {
+  transform: translate(1px, 1px);
+}
+@media (hover: hover) {
+  .doodle-btn:not(:disabled):hover {
+    transform: translate(-1px, -1px);
+  }
+  .doodle-btn:not(:disabled):hover > svg .sk-shadow {
+    transform: translate(5px, 5px);
+  }
+}
+
+.doodle-sheet {
+  margin: auto auto 0;
+  width: 100%;
+  max-width: 40rem;
+  height: 92dvh;
+  max-height: 92dvh;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  overflow: visible;
+}
+.doodle-sheet::backdrop {
+  background: rgb(10 10 10 / 0.45);
+}
+html:has(.doodle-sheet[open]) {
+  overflow: hidden;
+}
+
+/* pencil loader rest pose: at the end of the last line */
+.pl-pencil {
+  transform: translate(70px, 36px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* strokes draw themselves (paths carry pathLength=1) */
+  .ink-draw {
+    stroke-dasharray: 1 1;
+    animation: draw 0.6s cubic-bezier(0.5, 0.1, 0.3, 1) var(--d, 0ms) both;
+  }
+  .ink-draw[data-in="0"] {
+    animation: none;
+    stroke-dashoffset: 1;
+  }
+
+  .hl[data-anim][data-in="0"] {
+    background-size: 0% 0.62em;
+  }
+  .hl[data-anim][data-in="1"] {
+    animation: hl-swipe 0.5s cubic-bezier(0.3, 0.7, 0.2, 1) var(--d, 0ms) both;
+  }
+
+  .stamp[data-thud][data-in="0"] {
+    opacity: 0;
+  }
+  .stamp[data-thud][data-in="1"] {
+    animation: thud 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0ms) both;
+  }
+
+  .spring-in {
+    animation: spring-in 0.6s cubic-bezier(0.2, 0.9, 0.3, 1) var(--spring-d, 0ms) both;
+  }
+
+  .ink-boil {
+    animation: boil 0.3s infinite;
+  }
+
+  .doodle-sheet[open] {
+    animation: sheet-up 0.38s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+  }
+  .doodle-sheet[open]::backdrop {
+    animation: fade-in 0.3s both;
+  }
+
+  .pl-line-1 { stroke-dasharray: 1 1; animation: pl-1 3s linear infinite; }
+  .pl-line-2 { stroke-dasharray: 1 1; animation: pl-2 3s linear infinite; }
+  .pl-line-3 { stroke-dasharray: 1 1; animation: pl-3 3s linear infinite; }
+  .pl-pencil { animation: pl-pencil 3s linear infinite; }
+  .scribble-loop { stroke-dasharray: 1 1; animation: scribble-loop 1.1s linear infinite; }
+}
+
+@keyframes draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes hl-swipe {
+  from { background-size: 0% 0.62em; }
+  to { background-size: 100% 0.62em; }
+}
+@keyframes thud {
+  0% { opacity: 0; transform: rotate(var(--rot, -6deg)) scale(1.8); }
+  45% { opacity: 1; transform: rotate(var(--rot, -6deg)) scale(0.95); }
+  62% { transform: rotate(var(--rot, -6deg)) scale(1.02) translate(-1.5px, 1px); }
+  80% { transform: rotate(var(--rot, -6deg)) scale(1) translate(1.5px, -1px); }
+  100% { opacity: 1; transform: rotate(var(--rot, -6deg)) scale(1); }
+}
+@keyframes spring-in {
+  0% { opacity: 0; transform: translateY(18px) scale(0.96); }
+  60% { opacity: 1; transform: translateY(-3px) scale(1.01); }
+  100% { opacity: 1; transform: none; }
+}
+@keyframes boil {
+  0%, 33% { filter: url(#boil-1); }
+  33.4%, 66% { filter: url(#boil-2); }
+  66.4%, 100% { filter: url(#boil-3); }
+}
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+/* pencil loader: three lines write in turn, hold, fade, repeat */
+@keyframes pl-1 {
+  0% { stroke-dashoffset: 1; opacity: 1; }
+  25%, 88% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@keyframes pl-2 {
+  0%, 25% { stroke-dashoffset: 1; opacity: 1; }
+  50%, 88% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@keyframes pl-3 {
+  0%, 50% { stroke-dashoffset: 1; opacity: 1; }
+  72%, 88% { stroke-dashoffset: 0; opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+@keyframes pl-pencil {
+  0% { transform: translate(0px, 0px); }
+  25% { transform: translate(112px, 0px); }
+  27% { transform: translate(0px, 18px); }
+  50% { transform: translate(112px, 18px); }
+  52% { transform: translate(0px, 36px); }
+  72%, 88% { transform: translate(70px, 36px); }
+  100% { transform: translate(0px, 0px); }
+}
+@keyframes scribble-loop {
+  0% { stroke-dashoffset: 1; }
+  60% { stroke-dashoffset: 0; }
+  100% { stroke-dashoffset: -1; }
+}

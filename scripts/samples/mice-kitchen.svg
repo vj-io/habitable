@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+<defs>
+  <filter id="wob" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.018 0.02" numOctaves="2" seed="4" result="a"/>
+    <feDisplacementMap in="SourceGraphic" in2="a" scale="12" xChannelSelector="R" yChannelSelector="G" result="b"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.07" numOctaves="1" seed="9" result="c"/>
+    <feDisplacementMap in="b" in2="c" scale="3.5" xChannelSelector="G" yChannelSelector="B"/>
+  </filter>
+  <filter id="grain" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" seed="3"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 0.25  0 0 0 0 0.2  0 0 0 0 0.12  0 0 0 0.9 -0.35"/>
+  </filter>
+  <radialGradient id="vig" cx="50%" cy="50%" r="75%">
+    <stop offset="0.55" stop-color="#46321c" stop-opacity="0"/>
+    <stop offset="1" stop-color="#46321c" stop-opacity="0.28"/>
+  </radialGradient>
+  <ellipse id="pellet" cx="0" cy="0" rx="12" ry="5.5"/>
+  <g id="ring"><circle r="12" fill="#c8863a" stroke="#1a1a1a" stroke-width="2.5"/><circle r="4.5" fill="#cdc5b0" stroke="#1a1a1a" stroke-width="2"/></g>
+</defs>
+<style>
+  .k{fill:none;stroke:#1a1a1a;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+  .t{fill:none;stroke:#1a1a1a;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+  .o{stroke:#1a1a1a;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<g filter="url(#wob)">
+  <!-- wall, baseboard, floor -->
+  <rect x="-40" y="-40" width="1280" height="620" fill="#e9dfc4"/>
+  <path class="t" opacity=".3" d="M80,120 l26,12 M420,70 l26,12 M760,140 l26,12 M1080,90 l26,12 M1120,300 l26,12 M60,320 l26,12 M600,330 l26,12"/>
+  <!-- upper cabinet -->
+  <path class="o" fill="#8a6e4a" d="M-40,-40 H350 V292 H-40 Z"/>
+  <path class="o" fill="#7b6040" stroke-width="3" d="M-10,-10 H320 V262 H-10 Z"/>
+  <path class="o" fill="#b9a67b" stroke-width="3" d="M290,170 H304 V232 H290 Z"/>
+  <path d="M-40,292 H350 V316 H-40 Z" fill="#bfb594" opacity=".55"/>
+  <!-- outlet -->
+  <path class="o" fill="#f6f2e6" d="M660,330 H730 V420 H660 Z"/>
+  <path class="t" d="M684,350 v20 M706,350 v20 M684,386 v20 M706,386 v20"/>
+  <path class="o" fill="#d9d1bd" d="M-40,560 H1240 V700 H-40 Z"/>
+  <path class="t" opacity=".5" d="M-40,574 H1240"/>
+  <rect class="o" x="-40" y="700" width="1280" height="260" fill="#cdc5b0"/>
+  <!-- floor tile lines (fan to vanishing point) and rows -->
+  <path class="t" opacity=".6" d="M108,700 L-200,900 M256,700 L40,900 M403,700 L280,900 M551,700 L520,900 M698,700 L760,900 M846,700 L1000,900 M994,700 L1240,900 M1142,700 L1480,900 M-40,742 H1240 M-40,792 H1240 M-40,850 H1240"/>
+  <path fill="#bdb5a0" opacity=".7" d="M551,792 L698,792 L725,850 L520,850 Z M846,700 L994,700 L1046,742 L880,742 Z M256,700 L403,700 L360,742 L220,742 Z"/>
+
+  <!-- stove at the right -->
+  <path class="o" fill="#e9e6dc" d="M1056,250 H1260 V780 H1056 Z"/>
+  <path class="o" fill="#d4d0c4" stroke-width="3" d="M1056,250 H1260 V328 H1056 Z"/>
+  <g class="o" fill="#5a5a58" stroke-width="3"><circle cx="1096" cy="290" r="15"/><circle cx="1148" cy="290" r="15"/><circle cx="1200" cy="290" r="15"/></g>
+  <path class="t" d="M1096,278 v12 M1148,278 v12 M1200,278 v12"/>
+  <path class="o" fill="#f4f1e8" stroke-width="3" d="M1076,392 H1260 V700 H1076 Z"/>
+  <path class="o" fill="#3a3a3a" stroke-width="3" d="M1100,436 H1250 V610 H1100 Z"/>
+  <path d="M1112,446 L1150,446 L1118,600 L1112,600 Z" fill="#ffffff" opacity=".18"/>
+  <path class="o" fill="#b4bbbf" stroke-width="3" d="M1092,400 H1250 V416 H1092 Z"/>
+  <path class="o" fill="#d4d0c4" stroke-width="3" d="M1076,712 H1260 V768 H1076 Z"/>
+  <path class="o" fill="#b4bbbf" stroke-width="3" d="M1130,732 H1230 V744 H1130 Z"/>
+  <!-- rub marks and mouse hole in the baseboard -->
+  <path d="M800,692 C792,664 804,640 820,624 M984,694 C992,666 980,642 962,626" fill="none" stroke="#7a6e5a" stroke-width="16" stroke-linecap="round" opacity=".4"/>
+  <path d="M964,698 C990,702 1020,698 1050,700" fill="none" stroke="#7a6e5a" stroke-width="12" stroke-linecap="round" opacity=".35"/>
+  <path class="o" fill="#261c14" stroke-width="3.5" d="M826,700 L822,660 L836,640 L832,622 L852,608 L850,596 L878,586 L892,592 L912,584 L930,600 L950,608 L944,630 L962,646 L956,670 L964,700 Z"/>
+  <path class="t" stroke="#f6ead0" opacity=".9" d="M826,660 l-16,-6 M836,640 l-18,-10 M852,608 l-12,-14 M892,592 l-2,-18 M930,600 l10,-14 M950,608 l16,-10 M962,646 l16,-4 M956,670 l16,6"/>
+  <path class="o" fill="#f1e3b8" stroke-width="2.5" d="M810,650 l-14,4 l10,10 Z M846,590 l-8,-14 l-8,12 Z M960,600 l12,-10 l4,14 Z M984,640 l14,2 l-8,10 Z"/>
+  <path d="M846,690 C870,678 900,680 930,690" fill="none" stroke="#3a2c20" stroke-width="3" opacity=".6"/>
+
+  <!-- chewed cereal box -->
+  <g transform="rotate(-3 200 810)">
+    <path class="o" fill="#ecd075" d="M110,520 H290 L330,498 H150 Z"/>
+    <path class="o" fill="#b8933a" d="M290,520 L330,498 V790 L290,810 Z"/>
+    <path class="o" fill="#d9b24f" d="M110,520 H290 V810 H110 Z"/>
+    <path class="o" fill="#b5543f" d="M110,520 H290 V572 H110 Z"/>
+    <ellipse class="o" cx="200" cy="690" rx="62" ry="34" fill="#f1ead6"/>
+    <path class="o" fill="#8e8a7e" d="M138,690 C140,730 262,730 262,690 Z"/>
+    <circle cx="170" cy="674" r="9" fill="#c8863a" stroke="#1a1a1a" stroke-width="2.5"/><circle cx="198" cy="664" r="9" fill="#c8863a" stroke="#1a1a1a" stroke-width="2.5"/>
+    <circle cx="226" cy="676" r="9" fill="#c8863a" stroke="#1a1a1a" stroke-width="2.5"/><circle cx="188" cy="692" r="9" fill="#c8863a" stroke="#1a1a1a" stroke-width="2.5"/>
+    <circle cx="214" cy="696" r="9" fill="#c8863a" stroke="#1a1a1a" stroke-width="2.5"/>
+    <path class="o" fill="#e6e0cf" d="M236,628 C250,606 270,602 282,610 L270,640 Z"/>
+    <path class="t" d="M130,600 H270 M130,612 H230"/>
+    <circle class="o" cx="150" cy="546" r="14" fill="#f4e3a0" stroke-width="3"/>
+    <circle class="o" cx="190" cy="546" r="14" fill="#f4e3a0" stroke-width="3"/>
+    <!-- gnawed hole in the bottom corner -->
+    <path class="o" fill="#261c14" stroke-width="3.5" d="M226,810 L234,780 L252,790 L258,762 L276,774 L290,746 V810 Z"/>
+    <path class="t" stroke="#f6ead0" d="M234,780 l-10,-6 M258,762 l-8,-10 M276,774 l-4,-14 M252,790 l-14,4"/>
+    <path class="o" fill="#d9b24f" stroke-width="2.5" d="M290,810 L300,826 L316,812 Z"/>
+  </g>
+  <!-- spilled cereal -->
+  <use href="#ring" x="304" y="826"/><use href="#ring" x="330" y="842"/><use href="#ring" x="352" y="822"/>
+  <use href="#ring" x="378" y="846"/><use href="#ring" x="402" y="828"/><use href="#ring" x="426" y="850"/>
+  <use href="#ring" x="446" y="832"/><use href="#ring" x="476" y="856"/><use href="#ring" x="318" y="862"/>
+  <use href="#ring" x="368" y="872"/><use href="#ring" x="410" y="874"/>
+  <path class="o" fill="#d9b24f" stroke-width="2.5" d="M270,850 l16,-8 l8,12 l-14,10 Z M440,868 l12,-6 l6,10 l-12,6 Z"/>
+
+  <!-- droppings -->
+  <g fill="#2b2118" stroke="#1a1a1a" stroke-width="2">
+    <use href="#pellet" x="700" y="712" transform="rotate(20 700 712)"/><use href="#pellet" x="738" y="724" transform="rotate(-30 738 724)"/>
+    <use href="#pellet" x="770" y="708" transform="rotate(50 770 708)"/><use href="#pellet" x="800" y="722" transform="rotate(5 800 722)"/>
+    <use href="#pellet" x="655" y="710" transform="rotate(-10 655 710)"/><use href="#pellet" x="690" y="732" transform="rotate(35 690 732)"/>
+    <use href="#pellet" x="810" y="740" transform="rotate(-45 810 740)"/><use href="#pellet" x="846" y="724" transform="rotate(15 846 724)"/>
+    <use href="#pellet" x="880" y="736" transform="rotate(-20 880 736)"/><use href="#pellet" x="920" y="718" transform="rotate(60 920 718)"/>
+    <use href="#pellet" x="948" y="738" transform="rotate(0 948 738)"/><use href="#pellet" x="540" y="716" transform="rotate(25 540 716)"/>
+    <use href="#pellet" x="500" y="738" transform="rotate(-35 500 738)"/><use href="#pellet" x="610" y="726" transform="rotate(10 610 726)"/>
+    <use href="#pellet" x="1000" y="722" transform="rotate(-15 1000 722)"/><use href="#pellet" x="1040" y="740" transform="rotate(40 1040 740)"/>
+  </g>
+
+  <!-- mouse, facing the spilled cereal; tail trails toward the hole -->
+  <g transform="translate(640,800) scale(1.3)">
+    <path d="M82,12 C130,6 150,52 196,40 C222,34 236,52 262,46" fill="none" stroke="#1a1a1a" stroke-width="9" stroke-linecap="round"/>
+    <path d="M82,12 C130,6 150,52 196,40 C222,34 236,52 262,46" fill="none" stroke="#d9a9a0" stroke-width="4" stroke-linecap="round"/>
+    <ellipse cx="-50" cy="40" rx="30" ry="7" fill="#1a1a1a" opacity=".25"/>
+    <path class="o" fill="#8b8279" d="M-80,20 C-80,-5 -60,-20 -35,-30 C0,-48 55,-46 80,-15 C95,5 90,30 70,36 L-60,38 C-72,36 -80,30 -80,20 Z"/>
+    <path fill="#cbbfb0" d="M-68,28 C-40,36 40,38 68,32 C58,24 -44,22 -68,28 Z"/>
+    <path class="t" opacity=".6" d="M10,-30 l6,8 M30,-34 l6,8 M50,-28 l6,8 M20,-10 l6,8 M44,-8 l6,8 M62,0 l5,8"/>
+    <path class="o" fill="#c9a9a0" stroke-width="3.5" d="M-22,-30 C-34,-62 8,-66 12,-36 C8,-26 -14,-24 -22,-30 Z"/>
+    <path fill="#e8c9c0" d="M-14,-34 C-18,-52 2,-52 4,-38 C0,-32 -10,-30 -14,-34 Z"/>
+    <circle cx="-48" cy="-6" r="6" fill="#1a1a1a"/><circle cx="-50" cy="-8" r="2" fill="#fff"/>
+    <circle class="o" cx="-80" cy="18" r="6" fill="#d98e8e" stroke-width="2.5"/>
+    <path class="t" d="M-72,8 L-122,-8 M-72,14 L-126,12 M-72,20 L-120,34"/>
+    <ellipse class="o" cx="-44" cy="38" rx="11" ry="6" fill="#d9a9a0" stroke-width="3"/>
+    <ellipse class="o" cx="42" cy="40" rx="16" ry="7" fill="#d9a9a0" stroke-width="3"/>
+  </g>
+</g>
+<rect width="1200" height="900" filter="url(#grain)" opacity=".5"/>
+<rect width="1200" height="900" fill="url(#vig)"/>
+</svg>

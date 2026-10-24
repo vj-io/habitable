@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200">
+<defs>
+  <filter id="wob" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.018 0.02" numOctaves="2" seed="4" result="a"/>
+    <feDisplacementMap in="SourceGraphic" in2="a" scale="12" xChannelSelector="R" yChannelSelector="G" result="b"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.07" numOctaves="1" seed="9" result="c"/>
+    <feDisplacementMap in="b" in2="c" scale="3.5" xChannelSelector="G" yChannelSelector="B"/>
+  </filter>
+  <filter id="grain" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" seed="3"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 0.25  0 0 0 0 0.2  0 0 0 0 0.12  0 0 0 0.9 -0.35"/>
+  </filter>
+  <radialGradient id="vig" cx="50%" cy="50%" r="75%">
+    <stop offset="0.55" stop-color="#46321c" stop-opacity="0"/>
+    <stop offset="1" stop-color="#46321c" stop-opacity="0.28"/>
+  </radialGradient>
+  <g id="screw">
+    <path d="M-3.5,8 H3.5 V54 L0,60 L-3.5,54 Z" fill="#aeb5b9" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M-3.5,20 H3.5 M-3.5,30 H3.5 M-3.5,40 H3.5" stroke="#1a1a1a" stroke-width="1.8"/>
+    <circle r="10" fill="#c8a44f" stroke="#1a1a1a" stroke-width="3"/>
+    <path d="M-6,0 H6 M0,-6 V6" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <path id="chip" d="M0,0 L22,-6 L16,8 Z"/>
+</defs>
+<style>
+  .k{fill:none;stroke:#1a1a1a;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+  .t{fill:none;stroke:#1a1a1a;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+  .o{stroke:#1a1a1a;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<g filter="url(#wob)">
+  <!-- wall, floor -->
+  <rect x="-40" y="-40" width="980" height="1280" fill="#dcd5c3"/>
+  <path class="t" opacity=".3" d="M30,150 l24,12 M40,300 l24,12 M850,220 l24,12 M860,420 l24,12 M40,880 l24,12 M860,900 l24,12"/>
+  <rect class="o" x="-40" y="1090" width="980" height="160" fill="#b08a5a"/>
+  <path class="t" opacity=".7" d="M-40,1135 H940 M-40,1180 H940 M120,1090 V1135 M420,1090 V1135 M760,1090 V1135 M40,1135 V1180 M300,1135 V1180 M640,1135 V1180 M860,1135 V1180"/>
+
+  <!-- door casing, hallway behind the open door -->
+  <rect class="o" x="100" y="-40" width="730" height="1130" fill="#efe9dc"/>
+  <rect class="o" x="150" y="60" width="630" height="1030" fill="#c9c3b1"/>
+  <path class="o" fill="#8e7757" d="M150,985 H780 V1090 H150 Z"/>
+  <path class="t" opacity=".6" d="M150,1030 H780 M690,985 L720,1090 M740,985 L790,1090"/>
+  <path class="o" fill="#6b7d6a" d="M690,330 H772 V985 H690 Z"/>
+  <path class="t" d="M702,350 H760 V520 H702 Z M702,560 H760 V780 H702 Z"/>
+  <circle class="o" cx="705" cy="660" r="8" fill="#c8a44f" stroke-width="3"/>
+  <rect class="o" x="150" y="1070" width="630" height="20" fill="#a58a62"/>
+
+  <!-- the door, ajar: hinge side near, latch side swung away -->
+  <path class="o" fill="#9a7550" d="M150,70 L650,150 V1000 L150,1085 Z"/>
+  <path class="o" fill="#c9a56f" stroke-width="3" d="M650,150 L664,157 V993 L650,1000 Z"/>
+  <path class="o" fill="#8a6743" d="M200,158 L550,205 V522 L200,517 Z"/>
+  <path class="o" fill="#8a6743" d="M200,617 L550,611 V946 L200,997 Z"/>
+  <path class="t" d="M214,172 L536,216 V508 L214,503 Z M214,631 L536,625 V932 L214,983 Z"/>
+  <path class="t" opacity=".5" d="M240,700 V900 M300,700 V910 M360,696 V916"/>
+  <circle class="o" cx="375" cy="294" r="11" fill="#c8a44f" stroke-width="3"/>
+  <circle cx="375" cy="294" r="4" fill="#1a1a1a"/>
+  <g class="o" fill="#c8a44f" stroke-width="3"><rect x="140" y="200" width="22" height="60"/><rect x="140" y="550" width="22" height="60"/><rect x="140" y="900" width="22" height="60"/></g>
+  <!-- pry-bar gouges on the latch edge -->
+  <path class="o" fill="#e9d3a2" stroke-width="2.5" d="M650,380 l-18,6 l12,8 l-16,10 l20,4 Z M650,452 l-16,4 l14,10 l-12,8 l18,2 Z"/>
+
+  <!-- doorknob -->
+  <circle class="o" cx="615" cy="652" r="34" fill="#c8a44f"/>
+  <circle class="o" cx="615" cy="652" r="17" fill="#d9bb67" stroke-width="3"/>
+  <!-- torn hole where the deadbolt was, empty screw holes -->
+  <path class="o" fill="#2a1d12" stroke-width="3.5" d="M612,382 L628,388 L642,376 L650,394 L664,404 L650,418 L660,436 L640,442 L630,458 L614,448 L596,460 L592,440 L574,432 L584,416 L572,402 L592,396 L596,380 Z"/>
+  <path class="t" stroke="#f0dcae" d="M572,402 l-16,-8 M584,416 l-18,6 M596,380 l-6,-16 M642,376 l12,-14 M664,404 l16,-6 M660,436 l16,8 M630,458 l4,16"/>
+  <circle class="o" cx="612" cy="350" r="7" fill="#2a1d12" stroke-width="3"/>
+  <circle class="o" cx="612" cy="480" r="7" fill="#2a1d12" stroke-width="3"/>
+  <path class="t" opacity=".7" d="M612,350 l-30,-10 M612,480 l-26,16"/>
+  <!-- deadbolt lock body dangling out of the hole by its tailpiece -->
+  <path class="o" fill="#b8903a" stroke-width="3.5" d="M604,424 L620,426 L614,514 L598,512 Z"/>
+  <g transform="translate(602,558) rotate(-15)">
+    <ellipse class="o" rx="46" ry="44" fill="#c8a44f"/>
+    <ellipse class="o" rx="31" ry="30" fill="#d9bb67" stroke-width="3"/>
+    <circle class="o" r="18" fill="#b4bbbf" stroke-width="3"/>
+    <circle cy="-4" r="4.5" fill="#1a1a1a"/>
+    <path d="M-3,-2 H3 L5,12 H-5 Z" fill="#1a1a1a"/>
+  </g>
+  <!-- splintered door jamb with the strike plate torn half off -->
+  <path class="o" fill="#e9d3a2" d="M830,330 L790,340 L770,352 L784,372 L752,384 L776,408 L738,428 L770,448 L742,478 L778,496 L748,530 L780,552 L752,580 L784,600 L764,640 L790,660 L830,690 Z"/>
+  <path class="o" fill="#2e2014" stroke-width="3.5" d="M772,436 L806,428 L814,524 L778,534 Z"/>
+  <path class="o" fill="#f0dcae" stroke-width="2.5" d="M742,428 L688,414 L740,444 Z M752,572 L702,590 L758,586 Z M774,350 L716,348 L776,370 Z M746,484 L702,490 L750,500 Z"/>
+  <path class="t" d="M814,330 L806,262 L816,200 M812,690 L820,760 L808,820 M806,436 l14,-60"/>
+  <path class="o" fill="#b4bbbf" d="M720,494 L752,486 L766,574 L734,582 Z"/>
+  <ellipse class="o" cx="741" cy="535" rx="6" ry="18" fill="#2a1d12" stroke-width="2.5" transform="rotate(-6 741 535)"/>
+  <circle class="o" cx="738" cy="506" r="6" fill="#8e969a" stroke-width="2.5"/>
+
+  <!-- debris on the floor: screws and splinters -->
+  <use href="#screw" transform="translate(300,1128) rotate(70)"/>
+  <use href="#screw" transform="translate(470,1150) rotate(-25)"/>
+  <use href="#screw" transform="translate(590,1120) rotate(110)"/>
+  <use href="#chip" transform="translate(220,1112) rotate(20)" fill="#e9d3a2" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round"/>
+  <use href="#chip" transform="translate(420,1108) rotate(-40) scale(1.4)" fill="#e9d3a2" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round"/>
+  <use href="#chip" transform="translate(540,1180) rotate(150)" fill="#e9d3a2" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round"/>
+  <use href="#chip" transform="translate(680,1140) rotate(10) scale(1.6)" fill="#f0dcae" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round"/>
+  <use href="#chip" transform="translate(160,1170) rotate(-120)" fill="#e9d3a2" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round"/>
+  <use href="#chip" transform="translate(740,1100) rotate(80) scale(1.2)" fill="#f0dcae" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round"/>
+</g>
+<rect width="900" height="1200" filter="url(#grain)" opacity=".5"/>
+<rect width="900" height="1200" fill="url(#vig)"/>
+</svg>

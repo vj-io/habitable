@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+<defs>
+  <filter id="wob" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.018 0.02" numOctaves="2" seed="4" result="a"/>
+    <feDisplacementMap in="SourceGraphic" in2="a" scale="12" xChannelSelector="R" yChannelSelector="G" result="b"/>
+    <feTurbulence type="fractalNoise" baseFrequency="0.07" numOctaves="1" seed="9" result="c"/>
+    <feDisplacementMap in="b" in2="c" scale="3.5" xChannelSelector="G" yChannelSelector="B"/>
+  </filter>
+  <filter id="grain" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="2" seed="3"/>
+    <feColorMatrix type="matrix" values="0 0 0 0 0.25  0 0 0 0 0.2  0 0 0 0 0.12  0 0 0 0.9 -0.35"/>
+  </filter>
+  <radialGradient id="vig" cx="50%" cy="50%" r="75%">
+    <stop offset="0.55" stop-color="#46321c" stop-opacity="0"/>
+    <stop offset="1" stop-color="#46321c" stop-opacity="0.28"/>
+  </radialGradient>
+  <path id="drop" d="M0,-22 C-11,-2 -13,10 0,17 C13,10 11,-2 0,-22 Z"/>
+</defs>
+<style>
+  .k{fill:none;stroke:#1a1a1a;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+  .t{fill:none;stroke:#1a1a1a;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+  .o{stroke:#1a1a1a;stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<g filter="url(#wob)">
+  <rect x="-40" y="-40" width="1280" height="980" fill="#e9e4d8"/>
+  <!-- ceiling, left wall, right wall -->
+  <path class="o" fill="#f3efe5" d="M-40,-40 H1240 V67 L620,420 L-40,101 Z"/>
+  <path class="o" fill="#e9e4d8" d="M-40,101 L620,420 L620,760 L-40,866 Z"/>
+  <path class="o" fill="#dcd6c6" d="M620,420 L1240,67 V845 L620,760 Z"/>
+  <!-- baseboards and floor -->
+  <path class="o" fill="#d6cdb8" d="M-40,866 L620,760 L1240,845 V915 L620,812 L-40,930 Z"/>
+  <path class="o" fill="#b08a5a" d="M-40,930 L620,812 L1240,915 V960 H-40 Z"/>
+  <path class="t" opacity=".7" d="M-40,990 L620,830 M620,830 L1240,960 M300,900 L420,860 M900,900 L860,880"/>
+  <path class="k" d="M620,420 V760"/>
+  <!-- wall hatching for shading -->
+  <path class="t" opacity=".35" d="M60,260 l30,14 M100,300 l30,14 M150,350 l30,14 M70,420 l30,14 M200,440 l30,14 M260,320 l30,14 M1100,260 l-26,12 M1050,330 l-26,12 M1130,420 l-26,12 M980,450 l-26,12 M1080,520 l-26,12 M760,500 l-26,12 M880,560 l-26,12"/>
+  <!-- outlet on left wall -->
+  <path class="o" fill="#f4f1ea" d="M168,745 L212,752 L212,808 L168,799 Z"/>
+  <path class="t" d="M184,764 v14 M198,767 v14"/>
+  <!-- smoke detector on ceiling -->
+  <ellipse class="o" cx="990" cy="150" rx="44" ry="24" fill="#f7f5ef"/>
+  <ellipse class="t" cx="990" cy="150" rx="22" ry="12"/>
+  <circle cx="1022" cy="156" r="3.5" fill="#1a1a1a"/>
+
+  <!-- water stain: outer halo, rings, wet core, and the run down the corner -->
+  <path fill="#cfb386" stroke="#8a6a3d" stroke-width="7" stroke-linejoin="round" opacity=".95"
+    d="M320,215 C330,130 450,60 610,70 C770,60 900,140 905,230 C910,320 850,375 770,372 C725,372 690,420 662,470 C650,495 626,495 618,470 C605,420 590,405 560,398 C500,385 430,375 380,345 C330,315 315,270 320,215 Z"/>
+  <path class="t" d="M320,215 C330,130 450,60 610,70 C770,60 900,140 905,230 C910,320 850,375 770,372 C725,372 690,420 662,470 C650,495 626,495 618,470 C605,420 590,405 560,398 C500,385 430,375 380,345 C330,315 315,270 320,215 Z"/>
+  <path fill="#b8935f" stroke="#7b5a33" stroke-width="5" stroke-linejoin="round"
+    d="M400,220 C410,150 500,110 610,115 C720,110 820,170 825,235 C830,300 780,335 715,335 C690,365 668,405 650,440 C642,455 625,455 619,440 C608,405 596,385 560,375 C510,362 470,345 440,320 C405,295 395,260 400,220 Z"/>
+  <path fill="#946d3e" stroke="#6e4f2b" stroke-width="5" stroke-linejoin="round"
+    d="M480,225 C490,175 550,150 610,155 C680,150 745,190 750,235 C752,280 710,305 660,305 C645,325 640,345 636,375 C630,390 618,390 614,375 C608,350 590,330 568,322 C520,305 475,275 480,225 Z"/>
+  <path fill="#6e4f2b" opacity=".85" d="M560,262 C572,238 640,232 665,256 C680,286 652,314 616,320 C580,318 548,292 560,262 Z"/>
+  <path class="t" d="M400,220 C410,150 500,110 610,115 C720,110 820,170 825,235 C830,300 780,335 715,335 C690,365 668,405 650,440 C642,455 625,455 619,440 C608,405 596,385 560,375 C510,362 470,345 440,320 C405,295 395,260 400,220 Z"/>
+  <!-- wet runs down the corner -->
+  <path d="M600,440 C598,500 604,560 598,610" fill="none" stroke="#b8935f" stroke-width="18" stroke-linecap="round"/>
+  <path d="M672,430 C676,470 668,520 672,560" fill="none" stroke="#b8935f" stroke-width="14" stroke-linecap="round"/>
+  <path class="t" d="M591,445 C589,500 595,560 590,606 M608,520 C607,560 611,590 607,612 M665,440 C669,480 661,520 665,556 M680,470 C683,500 678,530 680,556"/>
+  <!-- hanging droplet and falling drops -->
+  <use href="#drop" transform="translate(636,544) scale(1.5)" fill="#a9cbd8" stroke="#1a1a1a" stroke-width="2.6" stroke-linejoin="round"/>
+  <use href="#drop" transform="translate(636,620) scale(1.6)" fill="#a9cbd8" stroke="#1a1a1a" stroke-width="2.6" stroke-linejoin="round"/>
+  <use href="#drop" transform="translate(634,676) scale(1.7)" fill="#a9cbd8" stroke="#1a1a1a" stroke-width="2.6" stroke-linejoin="round"/>
+  <path class="t" d="M658,610 v-18 M660,664 v-20 M614,606 v-14"/>
+
+  <!-- puddle, bucket -->
+  <ellipse class="o" cx="650" cy="868" rx="190" ry="24" fill="#bdd0d6" stroke-width="3"/>
+  <path class="t" d="M520,872 c20,8 60,10 80,6 M700,880 c30,2 70,-2 100,-10"/>
+  <path class="o" fill="#9aa3a8" d="M528,712 L550,845 C560,870 714,870 724,845 L746,712 Z"/>
+  <path class="t" d="M538,762 C580,786 702,786 738,762 M546,806 C588,830 690,830 730,806"/>
+  <path class="t" opacity=".6" d="M566,730 L580,832"/>
+  <path class="k" d="M534,716 C520,676 760,676 744,716"/>
+  <ellipse class="o" cx="636" cy="712" rx="108" ry="24" fill="#7d868b"/>
+  <ellipse fill="#8fb4c2" stroke="#1a1a1a" stroke-width="2.5" cx="636" cy="716" rx="96" ry="18"/>
+  <ellipse class="t" cx="636" cy="718" rx="30" ry="7"/>
+  <ellipse class="t" cx="636" cy="718" rx="14" ry="3.5"/>
+  <circle cx="606" cy="700" r="4" fill="#a9cbd8" stroke="#1a1a1a" stroke-width="2"/>
+  <circle cx="668" cy="698" r="3.5" fill="#a9cbd8" stroke="#1a1a1a" stroke-width="2"/>
+  <circle cx="650" cy="690" r="3" fill="#a9cbd8" stroke="#1a1a1a" stroke-width="2"/>
+</g>
+<rect width="1200" height="900" filter="url(#grain)" opacity=".5"/>
+<rect width="1200" height="900" fill="url(#vig)"/>
+</svg>

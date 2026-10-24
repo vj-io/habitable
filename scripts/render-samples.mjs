@@ -1,0 +1,89 @@
+// Renders scripts/samples/*.svg -> public/samples/*.jpg (+ EXIF) and writes manifest.json.
+// Usage: node scripts/render-samples.mjs   (needs `npx playwright install chromium` once)
+import { chromium } from '@playwright/test';
+import exifr from 'exifr';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import path from 'node:path';
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const srcDir = path.join(root, 'scripts/samples');
+const outDir = path.join(root, 'public/samples');
+const MAX_BYTES = 250 * 1024;
+
+// id, label, expectedIssue, EXIF capture time (NYC local, EDT = -04:00 on all of these dates)
+const SCENES = [
+  ['leak-ceiling', 'Ceiling stain with drips', 'leak', '2026:10:15 07:42:10'],
+  ['mold-bathroom', 'Black mold above the tub', 'mold', '2026:10:12 19:05:33'],
+  ['cold-radiator', 'Cold radiator and frosted window', 'heat_hot_water', '2026:10:20 06:58:02'],
+  ['mice-kitchen', 'Mouse, droppings and chewed cereal box', 'pests', '2026:10:18 22:14:47'],
+  ['broken-lock', 'Broken deadbolt and splintered door frame', 'lock_door', '2026:10:21 23:31:09'],
+  ['peeling-paint', 'Peeling paint on window sill', 'peeling_paint', '2026:10:09 16:20:55'],
+  ['ambiguous-stain', 'Faint stain on wall by window', 'ambiguous', '2026:10:22 12:03:40'],
+];
+
+// Minimal EXIF APP1: little-endian TIFF, IFD0 {Make, Model, DateTime, ExifIFD ptr} + Exif IFD {DateTimeOriginal}. No GPS.
+function exifSegment(dt) {
+  const asc = (s) => Buffer.from(s + '\0', 'latin1');
+  const make = asc('Habitable');
+  const model = asc('Sample scene');
+  const date = asc(dt);
+  const even = (n) => n + (n & 1);
+  const ifd0 = 8; // IFD0 starts right after the 8-byte TIFF header: 2 + 4*12 + 4 bytes
+  let off = ifd0 + 54;
+  const oMake = off; off += even(make.length);
+  const oModel = off; off += even(model.length);
+  const oDate = off; off += even(date.length);
+  const oExif = off; off += 2 + 12 + 4; // Exif IFD: count + 1 entry + next ptr
+  const oDTO = off; off += even(date.length);
+  const t = Buffer.alloc(off);
+  t.write('II', 0, 'latin1'); t.writeUInt16LE(42, 2); t.writeUInt32LE(8, 4);
+  const entry = (p, tag, type, count, val) => {
+    t.writeUInt16LE(tag, p); t.writeUInt16LE(type, p + 2); t.writeUInt32LE(count, p + 4); t.writeUInt32LE(val, p + 8);
+  };
+  t.writeUInt16LE(4, ifd0);
+  entry(ifd0 + 2, 0x010f, 2, make.length, oMake);
+  entry(ifd0 + 14, 0x0110, 2, model.length, oModel);
+  entry(ifd0 + 26, 0x0132, 2, date.length, oDate);
+  entry(ifd0 + 38, 0x8769, 4, 1, oExif);
+  make.copy(t, oMake); model.copy(t, oModel); date.copy(t, oDate);
+  t.writeUInt16LE(1, oExif);
+  entry(oExif + 2, 0x9003, 2, date.length, oDTO);
+  date.copy(t, oDTO);
+  const body = Buffer.concat([Buffer.from('Exif\0\0', 'latin1'), t]);
+  return Buffer.concat([Buffer.from([0xff, 0xe1, (body.length + 2) >> 8, (body.length + 2) & 0xff]), body]);
+}
+
+mkdirSync(outDir, { recursive: true });
+const browser = await chromium.launch({ channel: 'chromium' });
+const manifest = [];
+let failed = false;
+
+for (const [id, label, expectedIssue, dt] of SCENES) {
+  const file = path.join(srcDir, `${id}.svg`);
+  const [, w, h] = readFileSync(file, 'utf8').match(/viewBox="0 0 (\d+) (\d+)"/);
+  const page = await browser.newPage({ viewport: { width: +w, height: +h }, deviceScaleFactor: 1 });
+  await page.goto(pathToFileURL(file).href);
+  let jpg;
+  for (const quality of [85, 80, 75, 70, 65]) {
+    jpg = await page.screenshot({ type: 'jpeg', quality });
+    if (jpg.length < MAX_BYTES) break;
+  }
+  await page.close();
+  jpg = Buffer.concat([jpg.subarray(0, 2), exifSegment(dt), jpg.subarray(2)]); // APP1 right after SOI
+  writeFileSync(path.join(outDir, `${id}.jpg`), jpg);
+
+  const tags = await exifr.parse(jpg, { reviveValues: false });
+  const gps = await exifr.gps(jpg);
+  const ok = tags?.DateTimeOriginal === dt && tags?.ModifyDate === dt && tags?.Make === 'Habitable' && tags?.Model === 'Sample scene' && !gps && jpg.length < MAX_BYTES;
+  if (!ok) failed = true;
+  const revived = (await exifr.parse(jpg)).DateTimeOriginal;
+  console.log(`${ok ? 'ok ' : 'BAD'} ${id}.jpg ${w}x${h} ${(jpg.length / 1024).toFixed(1)} KB DateTimeOriginal=${tags?.DateTimeOriginal} (revived ${revived?.toString()}) ModifyDate(DateTime)=${tags?.ModifyDate} Make=${tags?.Make} Model=${tags?.Model} gps=${gps ? 'PRESENT' : 'none'}`);
+
+  const [d, tm] = dt.split(' ');
+  manifest.push({ id, file: `/samples/${id}.jpg`, label, expectedIssue, capturedAt: `${d.replaceAll(':', '-')}T${tm}-04:00` });
+}
+
+await browser.close();
+writeFileSync(path.join(outDir, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
+if (failed) { console.error('verification failed'); process.exit(1); }

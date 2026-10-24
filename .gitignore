@@ -9,5 +9,28 @@
 .env.*
 !.env.example
 
-# OS / editor
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# testing
+/coverage
+/test-results/
+/playwright-report/
+/blob-report/
+
+# next.js
+/.next/
+/out/
+/build
+next-env.d.ts
+*.tsbuildinfo
+
+# vercel
+.vercel
+
+# misc
 .DS_Store
+*.pem
+npm-debug.log*
