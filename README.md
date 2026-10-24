@@ -28,6 +28,14 @@ Built for the Devpost **Build With AI: Basics** hackathon with the Devpost Learn
 
 A New York City renter — often in an older, rent-stabilized building — with a leak, mold, no heat, pests, a broken lock or peeling paint, who usually complains by text, keeps no dated record, and doesn't know what the Housing Maintenance Code requires. Secondary: tenant organizers and legal-aid intake workers who need structured evidence.
 
+**The scale, from the same NYC Open Data set the app reads** ([HPD Housing Maintenance Code Violations](https://data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Violations/wvxf-dwi5), queried 2026-10-25): about **2.65 million open violations** citywide — 587,952 Class C (immediately hazardous), 1,386,990 Class B and 676,016 Class A — and **85,096 buildings** with at least one open Class C violation. Every one of those started with someone documenting a condition.
+
+## How it differs
+
+- **JustFix** (Letter of Complaint, Who Owns What) sends a letter to the landlord and maps landlord portfolios. Habitable is about the evidence behind the letter: dated, fingerprinted photos, the class and correction window each condition falls under with its citation, and a receipt anyone can check.
+- **The 311 app / portal** files a complaint and gets an inspection. Habitable's notice comes with pre-filled 311 text, so the two work together.
+- **The camera roll** has the photos but no dates you can prove, no rule, no deadline and no document to send.
+
 ## AI proposes, code disposes
 
 ```mermaid
