@@ -186,7 +186,11 @@ function dateOf(iso: string, lang: NoticeLang): string {
 /** "Oct 15, 2026, 7:42 AM" / "15 de octubre de 2026 a las 7:42 a.m." */
 function dateTimeOf(iso: string, lang: NoticeLang): string {
   if (lang === "en") return formatNY(iso, "datetime");
-  return esDateTime.format(new Date(iso)).replace(/[\u202f\u00a0]/g, " ");
+  // Engines differ on the joiner ("2026, 7:42" vs "2026 a las 7:42"); always write "a las".
+  return esDateTime
+    .format(new Date(iso))
+    .replace(/[\u202f\u00a0]/g, " ")
+    .replace(/(\d{4}),? (?:a las )?(?=\d)/, "$1 a las ");
 }
 
 function labelOf(issue: ProposalIssue, lang: NoticeLang): string {

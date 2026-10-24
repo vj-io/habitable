@@ -110,5 +110,7 @@ const formats = {
 /** "Oct 15, 2026" | "Oct 15, 2026, 7:42 AM" | "Oct 15" — always in America/New_York. */
 export function formatNY(iso: string, style: "date" | "datetime" | "short"): string {
   // Newer ICU puts a narrow no-break space before AM/PM; normalise to a plain space.
-  return formats[style].format(new Date(iso)).replace(/ /g, " ");
+  // Safari joins date and time with " at " where Chrome and Firefox use ", "; use the comma everywhere
+  // so the evidence reads the same on every phone.
+  return formats[style].format(new Date(iso)).replace(/ /g, " ").replace(" at ", ", ");
 }
