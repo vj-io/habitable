@@ -19,8 +19,8 @@ import type { ClassifyResponse } from "@/lib/types";
 export const maxDuration = 30;
 
 const MAX_IMAGE_CHARS = 2_000_000;
-// Per model, so two models (primary + fallback) still finish inside maxDuration.
-const MODEL_TIMEOUT_MS = 12_000;
+// Per model. Flash normally answers in ~3 s; past 8 s it is stalled and Flash-Lite should take over.
+const MODEL_TIMEOUT_MS = 8_000;
 // Demo only: a pause so the UI's "reading the photo" moment is visible. Real calls are slower anyway.
 const DEMO_DELAY_MS = 700;
 
