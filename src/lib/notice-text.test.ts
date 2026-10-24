@@ -135,7 +135,7 @@ describe("noticeText (es)", () => {
     expect(t.to).toBe("Propietario / Agente administrador");
     expect(t.from).toBe("Inquilino/a");
     expect(t.re).toBe("618 West 136th Street, Manhattan, NY 10031, Apto. 4B");
-    expect(t.labels.repairBy).toBe("Se solicita reparar antes del");
+    expect(t.labels.repairBy).toBe("Se solicita la reparación a más tardar el");
     expect(t.footer[1]).toBe("El recibo del servidor de cada foto se puede comprobar con el enlace junto a ella, en https://habitable.example/verify.");
     expect(t.footer[0]).toMatch(/^Preparado con Habitable el 24 de octubre de 2026\./);
     expect(t.footer[0]).toMatch(/No es asesoría legal\.$/);
@@ -145,8 +145,8 @@ describe("noticeText (es)", () => {
     const [l, m] = t.items;
     expect(l.label).toBe("Filtración / daño por agua");
     expect(m.label).toBe("Moho");
-    expect(l.classLine).toBe("Clase según las reglas publicadas de HPD: C — Inmediatamente peligrosa");
-    expect(m.classLine).toBe("Clase según las reglas publicadas de HPD: B — Peligrosa");
+    expect(l.classLine).toBe("Clase según las reglas que publica HPD: C — Inmediatamente peligrosa");
+    expect(m.classLine).toBe("Clase según las reglas que publica HPD: B — Peligrosa");
     expect(l.windowLine).toBe("Plazo de corrección de HPD: 24 horas");
     expect(m.windowLine).toBe("Plazo de corrección de HPD: 30 días");
     expect(m.citation).toContain("Código Administrativo de NYC");

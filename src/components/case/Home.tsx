@@ -1,7 +1,7 @@
 "use client";
 
 import { PencilLoader } from "@/components/doodle";
-import { Wordmark } from "@/components/site/Wordmark";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import { useCaseData } from "@/lib/store";
 import { CaseFile } from "./CaseFile";
 import { Welcome } from "./Welcome";
@@ -12,9 +12,7 @@ export function Home() {
   if (!ready) {
     return (
       <>
-        <header className="mx-auto w-full max-w-[1100px] px-4 pt-5 sm:px-6">
-          <Wordmark />
-        </header>
+        <SiteHeader />
         <main id="main" className="grid flex-1 place-items-center px-4 py-20">
           <PencilLoader caption="opening your case…" />
         </main>

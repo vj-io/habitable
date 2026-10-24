@@ -17,7 +17,31 @@ export function IssueIcon({ issue, ...p }: IconProps & { issue: ProposalIssue })
   return <Icon {...p} />;
 }
 
-export const CLASS_TONE = { A: "ink", B: "amber", C: "red" } as const satisfies Record<HazardClass, string>;
+export const CLASS_TONE = { A: "sky", B: "amber", C: "red" } as const satisfies Record<HazardClass, string>;
+
+/** Each problem type keeps one felt-tip colour wherever its icon appears. Violet stays reserved for the AI. */
+const ISSUE_TINT: Record<ProposalIssue, string> = {
+  leak: "bg-sky-tint text-sky-ink",
+  mold: "bg-mint-tint text-mint-ink",
+  heat_hot_water: "bg-red-tint text-red-ink",
+  pests: "bg-amber-tint text-amber-ink",
+  lock_door: "bg-marker-tint text-ink",
+  peeling_paint: "bg-pink-tint text-pink-ink",
+  not_covered: "bg-paper-2 text-ink",
+};
+
+/** Problem icon on its colour blob (a wobbly circle). */
+export function IssueBadge({ issue, size = 22, className = "" }: { issue: ProposalIssue; size?: number; className?: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`inline-grid shrink-0 place-items-center ${ISSUE_TINT[issue]} ${className}`}
+      style={{ width: size + 14, height: size + 14, borderRadius: "58% 42% 55% 45% / 47% 56% 44% 53%" }}
+    >
+      <IssueIcon issue={issue} size={size} />
+    </span>
+  );
+}
 
 /** "… open HPD violations — 37 for leaks." */
 export const ISSUE_FOR: Record<IssueId, string> = {

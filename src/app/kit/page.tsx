@@ -37,23 +37,32 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
+// Values live in globals.css and change with the theme, so the kit shows token names, not hex.
 const SWATCHES = [
-  ["paper", "#f0ede8", "bg-paper"],
-  ["paper-2", "#faf8f4", "bg-paper-2"],
-  ["ink", "#0a0a0a", "bg-ink"],
-  ["muted", "#65625c", "bg-muted"],
-  ["lime", "#c8ff00", "bg-lime"],
-  ["lime-tint", "#f1ffc2", "bg-lime-tint"],
-  ["violet", "#6b4eff", "bg-violet"],
-  ["violet-ink", "#5534e6", "bg-violet-ink"],
-  ["violet-tint", "#e8e2ff", "bg-violet-tint"],
-  ["red", "#d63a2a", "bg-red"],
-  ["red-ink", "#b3261a", "bg-red-ink"],
-  ["red-tint", "#ffe1dc", "bg-red-tint"],
-  ["amber", "#b85c00", "bg-amber"],
-  ["amber-ink", "#9c4c00", "bg-amber-ink"],
-  ["amber-tint", "#ffedd1", "bg-amber-tint"],
-  ["yellow-tint", "#fff4a8", "bg-yellow-tint"],
+  ["paper", "bg-paper"],
+  ["paper-2", "bg-paper-2"],
+  ["ink", "bg-ink"],
+  ["muted", "bg-muted"],
+  ["marker", "bg-marker"],
+  ["marker-tint", "bg-marker-tint"],
+  ["violet", "bg-violet"],
+  ["violet-ink", "bg-violet-ink"],
+  ["violet-tint", "bg-violet-tint"],
+  ["red", "bg-red"],
+  ["red-ink", "bg-red-ink"],
+  ["red-tint", "bg-red-tint"],
+  ["amber", "bg-amber"],
+  ["amber-ink", "bg-amber-ink"],
+  ["amber-tint", "bg-amber-tint"],
+  ["sky", "bg-sky"],
+  ["sky-ink", "bg-sky-ink"],
+  ["sky-tint", "bg-sky-tint"],
+  ["mint", "bg-mint"],
+  ["mint-ink", "bg-mint-ink"],
+  ["mint-tint", "bg-mint-tint"],
+  ["pink", "bg-pink"],
+  ["pink-ink", "bg-pink-ink"],
+  ["pink-tint", "bg-pink-tint"],
 ] as const;
 
 const ICONS = [
@@ -96,13 +105,13 @@ export default function KitPage() {
         </h1>
         <p className="max-w-xl text-lg text-ink/85">
           Ink on grid paper. <Highlight tone="violet">Violet pencil</Highlight> is what the AI proposes;{" "}
-          <Highlight>lime</Highlight> is what the code verified; red is for hazards and deadlines only.
+          the <Highlight>marker</Highlight> is what the code decided; red, amber and sky are HPD classes C, B and A; mint means done.
         </p>
       </header>
 
       <Section n={1} title="Tokens">
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {SWATCHES.map(([name, hex, bg]) => (
+          {SWATCHES.map(([name, bg]) => (
             <li key={name} className="flex items-center gap-2.5">
               <span
                 className={`size-10 shrink-0 border-2 border-ink ${bg}`}
@@ -110,7 +119,7 @@ export default function KitPage() {
               />
               <span className="min-w-0">
                 <span className="block font-mono text-xs font-bold">{name}</span>
-                <span className="block font-mono text-xs text-muted">{hex}</span>
+                <span className="block font-mono text-xs text-muted">--color-{name}</span>
               </span>
             </li>
           ))}
@@ -237,7 +246,7 @@ export default function KitPage() {
           <Stamp tone="violet" sub="Tentative" rotate={-6} seed={4}>
             AI guess
           </Stamp>
-          <Stamp tone="lime" sub="By the rules table" rotate={-8} seed={6}>
+          <Stamp tone="marker" sub="By the rules table" rotate={-8} seed={6}>
             Verified
           </Stamp>
           <Stamp tone="red" size="sm" rotate={-5} seed={2}>
@@ -255,7 +264,8 @@ export default function KitPage() {
           <Tag tone="violet">AI · 92%</Tag>
           <Tag tone="red">deadline</Tag>
           <Tag tone="amber">Class B</Tag>
-          <Tag tone="lime">fixed ✓</Tag>
+          <Tag tone="sky">Class A</Tag>
+          <Tag tone="mint">fixed ✓</Tag>
         </div>
       </Section>
 
@@ -273,9 +283,9 @@ export default function KitPage() {
 
       <Section n={8} title="Marks">
         <p className="text-xl leading-relaxed">
-          Highlighter in <Highlight>lime</Highlight>, <Highlight tone="violet">violet</Highlight>,{" "}
-          <Highlight tone="red">red</Highlight> and <Highlight tone="yellow">sticky yellow</Highlight> — it wraps
-          across lines when a phrase is long, like <Highlight tone="yellow">this deliberately long highlighted phrase</Highlight>.
+          Highlighter in <Highlight>marker</Highlight>, <Highlight tone="violet">violet</Highlight>,{" "}
+          <Highlight tone="red">red</Highlight>, <Highlight tone="sky">sky</Highlight> and <Highlight tone="mint">mint</Highlight> — it wraps
+          across lines when a phrase is long, like <Highlight tone="sky">this deliberately long highlighted phrase</Highlight>.
         </p>
         <p className="font-hand text-2xl">
           Circle the <CircleMark draw>important bit</CircleMark>, then{" "}
@@ -291,7 +301,7 @@ export default function KitPage() {
 
       <Section n={9} title="Loader & sheet">
         <div className="flex flex-wrap items-center gap-8">
-          <DoodleCard tone="yellow" appear={false} seed={3}>
+          <DoodleCard tone="marker" appear={false} seed={3}>
             <PencilLoader />
           </DoodleCard>
           <SheetDemo />

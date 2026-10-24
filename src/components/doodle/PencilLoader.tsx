@@ -14,7 +14,7 @@ export function PencilLoader({ caption = "reading the photo…", className = "" 
         {/* pencil, tip at the start of line 1; rests at the end of line 3 when motion is reduced */}
         <g className="pl-pencil">
           <g transform="translate(8 14) rotate(-40)" stroke="var(--color-ink)" strokeWidth="2.2">
-            <path d="M0 0 L4 -3 L26 -3 L26 3 L4 3 Z" fill="var(--color-lime)" />
+            <path d="M0 0 L4 -3 L26 -3 L26 3 L4 3 Z" fill="var(--color-marker)" />
             <path d="M0 0 L4 -3 M0 0 L4 3" />
             <path d="M21 -3 V3" />
           </g>

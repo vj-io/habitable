@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { MonoLabel, PencilLoader } from "@/components/doodle";
-import { Wordmark } from "@/components/site/Wordmark";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import { VerifyForm } from "./VerifyForm";
 
 export const metadata: Metadata = {
@@ -12,9 +12,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
-      <header className="mx-auto w-full max-w-[1100px] px-4 pt-5 sm:px-6">
-        <Wordmark />
-      </header>
+      <SiteHeader />
       <main id="main" className="mx-auto w-full max-w-2xl flex-1 space-y-6 px-4 pt-6 pb-6 sm:px-6">
         <MonoLabel as="p">Receipt check</MonoLabel>
         <h1 className="font-display text-[2.25rem] leading-[1.05] font-extrabold sm:text-5xl">Did Habitable really see this photo then?</h1>

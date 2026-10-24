@@ -153,7 +153,7 @@ export function RuleCard({
 /** Rules said "no class": heat out of season, or something Habitable doesn't cover. */
 export function NotApplicableCard({ outcome }: { outcome: Extract<RuleOutcome, { status: "not_applicable" }> }) {
   return (
-    <DoodleCard tone="yellow" seed={13} padding="1.25rem">
+    <DoodleCard tone="marker" seed={13} padding="1.25rem">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <MonoLabel>Rules table</MonoLabel>
         <Tag>no class</Tag>

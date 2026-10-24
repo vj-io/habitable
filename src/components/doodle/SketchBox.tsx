@@ -70,12 +70,16 @@ export function SketchBox({
     };
   }, [size, seed, strokeWidth, double, fill, shadow]);
 
+  // A caller that positions the box itself (absolute popover, fixed bar) keeps that; otherwise the
+  // box is the containing block for its drawn outline.
+  const position = /(^|\s)(absolute|fixed|sticky)(\s|$)/.test(className) ? "" : "relative";
+
   const drawProps = draw
     ? { pathLength: 1, className: "ink-draw", "data-in": inView ? "1" : "0" }
     : {};
 
   return (
-    <Tag ref={ref} className={`relative isolate ${className}`} style={{ padding, ...style }} {...rest}>
+    <Tag ref={ref} className={`${position} isolate ${className}`} style={{ padding, ...style }} {...rest}>
       <svg
         aria-hidden="true"
         focusable="false"

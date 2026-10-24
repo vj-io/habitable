@@ -8,7 +8,7 @@ export type DoodleButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 export type DoodleButtonSize = "md" | "lg" | "xl";
 
 const VARIANTS: Record<Exclude<DoodleButtonVariant, "ghost">, { fill: string; stroke: string; text: string }> = {
-  primary: { fill: "var(--color-lime)", stroke: "var(--color-ink)", text: "text-ink" },
+  primary: { fill: "var(--color-marker)", stroke: "var(--color-ink)", text: "text-on-marker" },
   secondary: { fill: "var(--color-paper-2)", stroke: "var(--color-ink)", text: "text-ink" },
   danger: { fill: "var(--color-red-tint)", stroke: "var(--color-red)", text: "text-red-ink" },
 };
@@ -86,7 +86,7 @@ export function DoodleButton({
       seed={seed}
       color={v.stroke}
       fill={v.fill}
-      shadow="var(--color-ink)"
+      shadow="var(--color-shadow)"
       strokeWidth={size === "xl" ? 3 : 2.5}
       className={`${base} ${v.text} ${className}`}
     >

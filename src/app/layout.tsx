@@ -40,13 +40,27 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#f0ede8",
-  colorScheme: "light",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f3eee5" },
+    { media: "(prefers-color-scheme: dark)", color: "#1b1a17" },
+  ],
+  colorScheme: "light dark",
 };
+
+const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem("habitable-theme");if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${archivo.variable} ${patrickHand.variable} ${jetbrainsMono.variable}`}>
+    <html
+      lang="en"
+      data-theme="light"
+      suppressHydrationWarning
+      className={`${archivo.variable} ${patrickHand.variable} ${jetbrainsMono.variable}`}
+    >
+      <head>
+        {/* Before first paint: the theme saved by ThemeToggle, else the system setting. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="flex flex-col">
         <SkipLink />
         <BoilFilter />

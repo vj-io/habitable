@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Arrow, Building, Camera, Doc, DoodleButton, DoodleCard, Highlight, MonoLabel, Stamp } from "@/components/doodle";
-import { Wordmark } from "@/components/site/Wordmark";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import { DEMO_ADDRESS, DEMO_UNIT, DEMO_YEAR_BUILT } from "@/lib/demo/building";
 import { saveCase } from "@/lib/store";
 import { AddressSetup } from "./AddressSetup";
@@ -60,9 +60,7 @@ export function Welcome() {
 
   return (
     <>
-      <header className="mx-auto w-full max-w-[1100px] px-4 pt-5 sm:px-6">
-        <Wordmark />
-      </header>
+      <SiteHeader />
       <main id="main" className="mx-auto grid w-full max-w-[1100px] flex-1 gap-8 px-4 pt-5 pb-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_440px] lg:gap-14 lg:pt-14">
         <section className="space-y-6">
           <MonoLabel as="p">For NYC renters · free · no account</MonoLabel>
@@ -79,7 +77,7 @@ export function Welcome() {
           <DoodleButton variant="ghost" icon={<Arrow size={20} />} className="lg:hidden" loading={demoBusy} onClick={() => void startDemo()}>
             Just looking? Try the demo building
           </DoodleButton>
-          <p className="hidden max-w-md font-hand text-xl leading-snug text-violet-ink lg:block">
+          <p className="max-w-md font-hand text-xl leading-snug text-violet-ink">
             The AI only names the problem. A cited rules table — never the AI — sets the hazard class and the correction window.
           </p>
         </section>

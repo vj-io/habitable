@@ -192,7 +192,7 @@ export function AddressSetup() {
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => select(a)}
                   onMouseEnter={() => setActive(i)}
-                  className={`flex min-h-12 cursor-pointer flex-col justify-center rounded-[3px] px-3 py-2 ${i === active ? "bg-lime" : ""}`}
+                  className={`flex min-h-12 cursor-pointer flex-col justify-center rounded-[3px] px-3 py-2 ${i === active ? "bg-marker-tint" : ""}`}
                 >
                   <span className="leading-tight font-bold">{a.label.split(",")[0]}</span>
                   <span className="font-mono text-[0.75rem] tracking-[0.06em] text-muted">
@@ -210,7 +210,7 @@ export function AddressSetup() {
           )}
         </div>
       ) : (
-        <DoodleCard tone="lime" seed={29} padding="1rem 1.25rem" appear={false}>
+        <DoodleCard tone="mint" seed={29} padding="1rem 1.25rem" appear={false}>
           <div className="flex items-start gap-3">
             <Check size={26} className="mt-0.5 shrink-0" draw />
             <div className="min-w-0 flex-1 space-y-1">

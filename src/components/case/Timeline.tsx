@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Arrow, DoodleCard, Highlight, MonoLabel, Stamp, Tag } from "@/components/doodle";
-import { CLASS_TONE, IssueIcon } from "@/components/issue/meta";
+import { CLASS_TONE, IssueBadge } from "@/components/issue/meta";
 import { RULES } from "@/lib/rules";
 import { shortLeft, useNow } from "@/components/snap/Countdown";
 import { daysSince, formatNY } from "@/lib/countdown";
@@ -16,7 +16,7 @@ function Entry({ issue, flash, now }: { issue: Issue; flash: boolean; now: Date 
   return (
     <DoodleCard
       as="article"
-      tone={flash ? "lime" : "paper"}
+      tone={flash ? "mint" : "paper"}
       seed={100 + issue.id.charCodeAt(0)}
       padding="0.875rem"
       draw={false}
@@ -33,7 +33,7 @@ function Entry({ issue, flash, now }: { issue: Issue; flash: boolean; now: Date 
         />
         <span className="flex min-w-0 flex-1 flex-col gap-1.5">
           <span className="flex min-w-0 items-center gap-1.5 font-display text-lg leading-tight font-bold">
-            <IssueIcon issue={issue.issue} size={22} />
+            <IssueBadge issue={issue.issue} size={18} />
             <span className="min-w-0">{flash ? <Highlight>{label}</Highlight> : label}</span>
           </span>
           <span className="flex flex-wrap items-center gap-x-3 gap-y-1">
@@ -46,7 +46,7 @@ function Entry({ issue, flash, now }: { issue: Issue; flash: boolean; now: Date 
             )}
             <span className="font-mono text-sm font-bold">
               {issue.fixedAt ? (
-                <span className="bg-lime px-1">Fixed {formatNY(issue.fixedAt, "short")}</span>
+                <span className="bg-mint-tint px-1 text-mint-ink">Fixed {formatNY(issue.fixedAt, "short")}</span>
               ) : left ? (
                 <span className={left.overdue ? "text-red-ink" : ""}>{left.text}</span>
               ) : o.status === "not_applicable" ? (

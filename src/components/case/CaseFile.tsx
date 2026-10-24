@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { Building, Camera, Chip, Cross, Doc, DoodleButton, DoodleCard, MonoLabel, SketchBox } from "@/components/doodle";
-import { Wordmark } from "@/components/site/Wordmark";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import { SnapSheet } from "@/components/snap/SnapSheet";
 import { clearAll } from "@/lib/store";
 import { ISSUE_IDS, type CaseFile as CaseFileT, type Issue, type IssueId } from "@/lib/types";
@@ -105,13 +105,10 @@ export function CaseFile({ caseFile, issues, persistent }: { caseFile: CaseFileT
 
   return (
     <>
-      <header className="mx-auto flex w-full max-w-[1100px] items-center justify-between gap-3 px-4 pt-4 sm:px-6">
-        <Wordmark />
-        <div className="flex items-center gap-1.5">
-          {caseFile.demo && <Chip lead="Demo">building</Chip>}
-          <Menu />
-        </div>
-      </header>
+      <SiteHeader>
+        {caseFile.demo && <Chip lead="Demo"><span className="max-[420px]:sr-only">building</span></Chip>}
+        <Menu />
+      </SiteHeader>
 
       <main id="main" className="mx-auto w-full max-w-[1100px] flex-1 px-4 pt-4 pb-6 sm:px-6">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-10">
@@ -131,7 +128,7 @@ export function CaseFile({ caseFile, issues, persistent }: { caseFile: CaseFileT
             </DoodleCard>
 
             {!persistent && (
-              <DoodleCard tone="yellow" appear={false} padding="0.875rem 1.25rem" seed={8}>
+              <DoodleCard tone="marker" appear={false} padding="0.875rem 1.25rem" seed={8}>
                 <p role="status" className="font-hand text-xl leading-snug">
                   This browser may not keep your log after you close it. Private browsing often blocks storage — use a regular window to keep your record.
                 </p>
@@ -158,7 +155,7 @@ export function CaseFile({ caseFile, issues, persistent }: { caseFile: CaseFileT
             <Timeline issues={issues} flashId={flashId} />
 
             {openIssues.length > 0 && (
-              <DoodleCard tone="lime" seed={19} padding="1.25rem" appear={false} className="space-y-3">
+              <DoodleCard tone="marker" seed={19} padding="1.25rem" appear={false} className="space-y-3">
                 <p className="font-display text-xl leading-snug font-bold">
                   Ready when you are: a dated notice listing {openIssues.length === 1 ? "your open issue" : `all ${openIssues.length} open issues`}.
                 </p>

@@ -24,18 +24,18 @@ export default async function OpengraphImage() {
           flexDirection: "column",
           justifyContent: "space-between",
           padding: "64px 72px",
-          backgroundColor: "#f0ede8",
+          backgroundColor: "#f3eee5",
           backgroundImage:
             "linear-gradient(rgba(10,10,10,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(10,10,10,0.08) 1px, transparent 1px)",
           backgroundSize: "40px 40px",
-          color: "#0a0a0a",
+          color: "#1d1b20",
           fontFamily: "Archivo",
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 16, fontSize: 44 }}>
           <svg viewBox="0 0 40 40" width="64" height="64">
-            <path d="M11.4 19.6 Q11.6 26.6 11.2 35.2 L33 34.8 Q32.4 27 32.8 19.4 L22 10.2 Z" fill="#c8ff00" />
-            <g fill="none" stroke="#0a0a0a" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M11.4 19.6 Q11.6 26.6 11.2 35.2 L33 34.8 Q32.4 27 32.8 19.4 L22 10.2 Z" fill="#ffcf3f" />
+            <g fill="none" stroke="#1d1b20" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M4.2 20.4 C9.4 15.4 14.6 10.4 20.2 5.6 C25.6 10.4 30.6 15.2 35.8 20.2" />
               <path d="M9.2 17.4 C9.6 23 9.3 28.2 9.5 33.8 L31 33.5 C30.6 28 30.8 22.4 30.7 17.2" />
               <path d="M14.4 24.8 C15.9 26.2 17.3 27.7 18.5 29.6 C20.6 25.6 23.4 22.4 26.8 20" />
@@ -48,7 +48,7 @@ export default async function OpengraphImage() {
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", flexWrap: "wrap", maxWidth: 720, fontSize: 96, lineHeight: 1.0, letterSpacing: "-0.04em" }}>
               <span>Your repair problem,&nbsp;</span>
-              <span style={{ display: "flex", backgroundImage: "linear-gradient(transparent 52%, #c8ff00 52%, #c8ff00 94%, transparent 94%)" }}>
+              <span style={{ display: "flex", backgroundImage: "linear-gradient(transparent 52%, #ffcf3f 52%, #ffcf3f 94%, transparent 94%)" }}>
                 on the record.
               </span>
             </div>

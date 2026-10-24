@@ -1,31 +1,95 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ tokens
-   Doodle palette. Text-safe variants (-ink, muted) are >= 4.5:1 on paper and
-   on every tint; base hues (violet, red, amber) are for strokes and large type. */
+   Doodle palette, marker-pen edition: warm paper, soft ink, and a box of
+   felt-tip colours, each with one job. Text-safe variants (-ink, muted) are
+   >= 4.5:1 on paper and on every tint in both themes; base hues are for
+   strokes, fills and large type.
+     marker  primary action + highlighter (what the code decided)
+     violet  anything the AI proposes (tentative, pencil)
+     red / amber / sky   HPD Class C / B / A
+     mint    done: fixed, valid, confirmed
+     pink    supporting accent (illustration, issue-type chips)
+   Dark theme ("night notebook") redefines the same names further down. */
 @theme static {
-  --color-paper: #f0ede8;
-  --color-paper-2: #faf8f4;
-  --color-ink: #0a0a0a;
-  --color-muted: #65625c; /* 5.2:1 on paper */
+  --color-paper: #f3eee5;
+  --color-paper-2: #fcf9f3;
+  --color-ink: #1d1b20;
+  --color-muted: #625e57;
+  --color-on-marker: #1d1b20; /* text on a marker fill, both themes */
+  --color-chip-lead: #ffcf3f; /* accent word inside an ink chip */
+  --color-shadow: #1d1b20; /* hand-drawn offset shadow under buttons */
+  --color-grid: rgb(29 27 32 / 0.07);
 
-  --color-lime: #c8ff00;
-  --color-lime-tint: #f1ffc2;
+  --color-marker: #ffcf3f;
+  --color-marker-tint: #fff0c2;
 
   --color-violet: #6b4eff;
-  --color-violet-ink: #5534e6; /* 5.9:1 on paper */
-  --color-violet-tint: #e8e2ff;
+  --color-violet-ink: #5534e6;
+  --color-violet-tint: #e9e3ff;
 
-  --color-red: #d63a2a;
-  --color-red-ink: #b3261a; /* 5.6:1 on paper */
-  --color-red-tint: #ffe1dc;
+  --color-red: #e0533d;
+  --color-red-ink: #b3261a;
+  --color-red-tint: #ffe1da;
 
-  --color-amber: #b85c00;
-  --color-amber-ink: #9c4c00; /* 5.2:1 on paper */
-  --color-amber-tint: #ffedd1;
+  --color-amber: #c46604;
+  --color-amber-ink: #9a4a00;
+  --color-amber-tint: #ffead0;
 
-  --color-yellow-tint: #fff4a8;
+  --color-mint: #23946a;
+  --color-mint-ink: #1b7650;
+  --color-mint-tint: #d7f2e4;
+
+  --color-sky: #2f84cf;
+  --color-sky-ink: #1d60a3;
+  --color-sky-tint: #dcebfa;
+
+  --color-pink: #d24f8b;
+  --color-pink-ink: #ad2d68;
+  --color-pink-tint: #ffe1ee;
 }
+
+/* night notebook: charcoal paper, chalk ink, the same felt tips a shade lighter */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: #1b1a17;
+  --color-paper-2: #262420;
+  --color-ink: #f0eadf;
+  --color-muted: #aaa397;
+  --color-chip-lead: #9a4a00;
+  --color-shadow: #000000;
+  --color-grid: rgb(240 234 223 / 0.06);
+
+  --color-marker: #ffd34f;
+  --color-marker-tint: #3a3118;
+
+  --color-violet: #9d88ff;
+  --color-violet-ink: #b8a8ff;
+  --color-violet-tint: #2c2650;
+
+  --color-red: #f0705c;
+  --color-red-ink: #ff9a8a;
+  --color-red-tint: #40221d;
+
+  --color-amber: #f39a3d;
+  --color-amber-ink: #f7b76f;
+  --color-amber-tint: #3c2b17;
+
+  --color-mint: #4cc795;
+  --color-mint-ink: #7fdcb3;
+  --color-mint-tint: #163429;
+
+  --color-sky: #5aa8ec;
+  --color-sky-ink: #96c8f5;
+  --color-sky-tint: #172c42;
+
+  --color-pink: #f07fb0;
+  --color-pink-ink: #f9a7cb;
+  --color-pink-tint: #3e1f2d;
+}
+
+/* dark-mode variant for utilities: dark:hidden, dark:block, ... */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme inline {
   --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
@@ -51,10 +115,9 @@
     /* static grain, then a 28px grid at 7% ink */
     background-image:
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .25 0 0 0 0 .22 0 0 0 0 .18 .32 0 0 0 -.1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-      linear-gradient(rgb(10 10 10 / 0.07) 1px, transparent 1px),
-      linear-gradient(90deg, rgb(10 10 10 / 0.07) 1px, transparent 1px);
+      linear-gradient(var(--color-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
     background-size: 220px 220px, 28px 28px, 28px 28px;
-    background-attachment: fixed;
   }
 
   .font-display {
@@ -62,7 +125,7 @@
   }
 
   ::selection {
-    background: var(--color-lime);
+    background: var(--hl-marker);
     color: var(--color-ink);
   }
 
@@ -77,10 +140,31 @@
    Every element's resting style is its final state; motion only lives inside
    the no-preference block, so reduced motion renders the finished drawing. */
 
-/* highlighter: sits low on the text, slanted ends, wraps across lines */
+/* highlighter: sits low on the text, slanted ends, wraps across lines.
+   Dark theme uses see-through ink so chalk text stays readable on it. */
+:root {
+  --hl-marker: #ffd95e;
+  --hl-violet: #d8ceff;
+  --hl-red: #ffc6bc;
+  --hl-mint: #b4e9cf;
+  --hl-sky: #bcdcf7;
+}
+:root[data-theme="dark"] {
+  --hl-marker: rgb(255 211 79 / 0.2);
+  --hl-violet: rgb(157 136 255 / 0.24);
+  --hl-red: rgb(240 112 92 / 0.24);
+  --hl-mint: rgb(76 199 149 / 0.22);
+  --hl-sky: rgb(90 168 236 / 0.24);
+}
+/* on night paper the marked words take the pen's colour; the band underneath stays faint */
+[data-theme="dark"] .hl { --hl-fg: var(--color-marker); }
+[data-theme="dark"] .hl-violet { --hl-fg: var(--color-violet-ink); }
+[data-theme="dark"] .hl-red { --hl-fg: var(--color-red-ink); }
+[data-theme="dark"] .hl-mint { --hl-fg: var(--color-mint-ink); }
+[data-theme="dark"] .hl-sky { --hl-fg: var(--color-sky-ink); }
 .hl {
-  --hl: var(--color-lime);
-  color: inherit;
+  --hl: var(--hl-marker);
+  color: var(--hl-fg, inherit);
   background-color: transparent;
   background-image: linear-gradient(
     100deg,
@@ -97,9 +181,10 @@
   padding: 0 0.12em;
   margin: 0 -0.12em;
 }
-.hl-violet { --hl: #d6ccff; }
-.hl-red { --hl: #ffc9c0; }
-.hl-yellow { --hl: #ffec6e; }
+.hl-violet { --hl: var(--hl-violet); }
+.hl-red { --hl: var(--hl-red); }
+.hl-mint { --hl: var(--hl-mint); }
+.hl-sky { --hl: var(--hl-sky); }
 
 .stamp {
   display: inline-block;

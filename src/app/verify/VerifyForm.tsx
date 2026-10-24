@@ -51,7 +51,7 @@ export function VerifyForm() {
       <div ref={resultRef} aria-live="polite" className="scroll-mt-6 empty:hidden">
         {shown === true && (
           <div className="flex flex-wrap items-center gap-5">
-            <Stamp tone="lime" size="lg" sub="Signed by Habitable" rotate={-7}>
+            <Stamp tone="mint" size="lg" sub="Signed by Habitable" rotate={-7}>
               Valid
             </Stamp>
             <p className="max-w-xs font-hand text-xl leading-snug">This fingerprint reached Habitable&apos;s server at exactly that time.</p>

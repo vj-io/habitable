@@ -1,9 +1,11 @@
-import { defineConfig } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test";
 
-const PORT = 3210;
+// PW_PORT lets parallel checkouts (worktrees) run the suite side by side without sharing a server.
+const PORT = Number(process.env.PW_PORT ?? 3210);
 // The bundled headless shell is not installed everywhere; the full "chromium" channel is. CI can use
 // the Playwright default with PW_CHANNEL=default (or an empty value).
 const channel = process.env.PW_CHANNEL ?? "chromium";
+const chromium = { browserName: "chromium" as const, ...(channel && channel !== "default" ? { channel } : {}) };
 
 export default defineConfig({
   testDir: "e2e",
@@ -18,12 +20,15 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: "retain-on-failure",
-    ...(channel && channel !== "default" ? { channel } : {}),
   },
   projects: [
-    { name: "phone", use: { viewport: { width: 375, height: 812 }, hasTouch: true } },
+    { name: "phone", use: { ...chromium, viewport: { width: 375, height: 812 }, hasTouch: true } },
     // Desktop only repeats the smoke test; the journey is phone-first.
-    { name: "desktop", testMatch: /smoke\.spec\.ts/, use: { viewport: { width: 1280, height: 900 } } },
+    { name: "desktop", testMatch: /smoke\.spec\.ts/, use: { ...chromium, viewport: { width: 1280, height: 900 } } },
+    // Other engines: Safari's engine on an iPhone profile, and Firefox at phone width. Needs
+    // `npx playwright install webkit firefox`; skip them with --project=phone --project=desktop.
+    { name: "iphone-webkit", testIgnore: /api\.spec\.ts/, use: { ...devices["iPhone 14"] } },
+    { name: "firefox", testIgnore: /api\.spec\.ts/, use: { browserName: "firefox", viewport: { width: 375, height: 812 } } },
   ],
   webServer: {
     command: `npm run build && npx next start -p ${PORT}`,

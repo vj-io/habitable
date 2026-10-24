@@ -120,6 +120,23 @@ export const Spore = icon("Spore", [
   "M19.6 19.4h.1",
 ]);
 
+export const Sun = icon("Sun", [
+  "M12 7.6c2.5-.1 4.5 1.9 4.4 4.4 0 2.4-2 4.4-4.4 4.4s-4.4-2-4.4-4.4c0-2.3 1.9-4.3 4.2-4.4",
+  "M12 2.6v2.2",
+  "M12.1 19.2v2.2",
+  "M2.6 12.1h2.2",
+  "M19.2 11.9h2.2",
+  "M5.3 5.4l1.6 1.5",
+  "M17.1 17.1l1.6 1.6",
+  "M18.7 5.3l-1.6 1.6",
+  "M6.9 17.1l-1.6 1.6",
+]);
+export const Moon = icon("Moon", [
+  "M19.6 14.6c-1 .4-2.1.6-3.2.6-4.4 0-7.9-3.5-7.9-7.9 0-1.4.4-2.8 1-3.9-3.5 1-6 4.2-6 8 0 4.6 3.7 8.4 8.4 8.4 3.6 0 6.6-2.2 7.7-5.2z",
+  "M16.8 4.2v2.6",
+  "M15.5 5.5h2.6",
+]);
+
 const ROT = { right: 0, down: 90, left: 180, up: -90 } as const;
 
 /** Curved hand-drawn arrow. `direction` picks a quarter turn; `rotate` adds any angle. */

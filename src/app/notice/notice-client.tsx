@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useId, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { Arrow, Check, Chip, Doc, DoodleButton, DoodleCard, Highlight, MonoLabel, PencilLoader, Tag } from "@/components/doodle";
 import { NoticePreview } from "@/components/notice/NoticePreview";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import {
   complaint311Text,
   complaintUrl,
@@ -21,16 +22,19 @@ const WOBBLE = "14px 4px 12px 5px / 5px 12px 4px 14px";
 
 function Shell({ children }: { children: ReactNode }) {
   return (
-    <main id="main" className="mx-auto w-full max-w-xl space-y-6 px-4 pt-4 pb-20 sm:px-6">
-      <Link
-        href="/"
-        className="inline-flex min-h-11 items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.12em] underline decoration-2 underline-offset-4 hover:decoration-wavy"
-      >
-        <Arrow direction="left" size={20} />
-        Back to your case file
-      </Link>
-      {children}
-    </main>
+    <>
+      <SiteHeader />
+      <main id="main" className="mx-auto w-full max-w-xl space-y-6 px-4 pt-4 pb-20 sm:px-6">
+        <Link
+          href="/"
+          className="inline-flex min-h-11 items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.12em] underline decoration-2 underline-offset-4 hover:decoration-wavy"
+        >
+          <Arrow direction="left" size={20} />
+          Back to your case file
+        </Link>
+        {children}
+      </main>
+    </>
   );
 }
 
@@ -161,7 +165,7 @@ function NoticeBuilder({ caseFile, issues }: { caseFile: CaseFile; issues: Issue
       </DoodleCard>
 
       {text.items.length === 0 ? (
-        <DoodleCard tone="yellow" className="space-y-3">
+        <DoodleCard tone="marker" className="space-y-3">
           <h2 className="font-display text-2xl font-extrabold leading-tight">Nothing to put in a notice yet</h2>
           <p>
             {text.fixedCount > 0
@@ -259,7 +263,7 @@ function LangToggle({ lang, onChange }: { lang: NoticeLang; onChange: (l: Notice
           aria-label={o.name}
           aria-pressed={lang === o.id}
           onClick={() => onChange(o.id)}
-          className={`min-h-11 min-w-20 cursor-pointer px-5 font-mono text-sm font-bold uppercase tracking-[0.1em] ${i > 0 ? "border-l-2 border-ink" : ""} ${lang === o.id ? "bg-lime" : ""}`}
+          className={`min-h-11 min-w-20 cursor-pointer px-5 font-mono text-sm font-bold uppercase tracking-[0.1em] ${i > 0 ? "border-l-2 border-ink" : ""} ${lang === o.id ? "bg-marker text-on-marker" : ""}`}
         >
           {o.id}
         </button>

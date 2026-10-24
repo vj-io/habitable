@@ -17,7 +17,7 @@ import {
   Tag,
 } from "@/components/doodle";
 import { CLASS_TONE, IssueIcon } from "@/components/issue/meta";
-import { Wordmark } from "@/components/site/Wordmark";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import { CLASS_TABLE, CLOCK_NOTE, CLOCK_SOURCE_URL, RULES, RULES_VERSION, type IssueRules } from "@/lib/rules";
 import { ISSUE_IDS, type IssueId } from "@/lib/types";
 
@@ -42,12 +42,12 @@ function Section({ n, title, id, children }: { n: number; title: string; id: str
   );
 }
 
-type Node = { title: string; body: string; icon: ReactNode; tone: "ink" | "violet" | "lime" };
+type Node = { title: string; body: string; icon: ReactNode; tone: "ink" | "violet" | "marker" };
 
 const FLOW: Node[] = [
   { title: "Your photo", body: "Fingerprinted and dated on your phone. Location stripped.", icon: <Camera size={30} />, tone: "ink" },
   { title: "AI picks one of 7", body: "Leak, mold, heat, pests, lock, paint — or not covered. Plus how sure.", icon: <Pencil size={28} />, tone: "violet" },
-  { title: "Rules table", body: "Plain data. Every row cites the NYC code and an HPD source.", icon: <Shield size={30} />, tone: "lime" },
+  { title: "Rules table", body: "Plain data. Every row cites the NYC code and an HPD source.", icon: <Shield size={30} />, tone: "marker" },
   { title: "Class + window + citation", body: "Stamped A, B or C, the correction window, the section.", icon: <Stamp tone="amber" size="sm" rotate={-6} thud={false}>B</Stamp>, tone: "ink" },
   { title: "Your timeline", body: "Day counter, countdown, follow-ups, receipts.", icon: <Clock size={30} />, tone: "ink" },
   { title: "The notice", body: "A dated PDF for your landlord, EN or ES.", icon: <Doc size={30} />, tone: "ink" },
@@ -56,7 +56,7 @@ const FLOW: Node[] = [
 const NODE_STYLE = {
   ink: { fill: "var(--color-paper-2)", color: "var(--color-ink)", text: "" },
   violet: { fill: "var(--color-violet-tint)", color: "var(--color-violet)", text: "text-violet-ink" },
-  lime: { fill: "var(--color-lime)", color: "var(--color-ink)", text: "" },
+  marker: { fill: "var(--color-marker)", color: "var(--color-ink)", text: "text-on-marker" },
 };
 
 function Diagram() {
@@ -169,7 +169,7 @@ function RulesTable() {
           </DoodleCard>
         );
       })}
-      <DoodleCard tone="yellow" seed={340} padding="1.25rem" appear={false} draw={false}>
+      <DoodleCard tone="marker" seed={340} padding="1.25rem" appear={false} draw={false}>
         <h3 className="flex items-center gap-2 font-display text-xl font-extrabold">
           <IssueIcon issue="not_covered" size={26} /> Anything else
         </h3>
@@ -197,9 +197,7 @@ const SOURCES: [string, string][] = [
 export default function Page() {
   return (
     <>
-      <header className="mx-auto w-full max-w-[1100px] px-4 pt-5 sm:px-6">
-        <Wordmark />
-      </header>
+      <SiteHeader />
       <main id="main" className="mx-auto w-full max-w-[1100px] flex-1 space-y-16 px-4 pt-8 pb-6 sm:px-6">
         <header className="max-w-3xl space-y-5">
           <MonoLabel as="p">How it works</MonoLabel>
@@ -237,7 +235,7 @@ export default function Page() {
               <p className="text-[0.9375rem] leading-snug">If a rule needs a fact the photo can&apos;t show — mold size, a child under 6 — it asks you.</p>
               <Chip lead="Set by code">not the AI</Chip>
             </DoodleCard>
-            <DoodleCard tone="lime" seed={403} padding="1.25rem" appear={false} className="space-y-2">
+            <DoodleCard tone="mint" seed={403} padding="1.25rem" appear={false} className="space-y-2">
               <MonoLabel as="p">You keep the record</MonoLabel>
               <p className="leading-snug">
                 Photo, capture time, a SHA-256 fingerprint, a signed server receipt and dated follow-ups — on your phone, ready for a notice,

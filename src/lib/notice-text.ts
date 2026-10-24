@@ -84,7 +84,7 @@ const STRINGS = {
     fromDefault: "Tenant",
     apt: "Apt",
     intro:
-      "I live in the apartment above. The conditions below need repair. Each one is documented with a dated photo. The repair-by date is the end of the correction period HPD publishes for that kind of condition, counted from the day I first documented it.",
+      "I am the tenant of the apartment named above. The conditions below need repair. Each one is documented with a dated photo. The repair-by date is the end of the correction period HPD publishes for that kind of condition, counted from the day I first documented it.",
     closing:
       "Please contact me to arrange access to my apartment so the repairs can be made. I am keeping a dated record of these conditions. If they are not corrected, I may ask NYC 311 to request an HPD inspection.",
     disclaimer: (date: string) =>
@@ -119,13 +119,13 @@ const STRINGS = {
     fromDefault: "Inquilino/a",
     apt: "Apto.",
     intro:
-      "Vivo en el apartamento indicado arriba. Las condiciones que se enumeran a continuación necesitan reparación. Cada una está documentada con una foto con fecha. La fecha de reparación solicitada es el final del plazo de corrección que HPD publica para ese tipo de condición, contado desde el día en que la documenté por primera vez.",
+      "Soy inquilino/a del apartamento indicado arriba. Las condiciones que se enumeran a continuación necesitan reparación. Cada una está documentada con una foto con fecha. La fecha de reparación solicitada es el final del plazo de corrección que HPD publica para ese tipo de condición, contado desde el día en que la documenté por primera vez.",
     closing:
-      "Por favor, comuníquese conmigo para coordinar el acceso a mi apartamento y poder hacer las reparaciones. Llevo un registro con fechas de estas condiciones. Si no se corrigen, es posible que pida al 311 de Nueva York que solicite una inspección de HPD.",
+      "Por favor, comuníquese conmigo para coordinar el acceso a mi apartamento y que se realicen las reparaciones. Llevo un registro con fechas de estas condiciones. Si no se corrigen, es posible que me comunique con el 311 de Nueva York para solicitar una inspección de HPD.",
     disclaimer: (date: string) =>
-      `Preparado con Habitable el ${date}. Las clases y los plazos son los que HPD publica para estas condiciones; el inspector de HPD asigna la clase real, y los plazos de corrección corren desde la notificación de una violación de HPD. No es asesoría legal.`,
+      `Preparado con Habitable el ${date}. Las clases y los plazos son los que HPD publica para estas condiciones; el inspector de HPD asigna la clase real, y los plazos de corrección cuentan a partir de la notificación de una infracción por parte de HPD. No es asesoría legal.`,
     verify: (origin: string) => `El recibo del servidor de cada foto se puede comprobar con el enlace junto a ella, en ${origin}/verify.`,
-    classLine: (cls: HazardClass, word: string) => `Clase según las reglas publicadas de HPD: ${cls} — ${word}`,
+    classLine: (cls: HazardClass, word: string) => `Clase según las reglas que publica HPD: ${cls} — ${word}`,
     classBadge: (cls: HazardClass) => `Clase ${cls}`,
     windowLine: (w: string) => `Plazo de corrección de HPD: ${w}`,
     photoTaken: "Foto tomada el",
@@ -140,7 +140,7 @@ const STRINGS = {
       re: "Asunto",
       firstDocumented: "Documentado por primera vez",
       day: "Día",
-      repairBy: "Se solicita reparar antes del",
+      repairBy: "Se solicita la reparación a más tardar el",
       signoff: "Atentamente,",
       page: "Página",
       of: "de",
@@ -154,7 +154,7 @@ const ISSUE_LABELS_ES: Record<ProposalIssue, string> = {
   mold: "Moho",
   heat_hot_water: "Sin calefacción / agua caliente",
   pests: "Plagas",
-  lock_door: "Cerradura / puerta rota",
+  lock_door: "Cerradura o puerta rota",
   peeling_paint: "Pintura descascarada",
   not_covered: "Otra condición",
 };

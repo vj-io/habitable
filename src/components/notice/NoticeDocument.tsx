@@ -27,8 +27,8 @@ Font.registerHyphenationCallback((word) => [word]);
 
 const INK = "#0a0a0a";
 const MUTED = "#4f4c47";
-const LIME = "#c8ff00";
-const TONES = { A: INK, B: "#9c4c00", C: "#b3261a" } as const;
+const MARKER = "#ffcf3f";
+const TONES = { A: "#1d60a3", B: "#9a4a00", C: "#b3261a" } as const;
 
 // Not set on the Page: a line-height inherited from the Page makes react-pdf drop the fixed page-number text.
 const LEADING = 1.4;
@@ -79,18 +79,18 @@ const safe = (v: string) => v.replace(/[^ -~ -ÿ‐-‧‰-⁞€™Œœ]/gu, "
 function Marked({ children, size = 12 }: { children: ReactNode; size?: number }) {
   return (
     <View style={{ position: "relative", paddingHorizontal: 3 }}>
-      <View style={{ position: "absolute", left: 0, right: 0, bottom: 1, height: size * 0.55, backgroundColor: LIME }} />
+      <View style={{ position: "absolute", left: 0, right: 0, bottom: 1, height: size * 0.55, backgroundColor: MARKER }} />
       {children}
     </View>
   );
 }
 
-/** The site's hand-drawn house (same paths as components/site/Wordmark): lime block, roof, walls, check. */
+/** The site's hand-drawn house (same paths as components/site/Wordmark): marker block, roof, walls, check. */
 function HouseMark() {
   const stroke = { stroke: INK, strokeWidth: 2.8, strokeLinecap: "round", strokeLinejoin: "round", fill: "none" } as const;
   return (
     <Svg width={28} height={28} viewBox="0 0 40 40">
-      <Path d="M11.4 19.6 Q11.6 26.6 11.2 35.2 L33 34.8 Q32.4 27 32.8 19.4 L22 10.2 Z" fill={LIME} />
+      <Path d="M11.4 19.6 Q11.6 26.6 11.2 35.2 L33 34.8 Q32.4 27 32.8 19.4 L22 10.2 Z" fill={MARKER} />
       <Path d="M4.2 20.4 C9.4 15.4 14.6 10.4 20.2 5.6 C25.6 10.4 30.6 15.2 35.8 20.2" {...stroke} />
       <Path d="M9.2 17.4 C9.6 23 9.3 28.2 9.5 33.8 L31 33.5 C30.6 28 30.8 22.4 30.7 17.2" {...stroke} />
       <Path d="M14.4 24.8 C15.9 26.2 17.3 27.7 18.5 29.6 C20.6 25.6 23.4 22.4 26.8 20" {...stroke} />

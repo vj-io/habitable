@@ -4,14 +4,16 @@ import { useRef, type CSSProperties, type ReactNode } from "react";
 import { useInView } from "./hooks";
 import { SketchBox } from "./SketchBox";
 
-export type StampTone = "red" | "amber" | "ink" | "violet" | "lime";
+export type StampTone = "red" | "amber" | "sky" | "ink" | "violet" | "mint" | "marker";
 
 const TONES: Record<StampTone, { stroke: string; text: string; fill?: string }> = {
   red: { stroke: "var(--color-red)", text: "var(--color-red-ink)" },
   amber: { stroke: "var(--color-amber)", text: "var(--color-amber-ink)" },
   ink: { stroke: "var(--color-ink)", text: "var(--color-ink)" },
   violet: { stroke: "var(--color-violet)", text: "var(--color-violet-ink)" },
-  lime: { stroke: "var(--color-ink)", text: "var(--color-ink)", fill: "var(--color-lime)" },
+  sky: { stroke: "var(--color-sky)", text: "var(--color-sky-ink)" },
+  mint: { stroke: "var(--color-mint)", text: "var(--color-mint-ink)" },
+  marker: { stroke: "var(--color-ink)", text: "var(--color-on-marker)", fill: "var(--color-marker)" },
 };
 
 const SIZES = {

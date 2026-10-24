@@ -28,6 +28,8 @@ export {
   Lock,
   Brush,
   Spore,
+  Sun,
+  Moon,
   type IconProps,
 } from "./icons";
 export * as DrawnIcon from "./icons";

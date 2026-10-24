@@ -1,7 +1,7 @@
 "use client";
 
 import { Building, DoodleButton, DoodleCard, Highlight, MonoLabel, PencilLoader, rough } from "@/components/doodle";
-import { ISSUE_FOR, IssueIcon } from "@/components/issue/meta";
+import { ISSUE_FOR, IssueBadge, IssueIcon } from "@/components/issue/meta";
 import { formatNY } from "@/lib/countdown";
 import { RULES } from "@/lib/rules";
 import { ISSUE_IDS, type BuildingRecord, type HazardClass, type IssueId } from "@/lib/types";
@@ -13,7 +13,7 @@ const day = (d: string | null) => (d ? formatNY(`${d}T12:00:00Z`, "date") : "und
 const CLASS_ROWS: { c: HazardClass; label: string; color: string }[] = [
   { c: "C", label: "Immediately hazardous", color: "var(--color-red)" },
   { c: "B", label: "Hazardous", color: "var(--color-amber)" },
-  { c: "A", label: "Non-hazardous", color: "var(--color-ink)" },
+  { c: "A", label: "Non-hazardous", color: "var(--color-sky)" },
 ];
 
 function TallyBar({ value, max, color, seed }: { value: number; max: number; color: string; seed: number }) {
@@ -22,7 +22,7 @@ function TallyBar({ value, max, color, seed }: { value: number; max: number; col
   return (
     <svg viewBox="0 0 200 18" preserveAspectRatio="none" className="h-4.5 w-full overflow-visible" aria-hidden="true" fill="none" strokeLinecap="round">
       <path d={r.line(2, 16, 198, 16, 0.8)} stroke="var(--color-ink)" strokeOpacity="0.25" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
-      {w > 0 && <path d={r.rectFill(2, 3, w, 12)} fill={color} opacity={color === "var(--color-ink)" ? 0.75 : 0.85} />}
+      {w > 0 && <path d={r.rectFill(2, 3, w, 12)} fill={color} opacity={0.85} />}
     </svg>
   );
 }
@@ -111,7 +111,7 @@ function Record({ record, related }: { record: BuildingRecord; related: IssueId[
           <ul className="grid grid-cols-1 gap-x-4 gap-y-1.5 min-[400px]:grid-cols-2">
             {issues.map((id) => (
               <li key={id} className={`flex items-center gap-2 ${related.includes(id) ? "font-bold" : ""}`}>
-                <IssueIcon issue={id} size={20} />
+                <IssueBadge issue={id} size={18} />
                 <span className="font-mono tabular-nums">{record.byIssue[id]}</span>
                 <span className="leading-tight">{ISSUE_FOR[id]}</span>
               </li>
@@ -154,7 +154,7 @@ export function BuildingSnippet({ state, issue, delay = 0 }: { state: BuildingSt
   const count = record.byIssue[issue];
   const recent = record.recent.filter((v) => v.issue === issue).slice(0, 2);
   return (
-    <DoodleCard tone="lime" seed={23} padding="1rem 1.25rem" delay={delay} className="space-y-2">
+    <DoodleCard tone="sky" seed={23} padding="1rem 1.25rem" delay={delay} className="space-y-2">
       <p className="flex items-start gap-2.5 font-display text-lg leading-snug font-bold">
         <Building size={24} className="mt-0.5" />
         {record.openTotal === 0 ? (

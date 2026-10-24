@@ -1,15 +1,17 @@
 import type { CSSProperties, JSX, ReactNode } from "react";
 import { SketchBox } from "./SketchBox";
 
-export type CardTone = "paper" | "lime" | "violet" | "red" | "amber" | "yellow";
+export type CardTone = "paper" | "marker" | "mint" | "sky" | "pink" | "violet" | "red" | "amber";
 
 const TONES: Record<CardTone, { fill: string; stroke: string }> = {
   paper: { fill: "var(--color-paper-2)", stroke: "var(--color-ink)" },
-  lime: { fill: "var(--color-lime-tint)", stroke: "var(--color-ink)" },
+  marker: { fill: "var(--color-marker-tint)", stroke: "var(--color-ink)" },
+  mint: { fill: "var(--color-mint-tint)", stroke: "var(--color-mint)" },
+  sky: { fill: "var(--color-sky-tint)", stroke: "var(--color-sky)" },
+  pink: { fill: "var(--color-pink-tint)", stroke: "var(--color-pink)" },
   violet: { fill: "var(--color-violet-tint)", stroke: "var(--color-violet)" },
   red: { fill: "var(--color-red-tint)", stroke: "var(--color-red)" },
   amber: { fill: "var(--color-amber-tint)", stroke: "var(--color-amber)" },
-  yellow: { fill: "var(--color-yellow-tint)", stroke: "var(--color-ink)" },
 };
 
 /** Paper card with a hand-drawn border that draws itself; springs in on mount. */

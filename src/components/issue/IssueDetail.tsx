@@ -21,7 +21,7 @@ import {
   Tag,
 } from "@/components/doodle";
 import { SketchInput, inputClass } from "@/components/site/Field";
-import { Wordmark } from "@/components/site/Wordmark";
+import { SiteHeader } from "@/components/site/SiteHeader";
 import { useNow } from "@/components/snap/Countdown";
 import { NotApplicableCard, RuleCard } from "@/components/snap/RuleCard";
 import { daysSince, formatNY } from "@/lib/countdown";
@@ -36,10 +36,7 @@ const linkClass = "underline decoration-2 underline-offset-4 hover:decoration-wa
 function Shell({ demo, children }: { demo?: boolean; children: React.ReactNode }) {
   return (
     <>
-      <header className="mx-auto flex w-full max-w-[1100px] items-center justify-between gap-3 px-4 pt-4 sm:px-6">
-        <Wordmark />
-        {demo && <Chip lead="Demo">building</Chip>}
-      </header>
+      <SiteHeader>{demo && <Chip lead="Demo"><span className="max-[420px]:sr-only">building</span></Chip>}</SiteHeader>
       <main id="main" className="mx-auto w-full max-w-[1100px] flex-1 px-4 pt-2 pb-6 sm:px-6">
         <Link href="/" className="inline-flex min-h-11 items-center gap-1.5 font-display font-bold">
           <Arrow direction="left" size={22} /> Your case
@@ -205,7 +202,7 @@ function FollowUps({ issue, now }: { issue: Issue; now: Date | null }) {
           <div className="flex flex-wrap gap-2">
             {QUICK.map((q) => (
               <button key={q} type="button" onClick={() => setNote(q)} className="min-h-11 cursor-pointer">
-                <Tag className="hover:bg-lime-tint">{q}</Tag>
+                <Tag className="hover:bg-marker-tint">{q}</Tag>
               </button>
             ))}
           </div>
@@ -290,7 +287,7 @@ function Confirm({
     );
   }
   return (
-    <SketchBox seed={57} fill={variant === "danger" ? "var(--color-red-tint)" : "var(--color-lime-tint)"} color={variant === "danger" ? "var(--color-red)" : "var(--color-ink)"} className="w-full space-y-3 p-4">
+    <SketchBox seed={57} fill={variant === "danger" ? "var(--color-red-tint)" : "var(--color-marker-tint)"} color={variant === "danger" ? "var(--color-red)" : "var(--color-ink)"} className="w-full space-y-3 p-4">
       <p role="alert" className="font-display text-lg leading-snug font-bold">
         {question}
       </p>
@@ -406,7 +403,7 @@ export function IssueDetail({ id }: { id: string }) {
 
           <FollowUps issue={issue} now={now} />
 
-          <DoodleCard as="section" tone="lime" seed={71} padding="1.25rem" appear={false} aria-labelledby="next-title" className="space-y-4">
+          <DoodleCard as="section" tone="marker" seed={71} padding="1.25rem" appear={false} aria-labelledby="next-title" className="space-y-4">
             <h2 id="next-title" className="font-display text-xl font-extrabold">
               What next
             </h2>

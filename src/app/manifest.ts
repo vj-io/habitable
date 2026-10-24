@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Your NYC repair problem, on the record: photo → housing-code class → dated notice.",
     start_url: "/",
     display: "standalone",
-    background_color: "#f0ede8",
-    theme_color: "#f0ede8",
+    background_color: "#f3eee5",
+    theme_color: "#f3eee5",
     icons: [
       { src: "/icon.svg", sizes: "any", type: "image/svg+xml" },
       { src: "/apple-icon", sizes: "180x180", type: "image/png" },

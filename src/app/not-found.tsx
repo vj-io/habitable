@@ -1,12 +1,10 @@
 import { DoodleButton, DoodleCard, MonoLabel } from "@/components/doodle";
-import { Wordmark } from "@/components/site/Wordmark";
+import { SiteHeader } from "@/components/site/SiteHeader";
 
 export default function NotFound() {
   return (
     <>
-      <header className="mx-auto w-full max-w-[1100px] px-4 pt-5 sm:px-6">
-        <Wordmark />
-      </header>
+      <SiteHeader />
       <main id="main" className="mx-auto grid w-full max-w-lg flex-1 content-center px-4 py-16">
         <DoodleCard seed={4} padding="1.75rem" className="space-y-3">
           <MonoLabel as="p">404 · not on record</MonoLabel>

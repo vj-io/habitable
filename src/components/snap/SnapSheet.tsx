@@ -85,7 +85,7 @@ function StepLine({ at }: { at: number }) {
             <li key={s} className="flex flex-col items-center gap-1.5 text-center" aria-current={state === "now" ? "step" : undefined}>
               <span
                 className={`grid size-7 place-items-center rounded-full border-[2.5px] ${
-                  state === "next" ? "border-ink/30 bg-paper-2" : state === "now" ? (i === 1 ? "border-violet bg-violet-tint" : "border-ink bg-lime") : "border-ink bg-ink text-paper"
+                  state === "next" ? "border-ink/30 bg-paper-2" : state === "now" ? (i === 1 ? "border-violet bg-violet-tint" : "border-ink bg-marker") : "border-ink bg-ink text-paper"
                 }`}
               >
                 {state === "done" && <Check size={15} strokeWidth={3} />}
@@ -494,7 +494,7 @@ export function SnapSheet({ open, onClose, caseFile, building, onSaved }: Props)
         {ev && !busy && !clarify && picking && (
           <div className="space-y-4">
             {unavailable ? (
-              <DoodleCard tone="yellow" appear={false} padding="1rem 1.25rem">
+              <DoodleCard tone="marker" appear={false} padding="1rem 1.25rem">
                 <p className="font-display text-lg leading-snug font-bold">{unavailable}</p>
                 <p className="mt-1 font-hand text-xl leading-snug">Pick what it is — the rules still apply.</p>
               </DoodleCard>

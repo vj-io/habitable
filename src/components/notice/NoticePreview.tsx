@@ -2,7 +2,7 @@ import { DoodleCard, Highlight, MonoLabel, Stamp, type StampTone } from "@/compo
 import { HouseMark } from "@/components/site/Wordmark";
 import type { NoticeItem, NoticeText } from "@/lib/notice-text";
 
-const STAMP_TONE: Record<"A" | "B" | "C", StampTone> = { A: "ink", B: "amber", C: "red" };
+const STAMP_TONE: Record<"A" | "B" | "C", StampTone> = { A: "sky", B: "amber", C: "red" };
 
 function Item({ item, text }: { item: NoticeItem; text: NoticeText }) {
   const L = text.labels;
