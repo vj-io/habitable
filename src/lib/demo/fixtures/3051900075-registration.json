@@ -1,0 +1,54 @@
+{
+  "asOf": "2026-07-31T00:00:00.000",
+  "fetchedAt": "2026-10-25T00:00:00.000Z",
+  "rows": [
+    {
+      "registrationid": "351922",
+      "buildingid": "205959",
+      "housenumber": "2505",
+      "lowhousenumber": "2499",
+      "highhousenumber": "2507",
+      "streetname": "BEDFORD AVENUE",
+      "bin": "3119766",
+      "lastregistrationdate": "2025-01-30T00:00:00.000",
+      "registrationenddate": "2025-09-01T00:00:00.000"
+    }
+  ],
+  "contacts": [
+    {
+      "registrationcontactid": "35192205",
+      "registrationid": "351922",
+      "type": "HeadOfficer",
+      "firstname": "JOSHUA",
+      "lastname": "POMERANTZ",
+      "businesshousenumber": "POB",
+      "businessstreetname": "319",
+      "businesscity": "Brooklyn",
+      "businessstate": "NY",
+      "businesszip": "11204"
+    },
+    {
+      "registrationcontactid": "35192203",
+      "registrationid": "351922",
+      "type": "CorporateOwner",
+      "corporationname": "2505 BEDFORD 2015 LLC",
+      "businesshousenumber": "POB",
+      "businessstreetname": "319",
+      "businesscity": "Brooklyn",
+      "businessstate": "NY",
+      "businesszip": "11204"
+    },
+    {
+      "registrationcontactid": "35192204",
+      "registrationid": "351922",
+      "type": "Agent",
+      "firstname": "Joshua",
+      "lastname": "Pomerantz",
+      "businesshousenumber": "1417",
+      "businessstreetname": "Avenue J",
+      "businesscity": "Brooklyn",
+      "businessstate": "NY",
+      "businesszip": "11230"
+    }
+  ]
+}

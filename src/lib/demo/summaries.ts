@@ -2,7 +2,13 @@
 // Headline counts (openTotal, byClass, byIssue) are the all-time open totals from NYC Open Data (HPD violations
 // wvxf-dwi5, PLUTO 64uk-42ks) on 2026-10-24, with self-closing doors counted as lock_door. `recent` is summarize()
 // over the saved rows in ./fixtures/<bbl>-violations.json (building.test.ts keeps the two in sync).
+// `registration` is read from ./fixtures/<bbl>-registration.json: HPD registration rows and contacts (tesw-yqqr,
+// feu5-w2e2) fetched on 2026-10-25; the file snapshot behind them is dated in each fixture's `asOf`.
+import { registrationInfo, type ContactRow, type RegistrationRow } from "../registration";
 import type { BuildingRecord } from "../types";
+import r1020020091 from "./fixtures/1020020091-registration.json";
+import r2043220010 from "./fixtures/2043220010-registration.json";
+import r3051900075 from "./fixtures/3051900075-registration.json";
 
 export const DEMO_BUILDINGS: Record<string, BuildingRecord> = {
   "1020020091": {
@@ -601,5 +607,15 @@ export const DEMO_BUILDINGS: Record<string, BuildingRecord> = {
   }
 };
 
-/** The saved summary for a demo BBL, or null for any other building. */
-export const demoBuilding = (bbl: string): BuildingRecord | null => DEMO_BUILDINGS[bbl] ?? null;
+const REGISTRATIONS: Record<string, { asOf: string; rows: RegistrationRow[]; contacts: ContactRow[] }> = {
+  "1020020091": r1020020091,
+  "2043220010": r2043220010,
+  "3051900075": r3051900075,
+};
+
+/** The saved summary for a demo BBL (with its saved HPD registration), or null for any other building. */
+export function demoBuilding(bbl: string): BuildingRecord | null {
+  const record = DEMO_BUILDINGS[bbl];
+  const reg = REGISTRATIONS[bbl];
+  return record && reg ? { ...record, registration: registrationInfo(reg.rows, reg.contacts, {}, reg.asOf) } : null;
+}

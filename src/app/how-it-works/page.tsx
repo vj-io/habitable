@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import type { ReactNode } from "react";
 import {
   Arrow,
@@ -187,6 +188,8 @@ const SOURCES: [string, string][] = [
   ["HPD — Heat and hot water", "https://www.nyc.gov/site/hpd/services-and-information/heat-and-hot-water-information.page"],
   ["HPD — Lead-based paint", "https://www.nyc.gov/site/hpd/services-and-information/lead-based-paint.page"],
   ["NYC Open Data — HPD violations (wvxf-dwi5)", "https://data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Violations/wvxf-dwi5"],
+  ["NYC Open Data — HPD registrations (tesw-yqqr)", "https://data.cityofnewyork.us/Housing-Development/Multiple-Dwelling-Registrations/tesw-yqqr"],
+  ["NYC Open Data — HPD registration contacts (feu5-w2e2)", "https://data.cityofnewyork.us/resource/feu5-w2e2.json"],
   ["NYC Open Data — PLUTO, year built (64uk-42ks)", "https://data.cityofnewyork.us/City-Government/Primary-Land-Use-Tax-Lot-Output-PLUTO-/64uk-42ks"],
   ["NYC GeoSearch — address lookup", "https://geosearch.planninglabs.nyc/docs/"],
   ["NYC311 — apartment maintenance complaints", "https://portal.311.nyc.gov/article/?kanumber=KA-01074"],
@@ -342,7 +345,12 @@ export default function Page() {
               violation — where that&apos;s a judgment call (leaks, locks, plaster), the card says so and shows how HPD has classed similar cases.
             </p>
             <p>
-              NYC only, six problem types. It doesn&apos;t advise on rent or what to do in court. For help: call 311, or file at{" "}
+              NYC only, six problem types. For what usually comes after the notice (311, Housing Court, free legal help, your rights as a tenant),
+              see{" "}
+              <Link href="/next-steps" className={linkClass}>
+                next steps &amp; your rights
+              </Link>
+              . To file a complaint now, call 311 or go to{" "}
               <a href="https://portal.311.nyc.gov/article/?kanumber=KA-01074" target="_blank" rel="noreferrer" className={linkClass}>
                 portal.311.nyc.gov
               </a>

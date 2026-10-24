@@ -71,10 +71,24 @@ export function NoticePreview({ text }: { text: NoticeText }) {
         <h2 className="font-display text-[1.7rem] font-extrabold leading-[1.08]">{text.title}</h2>
         <MonoLabel as="p" muted>{text.dateLine}</MonoLabel>
         <dl className="grid grid-cols-[4.5rem_1fr] gap-x-3 gap-y-1.5 text-[0.9375rem]">
-          {([[L.to, text.to], [L.from, text.from], [L.re, text.re]] as const).map(([label, value]) => (
+          {/* each value is a list of lines: the To block is the name, then the mailing address */}
+          {(
+            [
+              [L.to, text.to],
+              ...(text.cc ? [[L.cc, [text.cc]] as const] : []),
+              [L.from, [text.from]],
+              [L.re, [text.re]],
+            ] as (readonly [string, readonly string[]])[]
+          ).map(([label, lines]) => (
             <div key={label} className="col-span-2 grid grid-cols-subgrid">
               <MonoLabel as="dt" className="pt-1">{label}</MonoLabel>
-              <dd className={`min-w-0 break-words ${label === L.re ? "font-bold" : ""}`}>{value}</dd>
+              <dd className={`min-w-0 break-words ${label === L.re ? "font-bold" : ""}`}>
+                {lines.map((line) => (
+                  <span key={line} className="block">
+                    {line}
+                  </span>
+                ))}
+              </dd>
             </div>
           ))}
         </dl>

@@ -71,7 +71,7 @@ export function cleanDescription(raw: string): string {
   return `${s.slice(0, MAX_DESCRIPTION - 1).replace(/\s+\S*$/, "")}\u2026`;
 }
 
-const isoDate = (v?: string): string | null => (v && /^\d{4}-\d{2}-\d{2}/.test(v) ? v.slice(0, 10) : null);
+export const isoDate = (v?: string): string | null => (v && /^\d{4}-\d{2}-\d{2}/.test(v) ? v.slice(0, 10) : null);
 const hazard = (v?: string): HazardClass | null => (v === "A" || v === "B" || v === "C" ? v : null);
 
 /** PLUTO `yearbuilt` is text; "0" means unknown. */

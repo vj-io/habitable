@@ -63,7 +63,8 @@ describe("noticeText (en)", () => {
   it("has the letter header", () => {
     expect(t.title).toBe("Notice of Conditions Requiring Repair");
     expect(t.dateLine).toBe("Date: Oct 24, 2026");
-    expect(t.to).toBe("Acme Realty LLC");
+    expect(t.to).toEqual(["Acme Realty LLC"]);
+    expect(t.cc).toBeNull();
     expect(t.from).toBe("Sam Rivera");
     expect(t.re).toBe("618 West 136th Street, Manhattan, NY 10031, Apt 4B");
     expect(t.signature).toBe("Sam Rivera");
@@ -122,7 +123,44 @@ describe("noticeText (en)", () => {
 
   it("falls back to generic names", () => {
     const d = noticeText(CASE, [leak], "en", NOW, ORIGIN);
-    expect([d.to, d.from, d.signature]).toEqual(["Owner / Managing Agent", "Tenant", "Tenant"]);
+    expect([d.to, d.from, d.signature]).toEqual([["Owner / Managing Agent"], "Tenant", "Tenant"]);
+    expect(d.cc).toBeNull();
+  });
+});
+
+describe("the To: block", () => {
+  const agent = { landlordName: "EDWIN SHIRAZIAN", landlordAddress: "579 5th ave, 2nd fl, New York, NY 10017", landlordCc: "COLUMBIA HEIGHTS 136 LLC, 579 5th ave, 2nd fl, New York, NY 10017" };
+
+  it("is the name, then the mailing address, with the owner copied (en)", () => {
+    const t = noticeText({ ...CASE, ...agent }, [leak], "en", NOW, ORIGIN);
+    expect(t.to).toEqual(["EDWIN SHIRAZIAN", "579 5th ave, 2nd fl, New York, NY 10017"]);
+    expect(t.cc).toBe("COLUMBIA HEIGHTS 136 LLC, 579 5th ave, 2nd fl, New York, NY 10017");
+    expect([t.labels.to, t.labels.cc]).toEqual(["To", "Cc"]);
+  });
+
+  it("says the same in Spanish: Para / Cc, names and addresses untouched", () => {
+    const t = noticeText({ ...CASE, ...agent }, [leak], "es", NOW, ORIGIN);
+    expect(t.to).toEqual(["EDWIN SHIRAZIAN", "579 5th ave, 2nd fl, New York, NY 10017"]);
+    expect(t.cc).toBe("COLUMBIA HEIGHTS 136 LLC, 579 5th ave, 2nd fl, New York, NY 10017");
+    expect([t.labels.to, t.labels.cc]).toEqual(["Para", "Cc"]);
+    expect(noticeText(CASE, [leak], "es", NOW, ORIGIN).to).toEqual(["Propietario / Agente administrador"]);
+  });
+
+  it("keeps the generic addressee line above an address typed without a name", () => {
+    expect(noticeText({ ...CASE, landlordAddress: "1 Main St, New York, NY" }, [leak], "en", NOW, ORIGIN).to).toEqual([
+      "Owner / Managing Agent",
+      "1 Main St, New York, NY",
+    ]);
+  });
+
+  it("ignores blank address and cc, and trims the rest", () => {
+    const t = noticeText({ ...CASE, landlordName: "  Acme  ", landlordAddress: "   ", landlordCc: " " }, [leak], "en", NOW, ORIGIN);
+    expect(t.to).toEqual(["Acme"]);
+    expect(t.cc).toBeNull();
+  });
+
+  it("still carries the disclaimer", () => {
+    expect(noticeText({ ...CASE, ...agent }, [leak], "en", NOW, ORIGIN).footer[0]).toMatch(/Not legal advice\.$/);
   });
 });
 
@@ -132,7 +170,7 @@ describe("noticeText (es)", () => {
   it("translates the letter", () => {
     expect(t.title).toBe("Aviso de condiciones que requieren reparación");
     expect(t.dateLine).toBe("Fecha: 24 de octubre de 2026");
-    expect(t.to).toBe("Propietario / Agente administrador");
+    expect(t.to).toEqual(["Propietario / Agente administrador"]);
     expect(t.from).toBe("Inquilino/a");
     expect(t.re).toBe("618 West 136th Street, Manhattan, NY 10031, Apto. 4B");
     expect(t.labels.repairBy).toBe("Se solicita la reparación a más tardar el");

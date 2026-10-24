@@ -1,6 +1,6 @@
 // Node has no IndexedDB, so these tests exercise the in-memory fallback (same API as the IndexedDB path).
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { addFollowUp, clearAll, deleteIssue, getCase, getIssue, isPersistent, listIssues, markFixed, saveCase, saveIssue, storageAvailable, subscribe } from "./store";
+import { addFollowUp, clearAll, deleteIssue, getCase, getIssue, isPersistent, listIssues, markFixed, saveCase, saveIssue, storageAvailable, subscribe, updateCase } from "./store";
 import type { CaseFile, Issue } from "./types";
 
 const caseFile: CaseFile = {
@@ -41,6 +41,16 @@ describe("store (memory fallback)", () => {
     expect(await getCase()).toEqual(caseFile);
     await clearAll();
     expect(await getCase()).toBeNull();
+  });
+
+  it("updateCase merges into the saved case, can unset a field, and does nothing without a case", async () => {
+    await updateCase({ noticeMadeAt: "2026-10-24T00:00:00.000Z" });
+    expect(await getCase()).toBeNull();
+    await saveCase({ ...caseFile, landlordName: "Acme" });
+    await updateCase({ noticeMadeAt: "2026-10-24T00:00:00.000Z", landlordAddress: "1 Main St" });
+    expect(await getCase()).toMatchObject({ unit: "4B", landlordName: "Acme", landlordAddress: "1 Main St", noticeMadeAt: "2026-10-24T00:00:00.000Z" });
+    await updateCase({ landlordName: undefined });
+    expect((await getCase())?.landlordName).toBeUndefined();
   });
 
   it("lists issues newest first and upserts by id", async () => {

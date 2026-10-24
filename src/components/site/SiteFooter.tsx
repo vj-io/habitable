@@ -26,6 +26,12 @@ export function SiteFooter() {
         <Link href="/how-it-works" className="inline-flex min-h-11 items-center underline decoration-2 underline-offset-4 hover:text-ink">
           How it works
         </Link>
+        <span aria-hidden="true" className="hidden sm:inline">
+          ·
+        </span>
+        <Link href="/next-steps" className="inline-flex min-h-11 items-center underline decoration-2 underline-offset-4 hover:text-ink">
+          Next steps &amp; rights
+        </Link>
       </p>
     </footer>
   );

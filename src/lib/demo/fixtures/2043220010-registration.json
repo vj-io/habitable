@@ -1,0 +1,59 @@
+{
+  "asOf": "2026-07-31T00:00:00.000",
+  "fetchedAt": "2026-10-25T00:00:00.000Z",
+  "rows": [
+    {
+      "registrationid": "200271",
+      "buildingid": "47486",
+      "housenumber": "2140",
+      "lowhousenumber": "2140",
+      "highhousenumber": "2148",
+      "streetname": "BARNES AVENUE",
+      "bin": "2049431",
+      "lastregistrationdate": "2025-11-28T00:00:00.000",
+      "registrationenddate": "2026-09-01T00:00:00.000"
+    }
+  ],
+  "contacts": [
+    {
+      "registrationcontactid": "20027103",
+      "registrationid": "200271",
+      "type": "CorporateOwner",
+      "corporationname": "BP ASSETS 46, LLC",
+      "businesshousenumber": "110",
+      "businessstreetname": "EAST 55TH STREET",
+      "businessapartment": "BSMT",
+      "businesscity": "NEW YORK",
+      "businessstate": "NY",
+      "businesszip": "10022"
+    },
+    {
+      "registrationcontactid": "20027104",
+      "registrationid": "200271",
+      "type": "Agent",
+      "corporationname": "NEW PARK MANAGEMENT, LLC",
+      "firstname": "DAVID",
+      "lastname": "FRIEDMAN",
+      "businesshousenumber": "110",
+      "businessstreetname": "EAST 55TH ST",
+      "businessapartment": "BSMT",
+      "businesscity": "New York",
+      "businessstate": "NY",
+      "businesszip": "10021"
+    },
+    {
+      "registrationcontactid": "20027105",
+      "registrationid": "200271",
+      "type": "HeadOfficer",
+      "title": "HEAD OFFICER",
+      "firstname": "ADAM",
+      "lastname": "PARKOFF",
+      "businesshousenumber": "110",
+      "businessstreetname": "E. 55TH STREET",
+      "businessapartment": "BSMT",
+      "businesscity": "NEW YORK",
+      "businessstate": "NY",
+      "businesszip": "10022"
+    }
+  ]
+}

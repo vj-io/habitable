@@ -47,6 +47,7 @@ export interface NoticeItem {
 /** Fixed UI strings the preview and the PDF share. */
 export interface NoticeLabels {
   to: string;
+  cc: string;
   from: string;
   re: string;
   firstDocumented: string;
@@ -62,7 +63,10 @@ export interface NoticeText {
   lang: NoticeLang;
   title: string;
   dateLine: string;
-  to: string;
+  /** The "To:" block, one line each: who it is addressed to, then their mailing address when known. */
+  to: string[];
+  /** Who gets a copy (e.g. the owner), or null. */
+  cc: string | null;
   from: string;
   re: string;
   intro: string;
@@ -101,6 +105,7 @@ const STRINGS = {
       `Followed up ${n} ${n === 1 ? "time" : "times"}; most recent ${date}${note ? ` — ${note}` : ""}.`,
     labels: {
       to: "To",
+      cc: "Cc",
       from: "From",
       re: "Re",
       firstDocumented: "First documented",
@@ -136,6 +141,7 @@ const STRINGS = {
       `Di seguimiento ${n} ${n === 1 ? "vez" : "veces"}; el más reciente fue el ${date}${note ? ` — ${note}` : ""}.`,
     labels: {
       to: "Para",
+      cc: "Cc",
       from: "De",
       re: "Asunto",
       firstDocumented: "Documentado por primera vez",
@@ -287,11 +293,13 @@ export function noticeText(c: CaseFile, issues: Issue[], lang: NoticeLang, now: 
   const today = dateOf(now.toISOString(), lang);
   const tenant = c.tenantName?.trim();
   const base = origin.replace(/\/+$/, "");
+  const address = c.landlordAddress?.trim();
   return {
     lang,
     title: s.title,
     dateLine: `${s.date}: ${today}`,
-    to: c.landlordName?.trim() || s.toDefault,
+    to: [c.landlordName?.trim() || s.toDefault, ...(address ? [address] : [])],
+    cc: c.landlordCc?.trim() || null,
     from: tenant || s.fromDefault,
     re: `${c.address.label}, ${s.apt} ${c.unit}`,
     intro: s.intro,
