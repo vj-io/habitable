@@ -223,6 +223,33 @@ export function NoticeDocument({ text }: { text: NoticeText }) {
   );
 }
 
+/**
+ * Pays the first-PDF cost ahead of time: downloads and parses the font files, starts the layout engine and runs a
+ * one-line document through the whole pipeline. Call it once the notice page is idle; a failure is harmless (the real
+ * render just does the work itself).
+ */
+export async function warmPdf(): Promise<void> {
+  const faces = [
+    { fontFamily: "Archivo", fontWeight: 400 },
+    { fontFamily: "Archivo", fontWeight: 700 },
+    { fontFamily: "Archivo", fontWeight: 800 },
+    { fontFamily: "Patrick Hand", fontWeight: 400 },
+    { fontFamily: "JetBrains Mono", fontWeight: 400 },
+    { fontFamily: "JetBrains Mono", fontWeight: 700 },
+  ] as const;
+  await pdf(
+    <Document>
+      <Page size="LETTER">
+        {faces.map((f) => (
+          <Text key={`${f.fontFamily}${f.fontWeight}`} style={{ fontFamily: f.fontFamily, fontWeight: f.fontWeight }}>
+            Habitable
+          </Text>
+        ))}
+      </Page>
+    </Document>,
+  ).toBlob();
+}
+
 /** Builds the PDF in the browser. */
 export async function renderNoticeBlob(text: NoticeText): Promise<Blob> {
   return pdf(<NoticeDocument text={text} />).toBlob();

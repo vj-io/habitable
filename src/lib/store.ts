@@ -129,6 +129,12 @@ export function markFixed(issueId: string, at: string = new Date().toISOString()
   return changeIssue(issueId, (i) => ({ ...i, fixedAt: at }));
 }
 
+/** Restore from a backup: swaps in the case and its whole issue list at once (listeners fire once, after both writes). */
+export async function replaceCase(c: CaseFile, issues: Issue[]): Promise<void> {
+  await Promise.all([write(CASE_KEY, c), write(ISSUES_KEY, issues)]);
+  emit();
+}
+
 /** "Delete my case": removes the case and every issue. */
 export async function clearAll(): Promise<void> {
   await Promise.all([remove(CASE_KEY), remove(ISSUES_KEY)]);

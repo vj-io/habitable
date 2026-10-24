@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Check, Chip, CircleMark, DoodleCard, Highlight, MonoLabel, Stamp, Tag } from "@/components/doodle";
 import { CLASS_TONE, IssueIcon, factLines } from "@/components/issue/meta";
 import { formatNY } from "@/lib/countdown";
@@ -26,6 +27,7 @@ export function RuleCard({
   repairBy,
   fixedAt = null,
   stampDelay = 250,
+  action,
 }: {
   outcome: ClassifiedOutcome;
   facts: Record<string, string>;
@@ -33,6 +35,8 @@ export function RuleCard({
   repairBy: string;
   fixedAt?: string | null;
   stampDelay?: number;
+  /** Shown under the countdown while the issue is not fixed (e.g. "Add to my calendar"). */
+  action?: ReactNode;
 }) {
   const { window: w } = outcome;
   const lines = factLines(outcome.issue, facts, yearBuilt);
@@ -63,6 +67,7 @@ export function RuleCard({
               {isNoTime(w) ? "Requested repair-by" : "Requested repair-by date"} · {formatNY(repairBy, "datetime")}
             </MonoLabel>
             <Countdown repairBy={repairBy} className="mt-2" />
+            {action && <div className="mt-3">{action}</div>}
           </>
         )}
         <p className="mt-2 font-hand text-lg leading-snug text-muted">
