@@ -4,7 +4,7 @@
 // @react-pdf/renderer never runs on the server or lands in another page's bundle.
 import { Document, Font, Image, Link, Page, Path, StyleSheet, Svg, Text, View, pdf } from "@react-pdf/renderer";
 import type { ReactNode } from "react";
-import type { NoticeItem, NoticeText } from "@/lib/notice-text";
+import type { NoticeHeatSection, NoticeItem, NoticeText } from "@/lib/notice-text";
 
 Font.register({
   family: "Archivo",
@@ -70,6 +70,11 @@ const s = StyleSheet.create({
   footerRule: { borderTopWidth: 0.75, borderTopColor: INK, paddingTop: 4 },
   pageNumber: { position: "absolute", right: 54, bottom: 14, fontFamily: "JetBrains Mono", fontSize: 8, color: INK },
   footerText: { fontSize: 7, lineHeight: 1.35, color: MUTED },
+  heatTitle: { fontFamily: "Archivo", fontWeight: 700, fontSize: 14, letterSpacing: -0.2 },
+  heatRow: { flexDirection: "row", paddingVertical: 3, borderBottomWidth: 0.5, borderBottomColor: MUTED },
+  heatHead: { fontFamily: "JetBrains Mono", fontSize: 7, color: MUTED, textTransform: "uppercase", letterSpacing: 0.6 },
+  heatWhen: { fontFamily: "Archivo", fontWeight: 700, fontSize: 9, lineHeight: 1.3 },
+  heatCellText: { fontSize: 9, lineHeight: 1.3 },
 });
 
 /** The font files hold the Latin range only; drop anything else (emoji, other scripts) instead of printing boxes. */
@@ -168,6 +173,46 @@ function ItemBlock({ item, text }: { item: NoticeItem; text: NoticeText }) {
   );
 }
 
+// Heat log table: column widths in points (the page body is 504pt wide); the code column takes the rest.
+const HEAT_COLS = [
+  ["when", 172], // fits "10 de enero de 2027 a las 12:30 a.m." on one line
+  ["what", 70],
+  ["measured", 52],
+  ["outdoor", 76],
+  ["required", 52],
+  ["code", 0],
+] as const;
+const heatCell = (w: number) => (w ? { width: w, paddingRight: 6 } : { flex: 1 });
+
+function HeatBlock({ heat }: { heat: NoticeHeatSection }) {
+  return (
+    <View style={s.item}>
+      <View minPresenceAhead={60}>
+        <Text style={s.heatTitle}>{heat.title}</Text>
+        <Text style={[s.line, { marginTop: 6 }]}>{heat.summary}</Text>
+        <View style={[s.heatRow, { borderBottomWidth: 1, borderBottomColor: INK }]}>
+          {HEAT_COLS.map(([key, w]) => (
+            <Text key={key} style={[s.heatHead, heatCell(w)]}>
+              {heat.columns[key]}
+            </Text>
+          ))}
+        </View>
+      </View>
+      {heat.rows.map((r) => (
+        <View key={r.id} style={s.heatRow} wrap={false}>
+          {HEAT_COLS.map(([key, w]) => (
+            <Text key={key} style={[key === "when" ? s.heatWhen : s.heatCellText, heatCell(w)]}>
+              {r[key]}
+            </Text>
+          ))}
+        </View>
+      ))}
+      {heat.more && <Text style={[s.small, { marginTop: 4 }]}>{heat.more}</Text>}
+      <Text style={[s.small, { marginTop: 4 }]}>{heat.rules}</Text>
+    </View>
+  );
+}
+
 export function NoticeDocument({ text }: { text: NoticeText }) {
   const L = text.labels;
   const meta: [string, string][] = [
@@ -195,6 +240,8 @@ export function NoticeDocument({ text }: { text: NoticeText }) {
         {text.items.map((item) => (
           <ItemBlock key={item.issueId} item={item} text={text} />
         ))}
+
+        {text.heat && <HeatBlock heat={text.heat} />}
 
         <View wrap={false}>
           <Text style={s.closing}>{text.closing}</Text>

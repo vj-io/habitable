@@ -436,6 +436,15 @@ export function IssueDetail({ id }: { id: string }) {
             <DoodleButton href="/notice" size="lg" icon={<Doc size={22} />} className="w-full">
               Make the notice
             </DoodleButton>
+            {issue.issue === "heat_hot_water" && (
+              <p className="leading-snug">
+                A photo can&apos;t show a temperature.{" "}
+                <Link href="/heat" className={`${linkClass} inline-flex min-h-11 items-center font-bold`}>
+                  Keep a heat log
+                </Link>{" "}
+                — each dated reading is checked against the legal minimum.
+              </p>
+            )}
             {issue.issue !== "not_covered" && (
               <p className="leading-snug">
                 Landlord not responding?{" "}

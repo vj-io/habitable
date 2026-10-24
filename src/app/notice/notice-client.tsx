@@ -15,7 +15,7 @@ import {
   type NoticeText,
 } from "@/lib/notice-text";
 import { saveCase, useCaseData } from "@/lib/store";
-import type { CaseFile, Issue } from "@/lib/types";
+import type { CaseFile, HeatReading, Issue } from "@/lib/types";
 
 const HPD_NEXT_STEPS_URL = "https://www.nyc.gov/site/hpd/services-and-information/report-a-maintenance-issue.page";
 const WOBBLE = "14px 4px 12px 5px / 5px 12px 4px 14px";
@@ -39,7 +39,7 @@ function Shell({ children }: { children: ReactNode }) {
 }
 
 export function NoticeClient() {
-  const { caseFile, issues, ready } = useCaseData();
+  const { caseFile, issues, heatReadings, ready } = useCaseData();
 
   if (!ready) {
     return (
@@ -61,7 +61,7 @@ export function NoticeClient() {
   }
   return (
     <Shell>
-      <NoticeBuilder caseFile={caseFile} issues={issues} />
+      <NoticeBuilder caseFile={caseFile} issues={issues} heatReadings={heatReadings} />
     </Shell>
   );
 }
@@ -76,7 +76,7 @@ function canShareFiles(): boolean {
   }
 }
 
-function NoticeBuilder({ caseFile, issues }: { caseFile: CaseFile; issues: Issue[] }) {
+function NoticeBuilder({ caseFile, issues, heatReadings }: { caseFile: CaseFile; issues: Issue[]; heatReadings: HeatReading[] }) {
   const [now] = useState(() => new Date());
   const [lang, setLang] = useState<NoticeLang>("en");
   const [tenant, setTenant] = useState(caseFile.tenantName ?? "");
@@ -88,9 +88,13 @@ function NoticeBuilder({ caseFile, issues }: { caseFile: CaseFile; issues: Issue
   const cache = useRef<{ text: NoticeText; blob: Blob } | null>(null);
 
   const named = useMemo(() => ({ ...caseFile, tenantName: tenant, landlordName: landlord }), [caseFile, tenant, landlord]);
-  const text = useMemo(() => noticeText(named, issues, lang, now, window.location.origin), [named, issues, lang, now]);
+  const text = useMemo(
+    () => noticeText(named, issues, lang, now, window.location.origin, heatReadings),
+    [named, issues, lang, now, heatReadings],
+  );
   const fileName = noticeFileName(caseFile, now);
-  const hasItems = text.items.length > 0;
+  // A heat log with readings below the minimum is worth a notice on its own.
+  const hasItems = text.items.length > 0 || text.heat !== null;
 
   // Warm the PDF code path in the background (renderer, notice component, fonts) so the first Download or Share
   // is quick. Waits a moment so it doesn't compete with the first paint; ignores failures.
@@ -175,7 +179,7 @@ function NoticeBuilder({ caseFile, issues }: { caseFile: CaseFile; issues: Issue
         <Field label="Landlord or managing agent" value={landlord} onChange={setLandlord} onBlur={persistNames} autoComplete="off" />
       </DoodleCard>
 
-      {text.items.length === 0 ? (
+      {!hasItems ? (
         <DoodleCard tone="marker" className="space-y-3">
           <h2 className="font-display text-2xl font-extrabold leading-tight">Nothing to put in a notice yet</h2>
           <p>
@@ -229,18 +233,20 @@ function NoticeBuilder({ caseFile, issues }: { caseFile: CaseFile; issues: Issue
             )}
           </section>
 
-          <section aria-labelledby="h311" className="space-y-3">
-            <MonoLabel as="h2">
-              <span id="h311">Also tell NYC 311</span>
-            </MonoLabel>
-            <p className="text-[0.9375rem] leading-snug">Copy the text, then paste it into the 311 complaint form.</p>
-            <ul className="space-y-3">
-              {text.items.map((item) => {
-                const issue = byId.get(item.issueId);
-                return issue && <Row311 key={item.issueId} item={item} issue={issue} caseFile={caseFile} now={now} />;
-              })}
-            </ul>
-          </section>
+          {text.items.length > 0 && (
+            <section aria-labelledby="h311" className="space-y-3">
+              <MonoLabel as="h2">
+                <span id="h311">Also tell NYC 311</span>
+              </MonoLabel>
+              <p className="text-[0.9375rem] leading-snug">Copy the text, then paste it into the 311 complaint form.</p>
+              <ul className="space-y-3">
+                {text.items.map((item) => {
+                  const issue = byId.get(item.issueId);
+                  return issue && <Row311 key={item.issueId} item={item} issue={issue} caseFile={caseFile} now={now} heatReadings={heatReadings} />;
+                })}
+              </ul>
+            </section>
+          )}
         </>
       )}
 
@@ -318,9 +324,21 @@ function Field({
   );
 }
 
-function Row311({ item, issue, caseFile, now }: { item: NoticeItem; issue: Issue; caseFile: CaseFile; now: Date }) {
+function Row311({
+  item,
+  issue,
+  caseFile,
+  now,
+  heatReadings,
+}: {
+  item: NoticeItem;
+  issue: Issue;
+  caseFile: CaseFile;
+  now: Date;
+  heatReadings: HeatReading[];
+}) {
   const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
-  const body = complaint311Text(caseFile, issue, now);
+  const body = complaint311Text(caseFile, issue, now, heatReadings);
 
   async function copy() {
     try {
