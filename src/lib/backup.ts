@@ -3,8 +3,8 @@
 // before anything reaches the store, so a foreign or hand-edited file can't smuggle odd URLs or shapes into the UI.
 import { z } from "zod";
 import { nyDay } from "./countdown";
-import { getCase, listIssues, replaceCase } from "./store";
-import { ISSUE_IDS, PROPOSAL_IDS, type CaseFile, type Issue } from "./types";
+import { getCase, listHeatReadings, listIssues, replaceCase } from "./store";
+import { ISSUE_IDS, PROPOSAL_IDS, type CaseFile, type HeatReading, type Issue } from "./types";
 
 export const BACKUP_VERSION = 1;
 // Photos are stored as data URLs, so a backup is a few hundred KB per photo. ponytail: a case past ~25 MB
@@ -18,6 +18,8 @@ export interface Backup {
   exportedAt: string;
   caseFile: CaseFile;
   issues: Issue[];
+  /** The heat log. Optional: version-1 backups made before the heat log restore with an empty one. */
+  heatReadings?: HeatReading[];
 }
 
 export type BackupResult = { ok: true; backup: Backup } | { ok: false; error: string };
@@ -111,6 +113,27 @@ const issueSchema: z.ZodType<Issue> = z.object({
   demoSampleId: s(100).optional(),
 });
 
+const tempF = z.number().min(-100).max(250);
+
+const heatReadingSchema: z.ZodType<HeatReading> = z.object({
+  id: s(100).min(1),
+  at: iso,
+  kind: z.enum(["heat", "hot_water"]),
+  indoorF: tempF,
+  outdoorF: tempF.nullable(),
+  outdoorSource: z.enum(["nws", "typed"]).nullable(),
+  outdoorStation: s(10).optional(),
+  outdoorObservedAt: iso.optional(),
+  note: s().optional(),
+  complaint311: s(50).optional(),
+  witness: s(120).optional(),
+  photo: photo.optional(),
+  demo: z.boolean().optional(),
+  createdAt: iso,
+});
+
+const uniqueIds = (items: { id: string }[] = []) => new Set(items.map((i) => i.id)).size === items.length;
+
 const backupSchema: z.ZodType<Backup> = z
   .object({
     app: z.literal("habitable"),
@@ -119,8 +142,10 @@ const backupSchema: z.ZodType<Backup> = z
     exportedAt: iso,
     caseFile: caseFileSchema,
     issues: z.array(issueSchema),
+    heatReadings: z.array(heatReadingSchema).optional(),
   })
-  .refine((b) => new Set(b.issues.map((i) => i.id)).size === b.issues.length, { message: "two issues share an id", path: ["issues"] });
+  .refine((b) => uniqueIds(b.issues), { message: "two issues share an id", path: ["issues"] })
+  .refine((b) => uniqueIds(b.heatReadings), { message: "two heat readings share an id", path: ["heatReadings"] });
 
 // ---- parse ----
 
@@ -169,9 +194,9 @@ export async function readBackupFile(file: File): Promise<BackupResult> {
 
 /** The whole case as a backup object, or null when there is no case yet. */
 export async function exportCase(now: Date = new Date()): Promise<Backup | null> {
-  const [caseFile, issues] = await Promise.all([getCase(), listIssues()]);
+  const [caseFile, issues, heatReadings] = await Promise.all([getCase(), listIssues(), listHeatReadings()]);
   if (!caseFile) return null;
-  return { app: "habitable", kind: "case-backup", version: BACKUP_VERSION, exportedAt: now.toISOString(), caseFile, issues };
+  return { app: "habitable", kind: "case-backup", version: BACKUP_VERSION, exportedAt: now.toISOString(), caseFile, issues, heatReadings };
 }
 
 /** habitable-case-<yyyy-mm-dd>.json, the date on the New York calendar (same as the notice file). */
@@ -179,7 +204,7 @@ export function backupFileName(now: Date = new Date()): string {
   return `habitable-case-${nyDay(now)}.json`;
 }
 
-/** Replaces the current case and issues with the backup's. Callers ask the renter first. */
+/** Replaces the current case, issues and heat log with the backup's. Callers ask the renter first. */
 export function restoreCase(backup: Backup): Promise<void> {
-  return replaceCase(backup.caseFile, backup.issues);
+  return replaceCase(backup.caseFile, backup.issues, backup.heatReadings ?? []);
 }

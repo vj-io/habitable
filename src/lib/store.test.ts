@@ -1,7 +1,24 @@
 // Node has no IndexedDB, so these tests exercise the in-memory fallback (same API as the IndexedDB path).
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { addFollowUp, clearAll, deleteIssue, getCase, getIssue, isPersistent, listIssues, markFixed, saveCase, saveIssue, storageAvailable, subscribe, updateCase } from "./store";
-import type { CaseFile, Issue } from "./types";
+import {
+  addFollowUp,
+  clearAll,
+  deleteHeatReading,
+  deleteIssue,
+  getCase,
+  getIssue,
+  isPersistent,
+  listHeatReadings,
+  listIssues,
+  markFixed,
+  saveCase,
+  saveHeatReading,
+  saveIssue,
+  storageAvailable,
+  subscribe,
+  updateCase,
+} from "./store";
+import type { CaseFile, HeatReading, Issue } from "./types";
 
 const caseFile: CaseFile = {
   version: 1,
@@ -87,6 +104,29 @@ describe("store (memory fallback)", () => {
     await saveIssue(issue("i1", "2026-10-15T00:00:00.000Z"));
     (await getIssue("i1"))!.note = "mutated";
     expect((await getIssue("i1"))?.note).toBe("");
+  });
+
+  it("keeps heat readings newest first, upserts and deletes by id, and clears them with the case", async () => {
+    const reading = (id: string, at: string): HeatReading => ({
+      id,
+      at,
+      kind: "heat",
+      indoorF: 61,
+      outdoorF: 28,
+      outdoorSource: "nws",
+      outdoorStation: "KNYC",
+      outdoorObservedAt: at,
+      createdAt: at,
+    });
+    await Promise.all([saveHeatReading(reading("a", "2026-01-03T12:00:00.000Z")), saveHeatReading(reading("b", "2026-01-05T12:00:00.000Z"))]);
+    expect((await listHeatReadings()).map((r) => r.id)).toEqual(["b", "a"]);
+    await saveHeatReading({ ...reading("a", "2026-01-03T12:00:00.000Z"), indoorF: 59 });
+    expect(await listHeatReadings()).toHaveLength(2);
+    expect((await listHeatReadings()).find((r) => r.id === "a")?.indoorF).toBe(59);
+    await deleteHeatReading("b");
+    expect((await listHeatReadings()).map((r) => r.id)).toEqual(["a"]);
+    await clearAll();
+    expect(await listHeatReadings()).toEqual([]);
   });
 
   it("notifies subscribers after every write until unsubscribed", async () => {

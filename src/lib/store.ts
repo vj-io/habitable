@@ -1,10 +1,11 @@
 // Browser only. The renter's case lives in IndexedDB (idb-keyval); falls back to memory when IndexedDB is unavailable.
 import { useCallback, useEffect, useState } from "react";
 import { del, get, set, update } from "idb-keyval";
-import type { CaseFile, FollowUp, Issue } from "./types";
+import type { CaseFile, FollowUp, HeatReading, Issue } from "./types";
 
 const CASE_KEY = "habitable:case";
 const ISSUES_KEY = "habitable:issues";
+const HEAT_KEY = "habitable:heat";
 const PROBE_KEY = "habitable:probe";
 
 // ---- backend: IndexedDB, or an in-memory Map with the same semantics ----
@@ -52,12 +53,14 @@ async function remove(key: string): Promise<void> {
   else mem.delete(key);
 }
 
-/** Atomic read-modify-write of the issue list (one IndexedDB transaction), so concurrent writes can't drop each other. */
-async function mutateIssues(fn: (issues: Issue[]) => Issue[]): Promise<void> {
+/** Atomic read-modify-write of a stored list (one IndexedDB transaction), so concurrent writes can't drop each other. */
+async function mutateList<T>(key: string, fn: (items: T[]) => T[]): Promise<void> {
   await storageAvailable();
-  if (persistent) await update<Issue[]>(ISSUES_KEY, (old) => fn(old ?? []));
-  else mem.set(ISSUES_KEY, structuredClone(fn(structuredClone((mem.get(ISSUES_KEY) as Issue[] | undefined) ?? []))));
+  if (persistent) await update<T[]>(key, (old) => fn(old ?? []));
+  else mem.set(key, structuredClone(fn(structuredClone((mem.get(key) as T[] | undefined) ?? []))));
 }
+
+const mutateIssues = (fn: (issues: Issue[]) => Issue[]) => mutateList(ISSUES_KEY, fn);
 
 // ---- change notification ----
 
@@ -135,15 +138,36 @@ export function markFixed(issueId: string, at: string = new Date().toISOString()
   return changeIssue(issueId, (i) => ({ ...i, fixedAt: at }));
 }
 
-/** Restore from a backup: swaps in the case and its whole issue list at once (listeners fire once, after both writes). */
-export async function replaceCase(c: CaseFile, issues: Issue[]): Promise<void> {
-  await Promise.all([write(CASE_KEY, c), write(ISSUES_KEY, issues)]);
+// ---- heat and hot water log ----
+
+/** Newest reading first. */
+export async function listHeatReadings(): Promise<HeatReading[]> {
+  const readings = (await read<HeatReading[]>(HEAT_KEY)) ?? [];
+  return readings.sort((a, b) => b.at.localeCompare(a.at));
+}
+
+/** Insert or replace by id. */
+export async function saveHeatReading(reading: HeatReading): Promise<void> {
+  await mutateList<HeatReading>(HEAT_KEY, (all) =>
+    all.some((r) => r.id === reading.id) ? all.map((r) => (r.id === reading.id ? reading : r)) : [...all, reading],
+  );
   emit();
 }
 
-/** "Delete my case": removes the case and every issue. */
+export async function deleteHeatReading(id: string): Promise<void> {
+  await mutateList<HeatReading>(HEAT_KEY, (all) => all.filter((r) => r.id !== id));
+  emit();
+}
+
+/** Restore from a backup: swaps in the case, its whole issue list and heat log at once (listeners fire once, after all writes). */
+export async function replaceCase(c: CaseFile, issues: Issue[], heatReadings: HeatReading[] = []): Promise<void> {
+  await Promise.all([write(CASE_KEY, c), write(ISSUES_KEY, issues), write(HEAT_KEY, heatReadings)]);
+  emit();
+}
+
+/** "Delete my case": removes the case, every issue and the heat log. */
 export async function clearAll(): Promise<void> {
-  await Promise.all([remove(CASE_KEY), remove(ISSUES_KEY)]);
+  await Promise.all([remove(CASE_KEY), remove(ISSUES_KEY), remove(HEAT_KEY)]);
   emit();
 }
 
@@ -152,19 +176,20 @@ export async function clearAll(): Promise<void> {
 interface CaseData {
   caseFile: CaseFile | null;
   issues: Issue[];
+  heatReadings: HeatReading[];
   /** False until the first load finishes (and always on the server). */
   ready: boolean;
   persistent: boolean;
 }
 
 async function load(): Promise<CaseData> {
-  const [caseFile, issues] = await Promise.all([getCase(), listIssues()]);
-  return { caseFile, issues, ready: true, persistent: isPersistent() };
+  const [caseFile, issues, heatReadings] = await Promise.all([getCase(), listIssues(), listHeatReadings()]);
+  return { caseFile, issues, heatReadings, ready: true, persistent: isPersistent() };
 }
 
-/** Case + issues, reloaded after every store write. Reads IndexedDB only in the browser, after mount. */
+/** Case + issues + heat log, reloaded after every store write. Reads IndexedDB only in the browser, after mount. */
 export function useCaseData(): CaseData & { refresh: () => Promise<void> } {
-  const [data, setData] = useState<CaseData>({ caseFile: null, issues: [], ready: false, persistent: true });
+  const [data, setData] = useState<CaseData>({ caseFile: null, issues: [], heatReadings: [], ready: false, persistent: true });
   const refresh = useCallback(() => load().then(setData), []);
 
   useEffect(() => {

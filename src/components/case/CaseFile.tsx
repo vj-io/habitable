@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Arrow, Building, Camera, Chip, Cross, Doc, DoodleButton, DoodleCard, MonoLabel, Shield, SketchBox } from "@/components/doodle";
+import { HeatLogCard } from "@/components/heat/HeatLogCard";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SnapSheet } from "@/components/snap/SnapSheet";
 import { backupFileName, exportCase, readBackupFile, restoreCase, type Backup } from "@/lib/backup";
@@ -244,6 +245,9 @@ export function CaseFile({ caseFile, issues, persistent }: { caseFile: CaseFileT
             </div>
 
             <Timeline issues={issues} flashId={flashId} />
+
+            {/* Heat and hot water log entry point (self-contained: reads the log itself). */}
+            <HeatLogCard />
 
             <NextStepsCard caseFile={caseFile} issues={issues} />
           </div>

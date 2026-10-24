@@ -1,6 +1,6 @@
 import { DoodleCard, Highlight, MonoLabel, Stamp, type StampTone } from "@/components/doodle";
 import { HouseMark } from "@/components/site/Wordmark";
-import type { NoticeItem, NoticeText } from "@/lib/notice-text";
+import type { NoticeHeatSection, NoticeItem, NoticeText } from "@/lib/notice-text";
 
 const STAMP_TONE: Record<"A" | "B" | "C", StampTone> = { A: "sky", B: "amber", C: "red" };
 
@@ -58,6 +58,29 @@ function Item({ item, text }: { item: NoticeItem; text: NoticeText }) {
   );
 }
 
+/** Heat log readings below the minimum. Stacked rows here (phone width); the PDF prints the same cells as a table. */
+function HeatSection({ heat }: { heat: NoticeHeatSection }) {
+  const c = heat.columns;
+  return (
+    <section aria-label={heat.title} className="space-y-2 border-t-2 border-ink pt-4">
+      <h3 className="font-display text-lg font-bold leading-tight">{heat.title}</h3>
+      <p className="text-[0.9375rem] leading-snug">{heat.summary}</p>
+      <ul className="divide-y divide-ink/20 border-y border-ink/20">
+        {heat.rows.map((r) => (
+          <li key={r.id} className="py-1.5 text-sm leading-snug">
+            <b className="font-bold">{r.when}</b> · {r.what}
+            <span className="block font-mono text-[0.8125rem]">
+              {c.measured} {r.measured} · {c.outdoor} {r.outdoor} · {c.required} {r.required} · {r.code}
+            </span>
+          </li>
+        ))}
+      </ul>
+      {heat.more && <p className="text-sm">{heat.more}</p>}
+      <p className="text-xs leading-snug text-muted">{heat.rules}</p>
+    </section>
+  );
+}
+
 /** The notice as HTML on a paper card: the same NoticeText the PDF prints, so what you see is what you send. */
 export function NoticePreview({ text }: { text: NoticeText }) {
   const L = text.labels;
@@ -99,6 +122,8 @@ export function NoticePreview({ text }: { text: NoticeText }) {
             <Item key={item.issueId} item={item} text={text} />
           ))}
         </ol>
+
+        {text.heat && <HeatSection heat={text.heat} />}
 
         <p className="pt-2 leading-snug">{text.closing}</p>
         <div>
