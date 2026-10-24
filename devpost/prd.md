@@ -138,5 +138,5 @@ Everything under **Features and Behavior**: address setup, snap + AI proposal (w
 - Accounts, cloud sync, social features — not needed to prove the kernel.
 
 ## Open Questions
-- Exact HPD class for apartment-door locks and for general peeling paint — verify in `4-spec` research (blocks the rules table, not the PRD).
-- Mold area thresholds under Local Law 55 — verify in `4-spec`.
+- Exact HPD class for apartment-door locks and for general peeling paint — resolved in `spec.md > Rules Table`.
+- Mold area thresholds under Local Law 55 — resolved in `spec.md > Rules Table`.
