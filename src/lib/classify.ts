@@ -8,13 +8,14 @@ import { google } from "@ai-sdk/google";
 import { generateText, Output, type LanguageModel } from "ai";
 import { z } from "zod";
 import {
+  CONFIDENCE_THRESHOLD,
   PROPOSAL_IDS,
   type ClassifyResponse,
   type Proposal,
   type ProposalIssue,
 } from "@/lib/types";
 
-export const CONFIDENCE_THRESHOLD = 0.7;
+export { CONFIDENCE_THRESHOLD };
 
 /** Longest rationale we pass on. The schema allows 240 so a slightly long answer still parses. */
 const RATIONALE_MAX = 200;

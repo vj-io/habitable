@@ -3,7 +3,7 @@
 import { Check, DoodleButton, DoodleCard, MonoLabel, Pencil, SketchBox, Tag, rough } from "@/components/doodle";
 import { IssueIcon, issueName, pct } from "@/components/issue/meta";
 import { RULES } from "@/lib/rules";
-import { ISSUE_IDS, type Proposal, type ProposalIssue } from "@/lib/types";
+import { CONFIDENCE_THRESHOLD, ISSUE_IDS, type Proposal, type ProposalIssue } from "@/lib/types";
 
 const METER_BOX = rough(31).rect(2, 2, 196, 18, 3);
 
@@ -32,7 +32,7 @@ export function ProposalCard({
   onAccept: () => void;
   onCorrect: () => void;
 }) {
-  const unsure = proposal.confidence < 0.7;
+  const unsure = proposal.confidence < CONFIDENCE_THRESHOLD;
   return (
     <DoodleCard tone="violet" seed={5} padding="1.25rem" aria-label="AI proposal">
       <div className="flex flex-wrap items-center justify-between gap-2">

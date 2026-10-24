@@ -14,6 +14,9 @@ export type IssueId = (typeof ISSUE_IDS)[number];
 export const PROPOSAL_IDS = [...ISSUE_IDS, "not_covered"] as const;
 export type ProposalIssue = (typeof PROPOSAL_IDS)[number];
 
+/** Below this confidence, code (not the model) asks one clarifying question. Shared by server and UI. */
+export const CONFIDENCE_THRESHOLD = 0.7;
+
 export type HazardClass = "A" | "B" | "C";
 
 export interface Address {
