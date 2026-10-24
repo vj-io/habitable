@@ -37,3 +37,6 @@ npm-debug.log*
 
 # agent worktrees
 .claude/worktrees/
+
+# demo video build (deliverables are uploaded, not committed)
+brag-output/
