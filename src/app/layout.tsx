@@ -23,7 +23,13 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+// Absolute base for share images: the Vercel production domain when deployed, localhost otherwise.
+const SITE_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : "http://localhost:3000";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Habitable — your repair problem, on the record",
   description:
     "Snap a photo of what's broken in your NYC apartment. Get a code-classified evidence log and a ready-to-send repair notice.",

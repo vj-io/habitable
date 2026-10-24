@@ -1,9 +1,17 @@
 import { z } from "zod";
-import { signReceipt, verifyReceipt } from "@/lib/receipt";
+import { receiptSecret, signReceipt, verifyReceipt } from "@/lib/receipt";
 import type { ReceiptResponse } from "@/lib/types";
 
 // POST is never cached; GET reads request.url, which opts it into request-time rendering under Cache Components.
 const NO_STORE = { "Cache-Control": "no-store" };
+
+// Production without RECEIPT_SECRET: refuse rather than sign with the public dev secret. The app logs the
+// photo without a receipt, and /verify reports the service as unavailable.
+const noSecret = () =>
+  Response.json(
+    { error: "Receipts are switched off: RECEIPT_SECRET is not set on this server." },
+    { status: 503, headers: NO_STORE },
+  );
 
 const sha256 = z.string().regex(/^[0-9a-f]{64}$/, "sha256 must be 64 lowercase hex characters");
 
@@ -21,15 +29,19 @@ export async function POST(request: Request) {
   if (!body.success) {
     return Response.json({ error: body.error.issues[0]?.message ?? "Invalid request" }, { status: 400, headers: NO_STORE });
   }
+  const secret = receiptSecret();
+  if (!secret) return noSecret();
   const receivedAt = new Date().toISOString();
-  const res: ReceiptResponse = { receivedAt, receipt: signReceipt(body.data.sha256, receivedAt) };
+  const res: ReceiptResponse = { receivedAt, receipt: signReceipt(body.data.sha256, receivedAt, secret) };
   return Response.json(res, { headers: NO_STORE });
 }
 
 /** Check a receipt: `?sha256&receivedAt&receipt` -> `{ valid }`. Malformed input is simply not valid. */
 export async function GET(request: Request) {
+  const secret = receiptSecret();
+  if (!secret) return noSecret();
   const params = Object.fromEntries(new URL(request.url).searchParams);
   const q = VerifyQuery.safeParse(params);
-  const valid = q.success && verifyReceipt(q.data.sha256, q.data.receivedAt, q.data.receipt);
+  const valid = q.success && verifyReceipt(q.data.sha256, q.data.receivedAt, q.data.receipt, secret);
   return Response.json({ valid }, { headers: NO_STORE });
 }

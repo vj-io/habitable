@@ -91,9 +91,10 @@ export async function POST(request: Request) {
   const answered = Boolean(answer);
 
   // Demo mode: saved answers, through the same decide() as a live answer.
-  if (sampleId && DEMO_SAMPLES[sampleId]) {
+  // Own keys only: "constructor" or "toString" must not reach Object.prototype.
+  if (sampleId && Object.hasOwn(DEMO_SAMPLES, sampleId)) {
     const sample = DEMO_SAMPLES[sampleId];
-    const raw = (answer && sample.afterAnswer?.[answer.answer]) || sample.first;
+    const raw = (answer && sample.afterAnswer && Object.hasOwn(sample.afterAnswer, answer.answer) && sample.afterAnswer[answer.answer]) || sample.first;
     await new Promise((resolve) => setTimeout(resolve, DEMO_DELAY_MS));
     return Response.json(decide(raw, { answered, source: "demo", model: DEMO_MODEL_LABEL }));
   }

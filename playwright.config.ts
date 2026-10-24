@@ -38,6 +38,8 @@ export default defineConfig({
       GOOGLE_GENERATIVE_AI_API_KEY: "",
       AI_GATEWAY_API_KEY: "",
       VERCEL_OIDC_TOKEN: "",
+      // Production builds refuse to sign receipts without a secret; CI has no .env.local.
+      RECEIPT_SECRET: process.env.RECEIPT_SECRET || "e2e-only-secret",
     },
   },
 });

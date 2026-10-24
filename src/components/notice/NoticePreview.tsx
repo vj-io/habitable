@@ -46,6 +46,14 @@ function Item({ item, text }: { item: NoticeItem; text: NoticeText }) {
         />
       </div>
       <p className="mt-3 break-words font-mono text-[0.6875rem] leading-snug text-muted">{item.evidenceLine}</p>
+      {item.verifyUrl ? (
+        <a
+          href={item.verifyUrl}
+          className="mt-1 inline-block font-mono text-[0.6875rem] text-ink underline underline-offset-2"
+        >
+          {L.verifyReceipt}
+        </a>
+      ) : null}
     </li>
   );
 }

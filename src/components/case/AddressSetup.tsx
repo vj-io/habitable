@@ -41,8 +41,9 @@ export function AddressSetup() {
     if (selected || q.length < 3) return;
     const ac = new AbortController();
     const t = setTimeout(() => {
-      searchAddresses(q, ac.signal).then(
-        (items) => setResults({ q, items, error: false }),
+      // A stalled lookup (null after 8 s) shows the "unavailable" message instead of "looking…" forever.
+      within(searchAddresses(q, ac.signal), 8000, null).then(
+        (items) => setResults({ q, items: items ?? [], error: !items }),
         () => {
           if (!ac.signal.aborted) setResults({ q, items: [], error: true });
         },

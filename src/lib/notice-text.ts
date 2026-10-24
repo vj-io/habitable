@@ -21,7 +21,7 @@ export interface NoticeItem {
   classBadge: string | null;
   /** "Hazardous" / "Peligrosa"; null when unclassified. */
   classWord: string | null;
-  /** "HPD Class B — Hazardous" / "Clase B de HPD — Peligrosa"; null when unclassified. */
+  /** "Class under HPD's published rules: B — Hazardous"; null when unclassified. */
   classLine: string | null;
   /** "HPD correction window: 30 days"; null when unclassified. */
   windowLine: string | null;
@@ -36,6 +36,8 @@ export interface NoticeItem {
   followUpLine: string | null;
   /** "Photo taken Oct 15, 2026, 7:42 AM · fingerprint 9f2c…e41a · receipt 738193f80d3a" */
   evidenceLine: string;
+  /** Link that checks this photo's server receipt; null when the photo has no receipt. */
+  verifyUrl: string | null;
   /** Metadata-free JPEG data URL, with its pixel size. */
   photo: string;
   photoWidth: number;
@@ -53,6 +55,7 @@ export interface NoticeLabels {
   signoff: string;
   page: string;
   of: string;
+  verifyReceipt: string;
 }
 
 export interface NoticeText {
@@ -86,8 +89,8 @@ const STRINGS = {
       "Please contact me to arrange access to my apartment so the repairs can be made. I am keeping a dated record of these conditions. If they are not corrected, I may ask NYC 311 to request an HPD inspection.",
     disclaimer: (date: string) =>
       `Prepared with Habitable on ${date}. Classes and windows are those HPD publishes for these conditions; HPD's inspector assigns the actual class, and correction periods run from service of an HPD violation. Not legal advice.`,
-    verify: (origin: string) => `Verify receipts at ${origin}/verify`,
-    classLine: (cls: HazardClass, word: string) => `HPD Class ${cls} — ${word}`,
+    verify: (origin: string) => `Each photo's server receipt can be checked with the link beside it, at ${origin}/verify.`,
+    classLine: (cls: HazardClass, word: string) => `Class under HPD's published rules: ${cls} — ${word}`,
     classBadge: (cls: HazardClass) => `Class ${cls}`,
     windowLine: (w: string) => `HPD correction window: ${w}`,
     photoTaken: "Photo taken",
@@ -106,6 +109,7 @@ const STRINGS = {
       signoff: "Sincerely,",
       page: "Page",
       of: "of",
+      verifyReceipt: "Check this photo's receipt",
     },
   },
   es: {
@@ -120,8 +124,8 @@ const STRINGS = {
       "Por favor, comuníquese conmigo para coordinar el acceso a mi apartamento y poder hacer las reparaciones. Llevo un registro con fechas de estas condiciones. Si no se corrigen, es posible que pida al 311 de Nueva York que solicite una inspección de HPD.",
     disclaimer: (date: string) =>
       `Preparado con Habitable el ${date}. Las clases y los plazos son los que HPD publica para estas condiciones; el inspector de HPD asigna la clase real, y los plazos de corrección corren desde la notificación de una violación de HPD. No es asesoría legal.`,
-    verify: (origin: string) => `Verifique los recibos en ${origin}/verify`,
-    classLine: (cls: HazardClass, word: string) => `Clase ${cls} de HPD — ${word}`,
+    verify: (origin: string) => `El recibo del servidor de cada foto se puede comprobar con el enlace junto a ella, en ${origin}/verify.`,
+    classLine: (cls: HazardClass, word: string) => `Clase según las reglas publicadas de HPD: ${cls} — ${word}`,
     classBadge: (cls: HazardClass) => `Clase ${cls}`,
     windowLine: (w: string) => `Plazo de corrección de HPD: ${w}`,
     photoTaken: "Foto tomada el",
@@ -140,6 +144,7 @@ const STRINGS = {
       signoff: "Atentamente,",
       page: "Página",
       of: "de",
+      verifyReceipt: "Comprobar el recibo de esta foto",
     },
   },
 } as const;
@@ -222,7 +227,14 @@ function evidenceLineOf(issue: Issue, lang: NoticeLang): string {
   return parts.join(" · ");
 }
 
-function itemOf(issue: Issue, n: number, lang: NoticeLang, now: Date): NoticeItem {
+function verifyUrlOf(issue: Issue, origin: string): string | null {
+  const e = issue.evidence;
+  if (!e.receipt || !e.receivedAt) return null;
+  const q = new URLSearchParams({ sha256: e.sha256, receivedAt: e.receivedAt, receipt: e.receipt });
+  return `${origin}/verify?${q}`;
+}
+
+function itemOf(issue: Issue, n: number, lang: NoticeLang, now: Date, origin: string): NoticeItem {
   const s = STRINGS[lang];
   const o = issue.outcome;
   const classified = o.status === "classified" ? o : null;
@@ -248,6 +260,7 @@ function itemOf(issue: Issue, n: number, lang: NoticeLang, now: Date): NoticeIte
     latestFollowUp,
     followUpLine: latestFollowUp ? s.followUp(followUps.length, latestFollowUp.date, latestFollowUp.note) : null,
     evidenceLine: evidenceLineOf(issue, lang),
+    verifyUrl: verifyUrlOf(issue, origin),
     photo: issue.evidence.photo,
     photoWidth: issue.evidence.width,
     photoHeight: issue.evidence.height,
@@ -269,6 +282,7 @@ export function noticeText(c: CaseFile, issues: Issue[], lang: NoticeLang, now: 
   const s = STRINGS[lang];
   const today = dateOf(now.toISOString(), lang);
   const tenant = c.tenantName?.trim();
+  const base = origin.replace(/\/+$/, "");
   return {
     lang,
     title: s.title,
@@ -280,10 +294,10 @@ export function noticeText(c: CaseFile, issues: Issue[], lang: NoticeLang, now: 
     items: issues
       .filter(listable)
       .sort(byUrgency)
-      .map((issue, i) => itemOf(issue, i + 1, lang, now)),
+      .map((issue, i) => itemOf(issue, i + 1, lang, now, base)),
     closing: s.closing,
     signature: tenant || s.fromDefault,
-    footer: [s.disclaimer(today), s.verify(origin.replace(/\/+$/, ""))],
+    footer: [s.disclaimer(today), s.verify(base)],
     fixedCount: issues.filter((i) => i.fixedAt).length,
     labels: s.labels,
   };

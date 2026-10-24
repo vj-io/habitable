@@ -1,10 +1,8 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { DEV_FALLBACK_SECRET, signReceipt, verifyReceipt } from "./receipt";
+import { describe, expect, it } from "vitest";
+import { DEV_FALLBACK_SECRET, receiptSecret, signReceipt, verifyReceipt } from "./receipt";
 
 const SHA = "a".repeat(64);
 const AT = "2026-10-15T11:42:00.000Z";
-
-afterEach(() => vi.unstubAllEnvs());
 
 describe("signReceipt", () => {
   it("is the first 12 hex chars of HMAC-SHA256(secret, sha|receivedAt)", () => {
@@ -25,23 +23,22 @@ describe("signReceipt", () => {
     }
   });
 
-  it("uses RECEIPT_SECRET from the environment, else the dev fallback", () => {
-    vi.stubEnv("RECEIPT_SECRET", "from-env");
-    expect(signReceipt(SHA, AT)).toBe(signReceipt(SHA, AT, "from-env"));
-    vi.stubEnv("RECEIPT_SECRET", "");
-    expect(signReceipt(SHA, AT)).toBe(signReceipt(SHA, AT, DEV_FALLBACK_SECRET));
+});
+
+describe("receiptSecret", () => {
+  it("uses RECEIPT_SECRET when set, in any environment", () => {
+    expect(receiptSecret({ RECEIPT_SECRET: "from-env", NODE_ENV: "production" })).toBe("from-env");
+    expect(receiptSecret({ RECEIPT_SECRET: "from-env", NODE_ENV: "development" })).toBe("from-env");
   });
 
-  it("warns once in production when RECEIPT_SECRET is missing, but still signs", async () => {
-    vi.stubEnv("VERCEL_ENV", "production");
-    vi.stubEnv("RECEIPT_SECRET", "");
-    vi.resetModules(); // fresh module = fresh "warned" flag
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-    const fresh = await import("./receipt");
-    expect(fresh.signReceipt(SHA, AT)).toMatch(/^[0-9a-f]{12}$/);
-    fresh.signReceipt(SHA, AT);
-    expect(warn).toHaveBeenCalledTimes(1);
-    warn.mockRestore();
+  it("falls back to the public dev secret only outside production", () => {
+    expect(receiptSecret({ NODE_ENV: "development" })).toBe(DEV_FALLBACK_SECRET);
+    expect(receiptSecret({ NODE_ENV: "test", RECEIPT_SECRET: "" })).toBe(DEV_FALLBACK_SECRET);
+  });
+
+  it("refuses (null) in production when RECEIPT_SECRET is missing or empty", () => {
+    expect(receiptSecret({ NODE_ENV: "production" })).toBeNull();
+    expect(receiptSecret({ NODE_ENV: "production", RECEIPT_SECRET: "" })).toBeNull();
   });
 });
 

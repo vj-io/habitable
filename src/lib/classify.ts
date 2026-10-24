@@ -2,6 +2,7 @@
 // rationale. This file applies the confidence threshold (decide) and talks to the model
 // (classifyImage). It never decides a hazard class or a deadline; that is the rules table's job.
 
+import "server-only";
 import { createHash } from "node:crypto";
 import { google } from "@ai-sdk/google";
 import { generateText, Output, type LanguageModel } from "ai";

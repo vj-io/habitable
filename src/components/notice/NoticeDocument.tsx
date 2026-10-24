@@ -2,7 +2,7 @@
 
 // The repair notice as a PDF (US Letter). Client-only: load this module with a dynamic import() so
 // @react-pdf/renderer never runs on the server or lands in another page's bundle.
-import { Document, Font, Image, Page, Path, StyleSheet, Svg, Text, View, pdf } from "@react-pdf/renderer";
+import { Document, Font, Image, Link, Page, Path, StyleSheet, Svg, Text, View, pdf } from "@react-pdf/renderer";
 import type { ReactNode } from "react";
 import type { NoticeItem, NoticeText } from "@/lib/notice-text";
 
@@ -61,6 +61,7 @@ const s = StyleSheet.create({
   followUp: { fontSize: 9.5, lineHeight: LEADING, marginTop: 5 },
   photo: { borderWidth: 1, borderColor: INK },
   evidence: { fontFamily: "JetBrains Mono", fontSize: 7.5, color: MUTED, marginTop: 7 },
+  verify: { fontFamily: "JetBrains Mono", fontSize: 7.5, color: INK, marginTop: 3, textDecoration: "underline" },
   closing: { marginTop: 16, lineHeight: LEADING },
   signoff: { marginTop: 8 },
   sigLine: { marginTop: 24, width: 210, borderBottomWidth: 0.75, borderBottomColor: INK },
@@ -158,6 +159,11 @@ function ItemBlock({ item, text }: { item: NoticeItem; text: NoticeText }) {
         <Image src={item.photo} style={[s.photo, photoSize(item)]} />
       </View>
       <Text style={s.evidence}>{item.evidenceLine}</Text>
+      {item.verifyUrl ? (
+        <Link src={item.verifyUrl} style={s.verify}>
+          {L.verifyReceipt}
+        </Link>
+      ) : null}
     </View>
   );
 }

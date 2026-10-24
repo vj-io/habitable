@@ -21,13 +21,12 @@ import { Wordmark } from "@/components/site/Wordmark";
 import { CLASS_TABLE, CLOCK_NOTE, CLOCK_SOURCE_URL, RULES, RULES_VERSION, type IssueRules } from "@/lib/rules";
 import { ISSUE_IDS, type IssueId } from "@/lib/types";
 
-// TODO: point at the public GitHub repo before submitting.
-const REPO_URL = "https://github.com/";
+const REPO_URL = "https://github.com/vj-io/habitable";
 
 export const metadata: Metadata = {
   title: "How it works — Habitable",
   description:
-    "AI proposes, code disposes: the AI only names the problem; a cited table of NYC housing-code rules sets the hazard class and the deadline. Full rules table, sources and privacy.",
+    "AI proposes, code disposes: the AI only names the problem; a cited table of NYC housing-code rules sets the hazard class and the correction window. Full rules table, sources and privacy.",
 };
 
 const linkClass = "underline decoration-2 underline-offset-4 hover:decoration-wavy";
@@ -324,8 +323,8 @@ export default function Page() {
             {[
               ["Stored only on this device.", "Your address, issues, photos and follow-ups live in this browser's storage. No account, no cloud copy."],
               ["Location removed.", "Photos are re-drawn before they're stored, which drops GPS and every other metadata tag."],
-              ["What leaves your phone:", "a downscaled copy of the photo goes to the AI to name the problem, and the photo's fingerprint (not the photo) goes to Habitable's receipt service. Nothing else."],
-              ["Building lookups", "use only your building's public tax-lot number (BBL)."],
+              ["What leaves your phone:", "a downscaled copy of the photo and your optional one-line note go to the AI to name the problem, and the photo's fingerprint (not the photo) goes to Habitable's receipt service. Nothing else from your log."],
+              ["Address and building lookups", "send what you type in the address box to NYC's public GeoSearch service, then only your building's public tax-lot number (BBL) to NYC Open Data."],
               ["Deleting is real.", "\"Delete my case\" removes everything from this device."],
             ].map(([b, t]) => (
               <li key={b} className="flex gap-2.5">

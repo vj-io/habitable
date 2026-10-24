@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Camera,
   Check,
@@ -43,6 +43,7 @@ async function classify(body: Record<string, unknown>): Promise<ClassifyResponse
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(body),
+      signal: AbortSignal.timeout(45_000), // the route gives up by ~30 s; this covers a hung network
     });
     if (res.status === 429) {
       const j = (await res.json().catch(() => null)) as { reason?: string } | null;
@@ -55,8 +56,14 @@ async function classify(body: Record<string, unknown>): Promise<ClassifyResponse
   }
 }
 
+/** Never rejects and never hangs: "Add to my log" waits on it, so it gives up after 10 s (no receipt). */
 function postReceipt(sha256: string): Promise<ReceiptResponse | null> {
-  return fetch("/api/receipt", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ sha256 }) })
+  return fetch("/api/receipt", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ sha256 }),
+    signal: AbortSignal.timeout(10_000),
+  })
     .then((r) => (r.ok ? (r.json() as Promise<ReceiptResponse>) : null))
     .catch(() => null);
 }
@@ -149,6 +156,7 @@ export function SnapSheet({ open, onClose, caseFile, building, onSaved }: Props)
   const cameraRef = useRef<HTMLInputElement>(null);
   const libraryRef = useRef<HTMLInputElement>(null);
   const receiptRef = useRef<Promise<ReceiptResponse | null> | null>(null);
+  const stepRef = useRef<HTMLDivElement>(null);
 
   const [note, setNote] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -310,9 +318,14 @@ export function SnapSheet({ open, onClose, caseFile, building, onSaved }: Props)
 
   const corrected = proposal && chosen && proposal.issue !== chosen;
 
+  // Each step replaces the buttons of the last one, which drops focus to <body>; keep it in the sheet.
+  useEffect(() => {
+    if (open && document.activeElement === document.body) stepRef.current?.focus({ preventScroll: true });
+  });
+
   return (
     <DoodleSheet open={open} onClose={onClose} title="Snap a problem">
-      <div className="space-y-6 pt-2 pb-6">
+      <div ref={stepRef} tabIndex={-1} className="space-y-6 pt-2 pb-6 outline-none">
         <StepLine at={step} />
         <p className="sr-only" aria-live="polite">
           {live}
@@ -378,7 +391,7 @@ export function SnapSheet({ open, onClose, caseFile, building, onSaved }: Props)
                 }}
               />
               <p className="font-hand text-lg leading-snug text-muted">
-                The photo stays on this phone. Only a smaller copy goes to the AI, and only its fingerprint goes to our receipt service.
+                The photo stays on this phone. Only a smaller copy (and your note) goes to the AI, and only its fingerprint goes to our receipt service.
               </p>
             </div>
 

@@ -70,8 +70,8 @@ export function Welcome() {
             Your repair problem, <Highlight delay={300}>on the record</Highlight>.
           </h1>
           <p className="max-w-xl text-lg leading-relaxed text-ink/85">
-            Photograph what&apos;s broken. Habitable dates it, checks what NYC&apos;s housing code says about it, and builds a notice your
-            landlord can&apos;t shrug off.
+            Photograph what&apos;s broken. Habitable dates it, checks what NYC&apos;s housing code says about it, and builds a dated
+            repair notice with the evidence attached.
           </p>
           <div className="max-w-md">
             <StepStrip />
@@ -80,7 +80,7 @@ export function Welcome() {
             Just looking? Try the demo building
           </DoodleButton>
           <p className="hidden max-w-md font-hand text-xl leading-snug text-violet-ink lg:block">
-            The AI only names the problem. A cited rules table — never the AI — sets the hazard class and the deadline.
+            The AI only names the problem. A cited rules table — never the AI — sets the hazard class and the correction window.
           </p>
         </section>
 

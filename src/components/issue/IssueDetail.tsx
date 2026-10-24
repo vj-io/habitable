@@ -117,7 +117,7 @@ function Evidence({ issue }: { issue: Issue }) {
                 </span>
               </>
             ) : (
-              <span className="text-muted">No receipt — Habitable&apos;s server couldn&apos;t be reached when this was logged.</span>
+              <span className="text-muted">No receipt — Habitable&apos;s receipt service didn&apos;t answer when this was logged.</span>
             )}
           </dd>
         </div>
@@ -160,10 +160,15 @@ function FollowUps({ issue, now }: { issue: Issue; now: Date | null }) {
       return;
     }
     setBusy(true);
-    await addFollowUp(issue.id, { note: note.trim(), ...(photo ? { photo } : {}) });
-    setNote("");
-    setPhoto(null);
-    setError(null);
+    try {
+      await addFollowUp(issue.id, { note: note.trim(), ...(photo ? { photo } : {}) });
+      setNote("");
+      setPhoto(null);
+      setError(null);
+    } catch {
+      // Keep what they typed; a failed write (storage full or blocked) must not lose it or stick the button.
+      setError("Couldn't save to this device. Check that your browser allows site storage, then try again.");
+    }
     setBusy(false);
   }
 

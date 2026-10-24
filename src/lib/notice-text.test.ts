@@ -79,12 +79,12 @@ describe("noticeText (en)", () => {
 
   it("states class, window, citation and requested repair-by date", () => {
     const [l, m] = t.items;
-    expect(l.classLine).toBe("HPD Class C — Immediately hazardous");
+    expect(l.classLine).toBe("Class under HPD's published rules: C — Immediately hazardous");
     expect(l.classBadge).toBe("Class C");
     expect(l.windowLine).toBe("HPD correction window: 24 hours");
     expect(l.citation).toContain("§27-2005(a)");
     expect(l.repairBy).toBe("Oct 16, 2026");
-    expect(m.classLine).toBe("HPD Class B — Hazardous");
+    expect(m.classLine).toBe("Class under HPD's published rules: B — Hazardous");
     expect(m.windowLine).toBe("HPD correction window: 30 days");
     expect(m.repairBy).toBe("Nov 11, 2026");
   });
@@ -113,8 +113,11 @@ describe("noticeText (en)", () => {
     expect(t.footer[0]).toBe(
       "Prepared with Habitable on Oct 24, 2026. Classes and windows are those HPD publishes for these conditions; HPD's inspector assigns the actual class, and correction periods run from service of an HPD violation. Not legal advice.",
     );
-    expect(t.footer[1]).toBe("Verify receipts at https://habitable.example/verify");
-    expect(noticeText(CASE, [leak], "en", NOW, `${ORIGIN}/`).footer[1]).toBe("Verify receipts at https://habitable.example/verify");
+    expect(t.footer[1]).toBe("Each photo's server receipt can be checked with the link beside it, at https://habitable.example/verify.");
+    const url = noticeText(CASE, [leak], "en", NOW, `${ORIGIN}/`).items[0].verifyUrl;
+    if (leak.evidence.receipt) expect(url).toMatch(/^https:\/\/habitable\.example\/verify\?sha256=[0-9a-f]{64}&receivedAt=.+&receipt=/);
+    else expect(url).toBeNull();
+    expect(noticeText(CASE, [leak], "en", NOW, `${ORIGIN}/`).footer[1]).toBe("Each photo's server receipt can be checked with the link beside it, at https://habitable.example/verify.");
   });
 
   it("falls back to generic names", () => {
@@ -133,7 +136,7 @@ describe("noticeText (es)", () => {
     expect(t.from).toBe("Inquilino/a");
     expect(t.re).toBe("618 West 136th Street, Manhattan, NY 10031, Apto. 4B");
     expect(t.labels.repairBy).toBe("Se solicita reparar antes del");
-    expect(t.footer[1]).toBe("Verifique los recibos en https://habitable.example/verify");
+    expect(t.footer[1]).toBe("El recibo del servidor de cada foto se puede comprobar con el enlace junto a ella, en https://habitable.example/verify.");
     expect(t.footer[0]).toMatch(/^Preparado con Habitable el 24 de octubre de 2026\./);
     expect(t.footer[0]).toMatch(/No es asesoría legal\.$/);
   });
@@ -142,8 +145,8 @@ describe("noticeText (es)", () => {
     const [l, m] = t.items;
     expect(l.label).toBe("Filtración / daño por agua");
     expect(m.label).toBe("Moho");
-    expect(l.classLine).toBe("Clase C de HPD — Inmediatamente peligrosa");
-    expect(m.classLine).toBe("Clase B de HPD — Peligrosa");
+    expect(l.classLine).toBe("Clase según las reglas publicadas de HPD: C — Inmediatamente peligrosa");
+    expect(m.classLine).toBe("Clase según las reglas publicadas de HPD: B — Peligrosa");
     expect(l.windowLine).toBe("Plazo de corrección de HPD: 24 horas");
     expect(m.windowLine).toBe("Plazo de corrección de HPD: 30 días");
     expect(m.citation).toContain("Código Administrativo de NYC");
