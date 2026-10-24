@@ -1,27 +1,69 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { Building, Camera, Chip, Cross, Doc, DoodleButton, DoodleCard, MonoLabel, SketchBox } from "@/components/doodle";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Arrow, Building, Camera, Chip, Cross, Doc, DoodleButton, DoodleCard, MonoLabel, Shield, SketchBox } from "@/components/doodle";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SnapSheet } from "@/components/snap/SnapSheet";
+import { backupFileName, exportCase, readBackupFile, restoreCase, type Backup } from "@/lib/backup";
+import { formatNY } from "@/lib/countdown";
+import { downloadBlob } from "@/lib/download";
 import { clearAll } from "@/lib/store";
 import { ISSUE_IDS, type CaseFile as CaseFileT, type Issue, type IssueId } from "@/lib/types";
 import { BuildingPanel } from "./BuildingPanel";
 import { Timeline } from "./Timeline";
 import { useBuilding } from "./useBuilding";
 
+const menuItem = "flex min-h-11 w-full cursor-pointer items-center gap-2.5 rounded px-3 text-left font-display font-bold hover:bg-ink/5";
+
 function Menu() {
   const [open, setOpen] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  // A backup file the renter picked, waiting for "yes, replace my case".
+  const [pending, setPending] = useState<Backup | null>(null);
+  const [message, setMessage] = useState<{ error: boolean; text: string } | null>(null);
   const ref = useRef<HTMLDivElement>(null);
+
+  const reset = useCallback(() => {
+    setConfirming(false);
+    setPending(null);
+    setMessage(null);
+  }, []);
+
+  async function backUp() {
+    const now = new Date();
+    const backup = await exportCase(now);
+    if (!backup) return;
+    const fileName = backupFileName(now);
+    downloadBlob(new Blob([JSON.stringify(backup)], { type: "application/json" }), fileName);
+    setMessage({ error: false, text: `Saved ${fileName}. Keep it somewhere safe.` });
+  }
+
+  async function pick(file: File) {
+    const result = await readBackupFile(file);
+    if (result.ok) {
+      setMessage(null);
+      setPending(result.backup);
+    } else setMessage({ error: true, text: result.error });
+  }
+
+  async function restore(backup: Backup) {
+    try {
+      await restoreCase(backup);
+      setOpen(false);
+      reset();
+    } catch {
+      setPending(null);
+      setMessage({ error: true, text: "Couldn't save the backup to this device. Check that your browser allows site storage, then try again." });
+    }
+  }
 
   useEffect(() => {
     if (!open) return;
     const close = (e: MouseEvent | KeyboardEvent) => {
       if (e instanceof KeyboardEvent ? e.key === "Escape" : !ref.current?.contains(e.target as Node)) {
         setOpen(false);
-        setConfirming(false);
+        reset();
       }
     };
     document.addEventListener("mousedown", close);
@@ -30,7 +72,7 @@ function Menu() {
       document.removeEventListener("mousedown", close);
       document.removeEventListener("keydown", close);
     };
-  }, [open]);
+  }, [open, reset]);
 
   return (
     <div ref={ref} className="relative">
@@ -40,7 +82,7 @@ function Menu() {
         aria-controls="case-menu"
         onClick={() => {
           setOpen((o) => !o);
-          setConfirming(false);
+          reset();
         }}
         className="grid size-11 cursor-pointer place-items-center rounded-full hover:bg-ink/5"
       >
@@ -57,7 +99,24 @@ function Menu() {
           shadow="var(--color-ink)"
           className="absolute top-12 right-0 z-30 w-[17rem] p-2"
         >
-          {confirming ? (
+          {pending ? (
+            <div className="space-y-3 p-2">
+              <p className="font-display text-lg leading-snug font-bold">Replace your case with this backup?</p>
+              <p className="text-[0.9375rem] leading-snug text-muted">
+                {pending.caseFile.address.label.split(",")[0]}, unit {pending.caseFile.unit} · {pending.issues.length}{" "}
+                {pending.issues.length === 1 ? "issue" : "issues"} · saved {formatNY(pending.exportedAt, "date")}. What is on this device now will be
+                replaced.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <DoodleButton variant="danger" onClick={() => void restore(pending)}>
+                  Yes, replace it
+                </DoodleButton>
+                <DoodleButton variant="ghost" onClick={() => setPending(null)}>
+                  Keep my case
+                </DoodleButton>
+              </div>
+            </div>
+          ) : confirming ? (
             <div className="space-y-3 p-2">
               <p className="font-display text-lg leading-snug font-bold">Delete everything on this device?</p>
               <p className="text-[0.9375rem] leading-snug text-muted">Your address, every issue, photo and follow-up. This can&apos;t be undone.</p>
@@ -71,22 +130,49 @@ function Menu() {
               </div>
             </div>
           ) : (
-            <ul>
-              <li>
-                <Link href="/how-it-works" className="flex min-h-11 items-center gap-2.5 rounded px-3 font-display font-bold hover:bg-ink/5">
-                  <Doc size={20} /> How it works
-                </Link>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={() => setConfirming(true)}
-                  className="flex min-h-11 w-full cursor-pointer items-center gap-2.5 rounded px-3 text-left font-display font-bold text-red-ink hover:bg-red-tint/60"
-                >
-                  <Cross size={20} /> Delete my case
-                </button>
-              </li>
-            </ul>
+            <>
+              <ul>
+                <li>
+                  <Link href="/how-it-works" className="flex min-h-11 items-center gap-2.5 rounded px-3 font-display font-bold hover:bg-ink/5">
+                    <Doc size={20} /> How it works
+                  </Link>
+                </li>
+                <li>
+                  <button type="button" onClick={() => void backUp()} className={menuItem}>
+                    <Shield size={20} /> Back up my case
+                  </button>
+                </li>
+                <li>
+                  <label className={`${menuItem} has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-violet-ink`}>
+                    <Arrow direction="up" size={20} /> Restore from a backup
+                    <input
+                      type="file"
+                      accept="application/json,.json"
+                      className="sr-only"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        e.target.value = "";
+                        if (f) void pick(f);
+                      }}
+                    />
+                  </label>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={() => setConfirming(true)}
+                    className="flex min-h-11 w-full cursor-pointer items-center gap-2.5 rounded px-3 text-left font-display font-bold text-red-ink hover:bg-red-tint/60"
+                  >
+                    <Cross size={20} /> Delete my case
+                  </button>
+                </li>
+              </ul>
+              {message && (
+                <p role={message.error ? "alert" : "status"} className={`px-3 py-2 font-hand text-lg leading-snug ${message.error ? "text-red-ink" : "text-muted"}`}>
+                  {message.text}
+                </p>
+              )}
+            </>
           )}
         </SketchBox>
       )}

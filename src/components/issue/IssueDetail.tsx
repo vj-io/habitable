@@ -9,6 +9,7 @@ import {
   Camera,
   Check,
   Chip,
+  Clock,
   Cross,
   Doc,
   DoodleButton,
@@ -25,10 +26,12 @@ import { SiteHeader } from "@/components/site/SiteHeader";
 import { useNow } from "@/components/snap/Countdown";
 import { NotApplicableCard, RuleCard } from "@/components/snap/RuleCard";
 import { daysSince, formatNY } from "@/lib/countdown";
+import { downloadBlob } from "@/lib/download";
 import { EvidenceError, stripImage } from "@/lib/evidence";
+import { repairByFileName, repairByIcs } from "@/lib/ics";
 import { RULES } from "@/lib/rules";
 import { addFollowUp, deleteIssue, markFixed, useCaseData } from "@/lib/store";
-import type { Issue } from "@/lib/types";
+import type { CaseFile, Issue } from "@/lib/types";
 import { CLASS_TONE, IssueIcon, issueName, pct } from "./meta";
 
 const linkClass = "underline decoration-2 underline-offset-4 hover:decoration-wavy";
@@ -130,6 +133,22 @@ function Evidence({ issue }: { issue: Issue }) {
         <Check size={18} /> Location data removed from the stored copy
       </p>
     </DoodleCard>
+  );
+}
+
+/** Downloads a one-event .ics (all-day on the repair-by date, with a reminder the morning before). */
+function AddToCalendar({ caseFile, issue }: { caseFile: CaseFile; issue: Issue }) {
+  return (
+    <DoodleButton
+      variant="secondary"
+      icon={<Clock size={20} />}
+      onClick={() => {
+        const ics = repairByIcs(caseFile, issue, new Date());
+        if (ics) downloadBlob(new Blob([ics], { type: "text/calendar;charset=utf-8" }), repairByFileName(issue));
+      }}
+    >
+      Add to my calendar
+    </DoodleButton>
   );
 }
 
@@ -396,7 +415,14 @@ export function IssueDetail({ id }: { id: string }) {
 
         <div className="space-y-8">
           {o.status === "classified" && issue.repairBy ? (
-            <RuleCard outcome={o} facts={issue.facts} yearBuilt={caseFile?.yearBuilt ?? null} repairBy={issue.repairBy} fixedAt={issue.fixedAt} />
+            <RuleCard
+              outcome={o}
+              facts={issue.facts}
+              yearBuilt={caseFile?.yearBuilt ?? null}
+              repairBy={issue.repairBy}
+              fixedAt={issue.fixedAt}
+              action={caseFile && <AddToCalendar caseFile={caseFile} issue={issue} />}
+            />
           ) : o.status === "not_applicable" ? (
             <NotApplicableCard outcome={o} />
           ) : null}

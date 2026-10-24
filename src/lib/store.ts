@@ -153,6 +153,12 @@ export async function deleteHeatReading(id: string): Promise<void> {
   emit();
 }
 
+/** Restore from a backup: swaps in the case, its whole issue list and heat log at once (listeners fire once, after all writes). */
+export async function replaceCase(c: CaseFile, issues: Issue[], heatReadings: HeatReading[] = []): Promise<void> {
+  await Promise.all([write(CASE_KEY, c), write(ISSUES_KEY, issues), write(HEAT_KEY, heatReadings)]);
+  emit();
+}
+
 /** "Delete my case": removes the case, every issue and the heat log. */
 export async function clearAll(): Promise<void> {
   await Promise.all([remove(CASE_KEY), remove(ISSUES_KEY), remove(HEAT_KEY)]);
