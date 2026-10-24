@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useEffect } from "react";
 import Link from "next/link";
 import { Arrow, DoodleCard, Highlight, MonoLabel, Stamp, Tag } from "@/components/doodle";
 import { CLASS_TONE, IssueBadge } from "@/components/issue/meta";
@@ -22,7 +23,7 @@ function Entry({ issue, flash, now }: { issue: Issue; flash: boolean; now: Date 
       draw={false}
       className="transition-transform motion-safe:hover:-translate-y-0.5"
     >
-      <Link href={`/issue/${issue.id}`} className="flex gap-3.5 after:absolute after:inset-0 after:content-['']">
+      <Link href={`/issue/${encodeURIComponent(issue.id)}`} className="flex gap-3.5 after:absolute after:inset-0 after:content-['']">
         <Image
           src={issue.evidence.photo}
           alt=""
@@ -66,6 +67,15 @@ function Entry({ issue, flash, now }: { issue: Issue; flash: boolean; now: Date 
 
 export function Timeline({ issues, flashId }: { issues: Issue[]; flashId: string | null }) {
   const now = useNow();
+  // Offline: the service worker can't guess issue URLs, so while online fetch each issue page once and let it
+  // keep a copy; tapping an issue in a basement then opens it instead of bouncing to the case file.
+  useEffect(() => {
+    if (!navigator.onLine || !navigator.serviceWorker?.controller || !("caches" in window)) return;
+    for (const i of issues) {
+      const url = `/issue/${encodeURIComponent(i.id)}`;
+      void caches.match(url).then((hit) => hit ?? fetch(url).catch(() => undefined));
+    }
+  }, [issues]);
   if (issues.length === 0) {
     return (
       <div className="flex items-start gap-3 pt-1 pl-3">

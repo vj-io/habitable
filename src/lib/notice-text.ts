@@ -254,6 +254,16 @@ function dateTimeOf(iso: string, lang: NoticeLang): string {
     .replace(/(\d{4}),? (?:a las )?(?=\d)/, "$1 a las ");
 }
 
+const timeFormats = {
+  en: new Intl.DateTimeFormat("en-US", { timeZone: NY_TZ, hour: "numeric", minute: "2-digit" }),
+  es: new Intl.DateTimeFormat("es-US", { timeZone: NY_TZ, hour: "numeric", minute: "2-digit" }),
+};
+
+/** "6:51 AM" / "6:51 a.m." — New York time. */
+function timeOf(iso: string, lang: NoticeLang): string {
+  return timeFormats[lang].format(new Date(iso)).replace(/[\u202f\u00a0]/g, " ");
+}
+
 function labelOf(issue: ProposalIssue, lang: NoticeLang): string {
   if (lang === "es") return ISSUE_LABELS_ES[issue];
   return issue === "not_covered" ? "Other condition" : issueLabel(issue);
@@ -345,7 +355,11 @@ function heatSectionOf(readings: HeatReading[], lang: NoticeLang): NoticeHeatSec
   if (below.length === 0) return null;
   const { total, since } = heatSummary(readings);
   const shown = below.slice(-MAX_HEAT_ROWS);
-  const station = (r: HeatReading) => (r.outdoorSource === "nws" && r.outdoorStation ? ` (${r.outdoorStation})` : "");
+  // "(KNYC 6:51 AM)": which station and when it observed, since that can differ from the reading's own time.
+  const station = (r: HeatReading) =>
+    r.outdoorSource === "nws" && r.outdoorStation
+      ? ` (${r.outdoorStation}${r.outdoorObservedAt ? ` ${timeOf(r.outdoorObservedAt, lang)}` : ""})`
+      : "";
   return {
     title: s.title,
     summary: s.summary(below.length, total, dateOf(since ?? below[0].r.at, lang)),

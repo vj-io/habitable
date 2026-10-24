@@ -41,4 +41,10 @@ describe("nextStep", () => {
     expect(nextStep({ noticeMadeAt: "2026-10-10T00:00:00Z" }, [late], null).kind).toBe("waiting");
     expect(nextStep({}, [late], null)).toEqual({ kind: "notice", open: 1, overdue: 0 });
   });
+
+  it("counts a heat log with readings below the minimum as one open, already-late problem", () => {
+    expect(nextStep({}, [], NOW, 4)).toEqual({ kind: "notice", open: 1, overdue: 1 });
+    expect(nextStep({ noticeMadeAt: "2026-10-10T00:00:00Z" }, [], NOW, 4)).toEqual({ kind: "file", overdue: 1 });
+    expect(nextStep({}, [], NOW, 0)).toEqual({ kind: "photo" });
+  });
 });

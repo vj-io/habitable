@@ -46,13 +46,17 @@ async function fetchStation(station: OutdoorReading["station"], fetchImpl: typeo
   }
 }
 
+/** Central Park still wins when its reading is at most this much older than the freshest station's. */
+const PREFER_WITHIN_MS = 20 * 60_000;
+
 /**
- * The freshest usable reading in station order (KNYC, KLGA, KJFK). The three requests run in parallel so the
- * whole lookup stays within one 5 s timeout. Throws when no station has a usable reading.
+ * The freshest usable reading, preferring stations in order (KNYC, KLGA, KJFK) only while they are within 20
+ * minutes of the freshest — an 85-minute-old Central Park reading loses to a 9-minute-old LaGuardia one. The
+ * three requests run in parallel so the whole lookup stays within one 5 s timeout. Throws when none is usable.
  */
 export async function latestOutdoor(fetchImpl: typeof fetch = fetch, now: Date = new Date()): Promise<OutdoorReading> {
-  const results = await Promise.all(STATIONS.map((s) => fetchStation(s.id, fetchImpl, now)));
-  const first = results.find((r) => r !== null);
-  if (!first) throw new Error("No NWS station has a recent temperature.");
-  return first;
+  const results = (await Promise.all(STATIONS.map((s) => fetchStation(s.id, fetchImpl, now)))).filter((r) => r !== null);
+  if (results.length === 0) throw new Error("No NWS station has a recent temperature.");
+  const newest = Math.max(...results.map((r) => Date.parse(r.observedAt)));
+  return results.find((r) => newest - Date.parse(r.observedAt) <= PREFER_WITHIN_MS)!;
 }

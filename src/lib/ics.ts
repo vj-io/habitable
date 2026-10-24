@@ -67,7 +67,7 @@ export function repairByIcs(c: CaseFile, issue: Issue, now: Date): string | null
     "PRODID:-//Habitable//Case tools//EN",
     "CALSCALE:GREGORIAN",
     "BEGIN:VEVENT",
-    `UID:repair-by-${issue.id}@habitable.app`,
+    `UID:repair-by-${issue.id.replace(/[^A-Za-z0-9_-]/g, "")}@habitable.app`,
     `DTSTAMP:${utcStamp(now)}`,
     `DTSTART;VALUE=DATE:${dateValue(day)}`,
     `DTEND;VALUE=DATE:${dateValue(nextDay(day))}`,

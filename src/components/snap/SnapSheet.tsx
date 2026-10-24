@@ -24,7 +24,7 @@ import { formatNY, repairByDate } from "@/lib/countdown";
 import { DEMO_SAMPLES } from "@/lib/demo/samples";
 import { EvidenceError, readEvidence, shortHash, type EvidenceRead } from "@/lib/evidence";
 import { derivedFacts, evaluate, issueLabel } from "@/lib/rules";
-import { saveCase, saveIssue } from "@/lib/store";
+import { saveIssue, updateCase } from "@/lib/store";
 import type { CaseFile, ClassifyResponse, Facts, Issue, Proposal, ProposalIssue, ReceiptResponse } from "@/lib/types";
 import { IssuePicker, ProposalCard } from "./ProposalCard";
 import { NotApplicableCard, RuleCard, windowPhrase } from "./RuleCard";
@@ -243,7 +243,7 @@ export function SnapSheet({ open, onClose, caseFile, building, onSaved }: Props)
 
   function answerFact(factId: string, value: string) {
     setAnswers((a) => ({ ...a, [factId]: value }));
-    if (factId === "childUnder6") void saveCase({ ...caseFile, childUnder6: value === "yes" });
+    if (factId === "childUnder6") void updateCase({ childUnder6: value === "yes" });
   }
 
   // ---- the rules: pure code over the chosen issue and the facts ----

@@ -34,8 +34,10 @@ const httpsUrl = z.string().max(2048).regex(/^https:\/\//);
 // Shown as <img src>, so only an inline image; never a remote URL that would phone home when it renders.
 const photo = z.string().max(8_000_000).regex(/^data:image\/(?:jpeg|png|webp);base64,[A-Za-z0-9+/]*={0,2}$/);
 const dim = z.number().int().min(1).max(20_000);
+// Ids end up in URLs (/issue/<id>) and calendar UIDs, so only the characters the app itself generates.
+const id = z.string().regex(/^[A-Za-z0-9_-]{1,100}$/);
 
-const caseFileSchema: z.ZodType<CaseFile> = z.object({
+const caseFileObject = z.object({
   version: z.literal(1),
   address: z.object({
     label: s(300),
@@ -57,6 +59,7 @@ const caseFileSchema: z.ZodType<CaseFile> = z.object({
   landlordCc: s(500).optional(),
   noticeMadeAt: iso.optional(),
 });
+const caseFileSchema: z.ZodType<CaseFile> = caseFileObject;
 
 const outcomeSchema = z.discriminatedUnion("status", [
   z.object({
@@ -82,8 +85,8 @@ const outcomeSchema = z.discriminatedUnion("status", [
   }),
 ]);
 
-const issueSchema: z.ZodType<Issue> = z.object({
-  id: s(100).min(1),
+const issueObject = z.object({
+  id,
   createdAt: iso,
   note: s(),
   evidence: z.object({
@@ -108,15 +111,16 @@ const issueSchema: z.ZodType<Issue> = z.object({
   facts: z.record(s(100), s(100)),
   outcome: outcomeSchema,
   repairBy: iso.nullable(),
-  followUps: z.array(z.object({ id: s(100).min(1), at: iso, note: s(), photo: photo.optional() })),
+  followUps: z.array(z.object({ id, at: iso, note: s(), photo: photo.optional() })),
   fixedAt: iso.nullable(),
   demoSampleId: s(100).optional(),
 });
+const issueSchema: z.ZodType<Issue> = issueObject;
 
 const tempF = z.number().min(-100).max(250);
 
-const heatReadingSchema: z.ZodType<HeatReading> = z.object({
-  id: s(100).min(1),
+const heatReadingObject = z.object({
+  id,
   at: iso,
   kind: z.enum(["heat", "hot_water"]),
   indoorF: tempF,
@@ -131,6 +135,21 @@ const heatReadingSchema: z.ZodType<HeatReading> = z.object({
   demo: z.boolean().optional(),
   createdAt: iso,
 });
+const heatReadingSchema: z.ZodType<HeatReading> = heatReadingObject;
+
+// z.ZodType<T> still accepts a schema that leaves out one of T's optional fields (restore would then drop it
+// silently), so the key sets are compared too: a field added to types.ts and not here fails the build.
+type SameKeys<A, B> = [keyof A] extends [keyof B] ? ([keyof B] extends [keyof A] ? true : false) : false;
+type Shape<T extends z.ZodType> = z.infer<T>;
+const keysMatch: [
+  SameKeys<Shape<typeof caseFileObject>, CaseFile>,
+  SameKeys<Shape<typeof caseFileObject>["address"], CaseFile["address"]>,
+  SameKeys<Shape<typeof issueObject>, Issue>,
+  SameKeys<Shape<typeof issueObject>["evidence"], Issue["evidence"]>,
+  SameKeys<Shape<typeof issueObject>["proposal"], Issue["proposal"]>,
+  SameKeys<Shape<typeof heatReadingObject>, HeatReading>,
+] = [true, true, true, true, true, true];
+void keysMatch;
 
 const uniqueIds = (items: { id: string }[] = []) => new Set(items.map((i) => i.id)).size === items.length;
 

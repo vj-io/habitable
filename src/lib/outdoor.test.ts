@@ -66,6 +66,13 @@ describe("latestOutdoor: station fallback", () => {
     expect(empty.station).toBe("KLGA");
   });
 
+  it("prefers Central Park only while it is within 20 minutes of the freshest station", async () => {
+    const old = await latestOutdoor(fakeFetch({ KNYC: obs(11.7, minutesAgo(85)), KLGA: obs(13, minutesAgo(9)) }), NOW);
+    expect(old.station).toBe("KLGA");
+    const close = await latestOutdoor(fakeFetch({ KNYC: obs(11.7, minutesAgo(25)), KLGA: obs(13, minutesAgo(9)) }), NOW);
+    expect(close.station).toBe("KNYC");
+  });
+
   it("falls back to JFK when the others error out", async () => {
     const r = await latestOutdoor(fakeFetch({ KNYC: new Error("timeout"), KJFK: obs(2, minutesAgo(30)) }), NOW);
     expect(r).toMatchObject({ station: "KJFK", tempF: 35.6 });
@@ -88,13 +95,13 @@ describe("GET /api/outdoor", () => {
     vi.useRealTimers();
   });
 
-  it("answers 200 with the reading and a ~10 minute CDN cache", async () => {
+  it("answers 200 with the reading and a ~5 minute CDN cache", async () => {
     vi.useFakeTimers({ now: NOW, toFake: ["Date"] });
     vi.stubGlobal("fetch", fakeFetch({ KNYC: obs(14.4, minutesAgo(9)) }));
     const { GET } = await import("@/app/api/outdoor/route");
     const res = await GET();
     expect(res.status).toBe(200);
-    expect(res.headers.get("Cache-Control")).toBe("public, s-maxage=600");
+    expect(res.headers.get("Cache-Control")).toBe("public, s-maxage=300");
     expect(await res.json()).toEqual({ tempF: 57.9, observedAt: minutesAgo(9), station: "KNYC", source: observationUrl("KNYC") });
   });
 

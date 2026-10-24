@@ -1,6 +1,6 @@
 // Browser only. The renter's case lives in IndexedDB (idb-keyval); falls back to memory when IndexedDB is unavailable.
 import { useCallback, useEffect, useState } from "react";
-import { del, get, set, update } from "idb-keyval";
+import { del, delMany, get, set, setMany, update } from "idb-keyval";
 import type { CaseFile, FollowUp, HeatReading, Issue } from "./types";
 
 const CASE_KEY = "habitable:case";
@@ -47,12 +47,6 @@ async function write(key: string, value: unknown): Promise<void> {
   else mem.set(key, structuredClone(value));
 }
 
-async function remove(key: string): Promise<void> {
-  await storageAvailable();
-  if (persistent) await del(key);
-  else mem.delete(key);
-}
-
 /** Atomic read-modify-write of a stored list (one IndexedDB transaction), so concurrent writes can't drop each other. */
 async function mutateList<T>(key: string, fn: (items: T[]) => T[]): Promise<void> {
   await storageAvailable();
@@ -87,10 +81,12 @@ export async function saveCase(c: CaseFile): Promise<void> {
   emit();
 }
 
-/** Merges `patch` into the saved case (re-read just now, so a stale copy in a component can't undo a newer write). No case: no-op. */
+/** Merges `patch` into the saved case in one transaction, so a stale copy in a component can't undo a newer write. No case: no-op. */
 export async function updateCase(patch: Partial<CaseFile>): Promise<void> {
-  const c = await getCase();
-  if (c) await saveCase({ ...c, ...patch });
+  await storageAvailable();
+  if (persistent) await update<CaseFile | undefined>(CASE_KEY, (c) => (c ? { ...c, ...patch } : c));
+  else if (mem.has(CASE_KEY)) mem.set(CASE_KEY, structuredClone({ ...(mem.get(CASE_KEY) as CaseFile), ...patch }));
+  emit();
 }
 
 /** Newest first. */
@@ -159,15 +155,21 @@ export async function deleteHeatReading(id: string): Promise<void> {
   emit();
 }
 
-/** Restore from a backup: swaps in the case, its whole issue list and heat log at once (listeners fire once, after all writes). */
+/** Restore from a backup: swaps in the case, its whole issue list and heat log in one transaction — all or nothing. */
 export async function replaceCase(c: CaseFile, issues: Issue[], heatReadings: HeatReading[] = []): Promise<void> {
-  await Promise.all([write(CASE_KEY, c), write(ISSUES_KEY, issues), write(HEAT_KEY, heatReadings)]);
+  await storageAvailable();
+  const entries: [string, unknown][] = [[CASE_KEY, c], [ISSUES_KEY, issues], [HEAT_KEY, heatReadings]];
+  if (persistent) await setMany(entries);
+  else for (const [k, v] of entries) mem.set(k, structuredClone(v));
   emit();
 }
 
-/** "Delete my case": removes the case, every issue and the heat log. */
+/** "Delete my case": removes the case, every issue and the heat log in one transaction. */
 export async function clearAll(): Promise<void> {
-  await Promise.all([remove(CASE_KEY), remove(ISSUES_KEY), remove(HEAT_KEY)]);
+  await storageAvailable();
+  const keys = [CASE_KEY, ISSUES_KEY, HEAT_KEY];
+  if (persistent) await delMany(keys);
+  else keys.forEach((k) => mem.delete(k));
   emit();
 }
 

@@ -7,7 +7,7 @@ const PAGES = `habitable-pages-${VERSION}`;
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
-  event.waitUntil(caches.open(PAGES).then((cache) => cache.addAll(["/", "/heat", "/next-steps", "/how-it-works"])).catch(() => {}));
+  event.waitUntil(caches.open(PAGES).then((cache) => cache.addAll(["/", "/notice", "/heat", "/next-steps", "/how-it-works"])).catch(() => {}));
 });
 
 self.addEventListener("activate", (event) => {

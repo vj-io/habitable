@@ -294,7 +294,7 @@ describe("heat and hot water log section", () => {
     expect(h?.summary).toBe("3 of 5 readings I logged since Jan 3, 2026 were below the legal minimum:");
     expect(h?.columns).toEqual({ when: "Date and time", what: "What", measured: "Measured", outdoor: "Outside", required: "Minimum", code: "Code" });
     expect(h?.rows).toEqual([
-      { id: "h1", when: "Jan 3, 2026, 7:15 AM", what: "Heat", measured: "61°F", outdoor: "28°F (KNYC)", required: "68°F", code: "§27-2029(a)" },
+      { id: "h1", when: "Jan 3, 2026, 7:15 AM", what: "Heat", measured: "61°F", outdoor: "28°F (KNYC 7:15 AM)", required: "68°F", code: "§27-2029(a)" },
       { id: "h2", when: "Jan 3, 2026, 11:30 PM", what: "Heat", measured: "58°F", outdoor: "24°F", required: "62°F", code: "§27-2029(a)" },
       { id: "h4", when: "Jan 5, 2026, 6:45 AM", what: "Hot water", measured: "104°F", outdoor: "—", required: "120°F", code: "§27-2031" },
     ]);
@@ -310,7 +310,7 @@ describe("heat and hot water log section", () => {
     expect(es.summary).toBe("3 de 5 lecturas que registré desde el 3 de enero de 2026 estuvieron por debajo del mínimo legal:");
     expect(es.columns).toEqual({ when: "Fecha y hora", what: "Qué", measured: "Medido", outdoor: "Afuera", required: "Mínimo", code: "Código" });
     expect(es.rows.map((r) => r.id)).toEqual(en.rows.map((r) => r.id));
-    expect(es.rows[0]).toEqual({ ...en.rows[0], when: "3 de enero de 2026 a las 7:15 a.m.", what: "Calefacción" });
+    expect(es.rows[0]).toEqual({ ...en.rows[0], when: "3 de enero de 2026 a las 7:15 a.m.", what: "Calefacción", outdoor: "28°F (KNYC 7:15 a.m.)" });
     expect(es.rows[2].what).toBe("Agua caliente");
     expect(es.rules).toContain("Agua caliente, Código Administrativo de NYC §27-2031: todo el año, al menos 120°F en el grifo.");
     expect(es.rules).toContain("Ley Local 86 de 2017");

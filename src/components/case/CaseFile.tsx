@@ -10,7 +10,7 @@ import { backupFileName, exportCase, readBackupFile, restoreCase, type Backup } 
 import { formatNY } from "@/lib/countdown";
 import { downloadBlob } from "@/lib/download";
 import { clearAll } from "@/lib/store";
-import { ISSUE_IDS, type CaseFile as CaseFileT, type Issue, type IssueId } from "@/lib/types";
+import { ISSUE_IDS, type CaseFile as CaseFileT, type HeatReading, type Issue, type IssueId } from "@/lib/types";
 import { BuildingPanel } from "./BuildingPanel";
 import { NextStepsCard } from "./NextStepsCard";
 import { Timeline } from "./Timeline";
@@ -187,7 +187,17 @@ function Menu() {
   );
 }
 
-export function CaseFile({ caseFile, issues, persistent }: { caseFile: CaseFileT; issues: Issue[]; persistent: boolean }) {
+export function CaseFile({
+  caseFile,
+  issues,
+  heatReadings,
+  persistent,
+}: {
+  caseFile: CaseFileT;
+  issues: Issue[];
+  heatReadings: HeatReading[];
+  persistent: boolean;
+}) {
   const building = useBuilding(caseFile.address, caseFile.demo);
   const [snapOpen, setSnapOpen] = useState(false);
   const [snapKey, setSnapKey] = useState(0);
@@ -249,7 +259,7 @@ export function CaseFile({ caseFile, issues, persistent }: { caseFile: CaseFileT
             {/* Heat and hot water log entry point (self-contained: reads the log itself). */}
             <HeatLogCard />
 
-            <NextStepsCard caseFile={caseFile} issues={issues} />
+            <NextStepsCard caseFile={caseFile} issues={issues} heatReadings={heatReadings} />
           </div>
 
           <aside className="lg:self-start">

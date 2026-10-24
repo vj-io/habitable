@@ -12,12 +12,18 @@ export type NextStep =
   /** Notice made and at least one repair-by date has passed: time for 311 and, after that, the court. */
   | { kind: "file"; overdue: number };
 
-export function nextStep(c: Pick<CaseFile, "noticeMadeAt">, issues: Issue[], now: Date | null): NextStep {
-  if (issues.length === 0) return { kind: "photo" };
-  const open = issues.filter((i) => !i.fixedAt);
-  if (open.length === 0) return { kind: "fixed" };
+/**
+ * `heatBelow` = heat-log readings below the legal minimum. A heat log with any counts as one open problem, and as
+ * one that is already late: HPD gives heat and hot water "no time" to correct.
+ */
+export function nextStep(c: Pick<CaseFile, "noticeMadeAt">, issues: Issue[], now: Date | null, heatBelow = 0): NextStep {
+  const heat = heatBelow > 0 ? 1 : 0;
+  if (issues.length === 0 && !heat) return { kind: "photo" };
+  const open = issues.filter((i) => !i.fixedAt).length + heat;
+  if (open === 0) return { kind: "fixed" };
   // Before the first clock tick (server render, hydration) nothing counts as late.
-  const overdue = now ? open.filter((i) => i.repairBy && new Date(i.repairBy).getTime() < now.getTime()).length : 0;
-  if (!c.noticeMadeAt) return { kind: "notice", open: open.length, overdue };
-  return overdue > 0 ? { kind: "file", overdue } : { kind: "waiting", open: open.length, noticeMadeAt: c.noticeMadeAt };
+  const late = now ? issues.filter((i) => !i.fixedAt && i.repairBy && new Date(i.repairBy).getTime() < now.getTime()).length : 0;
+  const overdue = late + heat;
+  if (!c.noticeMadeAt) return { kind: "notice", open, overdue };
+  return overdue > 0 ? { kind: "file", overdue } : { kind: "waiting", open, noticeMadeAt: c.noticeMadeAt };
 }

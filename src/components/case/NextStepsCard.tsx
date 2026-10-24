@@ -4,14 +4,15 @@ import Link from "next/link";
 import { Doc, DoodleButton, DoodleCard, MonoLabel } from "@/components/doodle";
 import { useNow } from "@/components/snap/Countdown";
 import { formatNY } from "@/lib/countdown";
+import { heatSummary } from "@/lib/heat";
 import { nextStep } from "@/lib/next-step";
-import type { CaseFile, Issue } from "@/lib/types";
+import type { CaseFile, HeatReading, Issue } from "@/lib/types";
 
 const linkClass = "underline decoration-2 underline-offset-4 hover:decoration-wavy inline-flex min-h-11 items-center font-bold";
 
 /** "What you can do next": one short suggestion that follows the renter's place on the ladder. Details live on /next-steps. */
-export function NextStepsCard({ caseFile, issues }: { caseFile: CaseFile; issues: Issue[] }) {
-  const step = nextStep(caseFile, issues, useNow());
+export function NextStepsCard({ caseFile, issues, heatReadings }: { caseFile: CaseFile; issues: Issue[]; heatReadings: HeatReading[] }) {
+  const step = nextStep(caseFile, issues, useNow(), heatSummary(heatReadings).below);
   const tone = step.kind === "notice" || step.kind === "file" ? "marker" : "paper";
   return (
     <DoodleCard as="section" tone={tone} seed={19} padding="1.25rem" appear={false} aria-labelledby="next-title" className="space-y-3">

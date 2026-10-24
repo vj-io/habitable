@@ -153,6 +153,14 @@ describe("parseBackup", () => {
     expect(errorOf(backup({ issues: [issue("same"), issue("same")] }))).toMatch(/damaged/);
   });
 
+  it("rejects ids that could break a link or inject calendar lines", () => {
+    for (const bad of ["x@evil\r\nATTENDEE:mailto:a@example.com", "a/b", "", "x".repeat(101)]) {
+      expect(parse(backup({ issues: [issue(bad)] })).ok).toBe(false);
+      expect(parse(backup({ heatReadings: [heatReading(bad)] })).ok).toBe(false);
+    }
+    expect(parse(backup({ issues: [issue(crypto.randomUUID())], heatReadings: [heatReading("demo-heat-1")] })).ok).toBe(true);
+  });
+
   it("accepts a heat log, and a backup made before the heat log existed", () => {
     const r = parse(backup({ heatReadings: [heatReading(), heatReading("h2", { kind: "hot_water", indoorF: 104, outdoorF: null, outdoorSource: null })] }));
     expect(r.ok).toBe(true);

@@ -19,6 +19,10 @@ test("the case opens with no connection once the app has been loaded", async ({ 
   await page.reload();
   await expect(page.getByRole("button", { name: "Snap a problem" })).toBeVisible();
   await expect(page.getByRole("status").filter({ hasText: "Offline" })).toBeVisible();
+  // a page precached at install opens offline too, without bouncing back to the case file
+  await page.goto("/next-steps");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Next steps");
+  await page.goto("/");
   await context.setOffline(false);
   await expect(page.getByRole("status").filter({ hasText: "Offline" })).toHaveCount(0);
 });

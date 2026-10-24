@@ -8,7 +8,7 @@ import { Welcome } from "./Welcome";
 
 /** "/" — the welcome until a case exists, then the case file. Data lives in this browser only. */
 export function Home() {
-  const { caseFile, issues, ready, persistent } = useCaseData();
+  const { caseFile, issues, heatReadings, ready, persistent } = useCaseData();
   if (!ready) {
     return (
       <>
@@ -19,5 +19,5 @@ export function Home() {
       </>
     );
   }
-  return caseFile ? <CaseFile caseFile={caseFile} issues={issues} persistent={persistent} /> : <Welcome />;
+  return caseFile ? <CaseFile caseFile={caseFile} issues={issues} heatReadings={heatReadings} persistent={persistent} /> : <Welcome />;
 }
