@@ -18,8 +18,8 @@ const partsFormat = new Intl.DateTimeFormat("en-US", {
   second: "numeric",
 });
 
-/** New York wall-clock fields of an instant. */
-function nyParts(ms: number) {
+/** New York wall-clock fields of an instant (hour 0-23). */
+export function nyParts(ms: number) {
   const p: Record<string, number> = {};
   for (const { type, value } of partsFormat.formatToParts(ms)) {
     if (type !== "literal") p[type] = Number(value);

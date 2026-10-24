@@ -141,6 +141,41 @@ export interface Issue {
   demoSampleId?: string;
 }
 
+export type HeatKind = "heat" | "hot_water";
+
+/** One dated reading in the heat and hot water log. Raw facts only: the legal check (lib/heat.ts) runs at display time. */
+export interface HeatReading {
+  id: string;
+  /** When the reading was taken, ISO. */
+  at: string;
+  kind: HeatKind;
+  /** Indoor air temperature (heat) or water temperature at the tap (hot water), °F. */
+  indoorF: number;
+  outdoorF: number | null;
+  outdoorSource: "nws" | "typed" | null;
+  /** NWS station id and observation time, kept with the reading: NWS keeps only 7 days of history. */
+  outdoorStation?: string;
+  outdoorObservedAt?: string;
+  note?: string;
+  /** 311 service request number, if the renter filed a complaint. */
+  complaint311?: string;
+  witness?: string;
+  /** Thermometer photo: metadata-free JPEG data URL. */
+  photo?: string;
+  /** A sample reading added in demo mode. */
+  demo?: boolean;
+  createdAt: string; // ISO
+}
+
+/** Response of GET /api/outdoor (200). */
+export interface OutdoorReading {
+  tempF: number;
+  observedAt: string; // ISO
+  station: "KNYC" | "KLGA" | "KJFK";
+  /** The NWS observation URL the value came from. */
+  source: string;
+}
+
 /** Response of POST /api/classify. */
 export type ClassifyResponse =
   | {

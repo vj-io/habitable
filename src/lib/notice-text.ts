@@ -2,8 +2,9 @@
 // Both the on-screen preview and the PDF render exactly this, so what you see is what gets sent.
 import { NY_TZ, daysSince, formatNY } from "./countdown";
 import { shortHash } from "./evidence";
+import { checkHeatReading, formatF, heatSummary } from "./heat";
 import { RULES, issueLabel } from "./rules";
-import type { CaseFile, HazardClass, Issue, ProposalIssue } from "./types";
+import type { CaseFile, HazardClass, HeatKind, HeatReading, Issue, ProposalIssue } from "./types";
 
 export type NoticeLang = "en" | "es";
 
@@ -58,6 +59,35 @@ export interface NoticeLabels {
   verifyReceipt: string;
 }
 
+/** One heat log reading below the legal minimum, ready to print. */
+export interface NoticeHeatRow {
+  id: string;
+  /** Date and time, New York. */
+  when: string;
+  /** "Heat" / "Hot water". */
+  what: string;
+  measured: string;
+  /** "28°F (KNYC)" for a weather-station reading, "28°F" typed, "—" when none. */
+  outdoor: string;
+  required: string;
+  /** Short section, e.g. "§27-2029(a)". */
+  code: string;
+}
+
+/** "Heat and hot water log" section: readings below the minimum. Present only when there is at least one. */
+export interface NoticeHeatSection {
+  title: string;
+  /** "4 of 5 readings I logged since Jan 3, 2026 were below the legal minimum:" */
+  summary: string;
+  columns: { when: string; what: string; measured: string; outdoor: string; required: string; code: string };
+  /** Oldest first; the most recent MAX_HEAT_ROWS when there are more. */
+  rows: NoticeHeatRow[];
+  /** "3 earlier readings below the minimum are in my log." when rows were left out. */
+  more: string | null;
+  /** The rules the rows were checked against, with full citations. */
+  rules: string;
+}
+
 export interface NoticeText {
   lang: NoticeLang;
   title: string;
@@ -67,6 +97,7 @@ export interface NoticeText {
   re: string;
   intro: string;
   items: NoticeItem[];
+  heat: NoticeHeatSection | null;
   closing: string;
   signature: string;
   /** Disclaimer, then the receipt-verification line. */
@@ -99,6 +130,16 @@ const STRINGS = {
     receipt: "receipt",
     followUp: (n: number, date: string, note: string) =>
       `Followed up ${n} ${n === 1 ? "time" : "times"}; most recent ${date}${note ? ` — ${note}` : ""}.`,
+    heat: {
+      title: "Heat and hot water log",
+      summary: (below: number, total: number, since: string) =>
+        `${below} of ${total} ${total === 1 ? "reading" : "readings"} I logged since ${since} ${below === 1 ? "was" : "were"} below the legal minimum:`,
+      columns: { when: "Date and time", what: "What", measured: "Measured", outdoor: "Outside", required: "Minimum", code: "Code" },
+      kinds: { heat: "Heat", hot_water: "Hot water" } satisfies Record<HeatKind, string>,
+      more: (n: number) => `${n} earlier ${n === 1 ? "reading" : "readings"} below the minimum ${n === 1 ? "is" : "are"} in my log.`,
+      rules:
+        "Heat, NYC Admin. Code §27-2029(a) (as amended by Local Law 86 of 2017): October 1 to May 31, at least 68°F from 6 AM to 10 PM when it is below 55°F outside, and at least 62°F from 10 PM to 6 AM. Hot water, NYC Admin. Code §27-2031: year-round, at least 120°F at the tap. Outside temperatures marked KNYC, KLGA or KJFK are National Weather Service readings (Central Park, LaGuardia, JFK).",
+    },
     labels: {
       to: "To",
       from: "From",
@@ -134,6 +175,16 @@ const STRINGS = {
     receipt: "recibo",
     followUp: (n: number, date: string, note: string) =>
       `Di seguimiento ${n} ${n === 1 ? "vez" : "veces"}; el más reciente fue el ${date}${note ? ` — ${note}` : ""}.`,
+    heat: {
+      title: "Registro de calefacción y agua caliente",
+      summary: (below: number, total: number, since: string) =>
+        `${below} de ${total} ${total === 1 ? "lectura" : "lecturas"} que registré desde el ${since} ${below === 1 ? "estuvo" : "estuvieron"} por debajo del mínimo legal:`,
+      columns: { when: "Fecha y hora", what: "Qué", measured: "Medido", outdoor: "Afuera", required: "Mínimo", code: "Código" },
+      kinds: { heat: "Calefacción", hot_water: "Agua caliente" } satisfies Record<HeatKind, string>,
+      more: (n: number) => `${n === 1 ? "Hay 1 lectura anterior" : `Hay ${n} lecturas anteriores`} por debajo del mínimo en mi registro.`,
+      rules:
+        "Calefacción, Código Administrativo de NYC §27-2029(a) (enmendado por la Ley Local 86 de 2017): del 1 de octubre al 31 de mayo, al menos 68°F de 6 a.m. a 10 p.m. cuando afuera hace menos de 55°F, y al menos 62°F de 10 p.m. a 6 a.m. Agua caliente, Código Administrativo de NYC §27-2031: todo el año, al menos 120°F en el grifo. Las temperaturas exteriores marcadas KNYC, KLGA o KJFK son lecturas del Servicio Meteorológico Nacional (Central Park, LaGuardia, JFK).",
+    },
     labels: {
       to: "Para",
       from: "De",
@@ -271,6 +322,37 @@ function itemOf(issue: Issue, n: number, lang: NoticeLang, now: Date, origin: st
   };
 }
 
+/** Most rows the heat section prints, so the log adds at most about one page to the PDF. */
+export const MAX_HEAT_ROWS = 20;
+
+function heatSectionOf(readings: HeatReading[], lang: NoticeLang): NoticeHeatSection | null {
+  const s = STRINGS[lang].heat;
+  const below = readings
+    .map((r) => ({ r, check: checkHeatReading(r) }))
+    .filter(({ check }) => check.status === "below_minimum")
+    .sort((a, b) => a.r.at.localeCompare(b.r.at));
+  if (below.length === 0) return null;
+  const { total, since } = heatSummary(readings);
+  const shown = below.slice(-MAX_HEAT_ROWS);
+  const station = (r: HeatReading) => (r.outdoorSource === "nws" && r.outdoorStation ? ` (${r.outdoorStation})` : "");
+  return {
+    title: s.title,
+    summary: s.summary(below.length, total, dateOf(since ?? below[0].r.at, lang)),
+    columns: s.columns,
+    rows: shown.map(({ r, check }) => ({
+      id: r.id,
+      when: dateTimeOf(r.at, lang),
+      what: s.kinds[r.kind],
+      measured: formatF(r.indoorF),
+      outdoor: r.kind === "hot_water" || r.outdoorF === null ? "—" : `${formatF(r.outdoorF)}${station(r)}`,
+      required: check.requiredF === null ? "—" : formatF(check.requiredF),
+      code: check.rule === "hot_water" ? "§27-2031" : "§27-2029(a)",
+    })),
+    more: below.length > shown.length ? s.more(below.length - shown.length) : null,
+    rules: s.rules,
+  };
+}
+
 /** Open issues that say something: a class from the rules table, or at least the renter's own note. */
 function listable(i: Issue): boolean {
   return !i.fixedAt && (i.outcome.status === "classified" || i.note.trim() !== "");
@@ -282,7 +364,14 @@ function byUrgency(a: Issue, b: Issue): number {
   return rank(a) - rank(b) || a.createdAt.localeCompare(b.createdAt);
 }
 
-export function noticeText(c: CaseFile, issues: Issue[], lang: NoticeLang, now: Date, origin: string): NoticeText {
+export function noticeText(
+  c: CaseFile,
+  issues: Issue[],
+  lang: NoticeLang,
+  now: Date,
+  origin: string,
+  heatReadings: HeatReading[] = [],
+): NoticeText {
   const s = STRINGS[lang];
   const today = dateOf(now.toISOString(), lang);
   const tenant = c.tenantName?.trim();
@@ -299,6 +388,7 @@ export function noticeText(c: CaseFile, issues: Issue[], lang: NoticeLang, now: 
       .filter(listable)
       .sort(byUrgency)
       .map((issue, i) => itemOf(issue, i + 1, lang, now, base)),
+    heat: heatSectionOf(heatReadings, lang),
     closing: s.closing,
     signature: tenant || s.fromDefault,
     footer: [s.disclaimer(today), s.verify(base)],
@@ -316,13 +406,18 @@ export function complaintUrl(issue: Issue): string {
 
 const MAX_311 = 600;
 
-/** Plain-English text to paste into a 311 complaint, 600 characters at most. */
-export function complaint311Text(c: CaseFile, issue: Issue, now: Date): string {
+/** Plain-English text to paste into a 311 complaint, 600 characters at most. A heat issue mentions the heat log's count. */
+export function complaint311Text(c: CaseFile, issue: Issue, now: Date, heatReadings: HeatReading[] = []): string {
   const head =
     `Condition: ${labelOf(issue.issue, "en")}. ` +
     `Location: ${c.address.label}, Apt ${c.unit}. ` +
     `First documented ${dateOf(issue.createdAt, "en")}; still present as of ${dateOf(now.toISOString(), "en")}. `;
-  const build = (note: string) => `${head}${note ? `Tenant's note: "${note}". ` : ""}Dated photos available.`;
+  const heat = issue.issue === "heat_hot_water" ? heatSummary(heatReadings) : null;
+  const heatLine =
+    heat && heat.below > 0 && heat.since
+      ? `Heat log: ${heat.below} of ${heat.total} ${heat.total === 1 ? "reading" : "readings"} below the legal minimum since ${dateOf(heat.since, "en")}. `
+      : "";
+  const build = (note: string) => `${head}${note ? `Tenant's note: "${note}". ` : ""}${heatLine}Dated photos available.`;
   let note = issue.note.trim().replace(/\s+/g, " ");
   let text = build(note);
   // The note is the only unbounded part: trim it until the whole text fits.

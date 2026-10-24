@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { complaint311Text, complaintUrl, noticeFileName, noticeText } from "./notice-text";
+import { MAX_HEAT_ROWS, complaint311Text, complaintUrl, noticeFileName, noticeText } from "./notice-text";
 import { repairByDate } from "./countdown";
 import { evaluate } from "./rules";
-import type { CaseFile, Facts, Issue, ProposalIssue } from "./types";
+import type { CaseFile, Facts, HeatReading, Issue, ProposalIssue } from "./types";
 
 const NOW = new Date("2026-10-24T14:00:00Z"); // Oct 24 2026, 10:00 AM in New York
 const ORIGIN = "https://habitable.example";
@@ -221,6 +221,109 @@ describe("complaint311Text", () => {
     expect(s.length).toBeLessThanOrEqual(600);
     expect(s.endsWith("Dated photos available.")).toBe(true);
     expect(s).toContain("…");
+  });
+});
+
+// January is EST (UTC-5). Three of the five readings are below the minimum; the last one needs an outdoor temp.
+const reading = (id: string, at: string, kind: HeatReading["kind"], indoorF: number, outdoorF: number | null, nws = false): HeatReading => ({
+  id,
+  at,
+  kind,
+  indoorF,
+  outdoorF,
+  outdoorSource: outdoorF === null ? null : nws ? "nws" : "typed",
+  ...(nws ? { outdoorStation: "KNYC", outdoorObservedAt: at } : {}),
+  createdAt: at,
+});
+const HEAT_LOG = [
+  reading("h3", "2026-01-04T19:00:00Z", "heat", 70, 35), // 2 PM, meets 68
+  reading("h1", "2026-01-03T12:15:00Z", "heat", 61, 28, true), // 7:15 AM, below 68
+  reading("h4", "2026-01-05T11:45:00Z", "hot_water", 104, null), // below 120
+  reading("h2", "2026-01-04T04:30:00Z", "heat", 58, 24), // 11:30 PM Jan 3, below 62 (night)
+  reading("h5", "2026-01-06T01:00:00Z", "heat", 64, null), // 8 PM, needs the outdoor temp: not counted
+];
+
+describe("heat and hot water log section", () => {
+  it("lists readings below the minimum, oldest first, with date/time, indoor, outdoor, minimum and code (en)", () => {
+    const h = noticeText(CASE, [leak], "en", NOW, ORIGIN, HEAT_LOG).heat;
+    expect(h?.title).toBe("Heat and hot water log");
+    expect(h?.summary).toBe("3 of 5 readings I logged since Jan 3, 2026 were below the legal minimum:");
+    expect(h?.columns).toEqual({ when: "Date and time", what: "What", measured: "Measured", outdoor: "Outside", required: "Minimum", code: "Code" });
+    expect(h?.rows).toEqual([
+      { id: "h1", when: "Jan 3, 2026, 7:15 AM", what: "Heat", measured: "61°F", outdoor: "28°F (KNYC)", required: "68°F", code: "§27-2029(a)" },
+      { id: "h2", when: "Jan 3, 2026, 11:30 PM", what: "Heat", measured: "58°F", outdoor: "24°F", required: "62°F", code: "§27-2029(a)" },
+      { id: "h4", when: "Jan 5, 2026, 6:45 AM", what: "Hot water", measured: "104°F", outdoor: "—", required: "120°F", code: "§27-2031" },
+    ]);
+    expect(h?.more).toBeNull();
+    expect(h?.rules).toContain("NYC Admin. Code §27-2029(a) (as amended by Local Law 86 of 2017)");
+    expect(h?.rules).toContain("Hot water, NYC Admin. Code §27-2031: year-round, at least 120°F at the tap.");
+  });
+
+  it("keeps Spanish in step with English", () => {
+    const en = noticeText(CASE, [leak], "en", NOW, ORIGIN, HEAT_LOG).heat!;
+    const es = noticeText(CASE, [leak], "es", NOW, ORIGIN, HEAT_LOG).heat!;
+    expect(es.title).toBe("Registro de calefacción y agua caliente");
+    expect(es.summary).toBe("3 de 5 lecturas que registré desde el 3 de enero de 2026 estuvieron por debajo del mínimo legal:");
+    expect(es.columns).toEqual({ when: "Fecha y hora", what: "Qué", measured: "Medido", outdoor: "Afuera", required: "Mínimo", code: "Código" });
+    expect(es.rows.map((r) => r.id)).toEqual(en.rows.map((r) => r.id));
+    expect(es.rows[0]).toEqual({ ...en.rows[0], when: "3 de enero de 2026 a las 7:15 a.m.", what: "Calefacción" });
+    expect(es.rows[2].what).toBe("Agua caliente");
+    expect(es.rules).toContain("Agua caliente, Código Administrativo de NYC §27-2031: todo el año, al menos 120°F en el grifo.");
+    expect(es.rules).toContain("Ley Local 86 de 2017");
+  });
+
+  it("states no hours for hot water", () => {
+    for (const lang of ["en", "es"] as const) {
+      const rules = noticeText(CASE, [], lang, NOW, ORIGIN, HEAT_LOG).heat!.rules;
+      const hotWater = rules.slice(rules.indexOf(lang === "en" ? "Hot water," : "Agua caliente,"));
+      expect(hotWater).not.toMatch(/\b(AM|PM|a\.m\.|p\.m\.|midnight|medianoche)\b/);
+    }
+  });
+
+  it("is absent when no reading is below the minimum", () => {
+    expect(noticeText(CASE, [leak], "en", NOW, ORIGIN).heat).toBeNull();
+    expect(noticeText(CASE, [leak], "en", NOW, ORIGIN, []).heat).toBeNull();
+    expect(noticeText(CASE, [leak], "en", NOW, ORIGIN, [HEAT_LOG[0], HEAT_LOG[4]]).heat).toBeNull();
+  });
+
+  it(`prints at most ${MAX_HEAT_ROWS} rows (the most recent) and says how many more are in the log`, () => {
+    const many = Array.from({ length: 25 }, (_, i) => reading(`n${i}`, new Date(Date.UTC(2026, 0, 2 + i, 8)).toISOString(), "heat", 55, null));
+    const en = noticeText(CASE, [], "en", NOW, ORIGIN, many).heat!;
+    expect(en.rows).toHaveLength(MAX_HEAT_ROWS);
+    expect(en.rows[0].id).toBe("n5");
+    expect(en.rows.at(-1)?.id).toBe("n24");
+    expect(en.summary).toBe("25 of 25 readings I logged since Jan 2, 2026 were below the legal minimum:");
+    expect(en.more).toBe("5 earlier readings below the minimum are in my log.");
+    expect(noticeText(CASE, [], "es", NOW, ORIGIN, many).heat!.more).toBe("Hay 5 lecturas anteriores por debajo del mínimo en mi registro.");
+  });
+
+  it("uses singular wording for one reading", () => {
+    const one = [HEAT_LOG[1]];
+    expect(noticeText(CASE, [], "en", NOW, ORIGIN, one).heat!.summary).toBe("1 of 1 reading I logged since Jan 3, 2026 was below the legal minimum:");
+    expect(noticeText(CASE, [], "es", NOW, ORIGIN, one).heat!.summary).toBe("1 de 1 lectura que registré desde el 3 de enero de 2026 estuvo por debajo del mínimo legal:");
+  });
+});
+
+describe("complaint311Text with a heat log", () => {
+  const noHeat = issue("hh", "heat_hot_water", { problem: "no_heat" }, "2026-10-20T10:58:02Z", { note: "Radiators cold" });
+
+  it("mentions the heat log's count on a heat issue", () => {
+    const s = complaint311Text(CASE, noHeat, NOW, HEAT_LOG);
+    expect(s).toBe(
+      'Condition: No heat / hot water. Location: 618 West 136th Street, Manhattan, NY 10031, Apt 4B. First documented Oct 20, 2026; still present as of Oct 24, 2026. Tenant\'s note: "Radiators cold". Heat log: 3 of 5 readings below the legal minimum since Jan 3, 2026. Dated photos available.',
+    );
+  });
+
+  it("leaves it out for other issues, or when no reading is below the minimum", () => {
+    expect(complaint311Text(CASE, leak, NOW, HEAT_LOG)).not.toContain("Heat log");
+    expect(complaint311Text(CASE, noHeat, NOW, [HEAT_LOG[0]])).not.toContain("Heat log");
+    expect(complaint311Text(CASE, noHeat, NOW)).not.toContain("Heat log");
+  });
+
+  it("still fits 600 characters with a very long note", () => {
+    const s = complaint311Text(CASE, { ...noHeat, note: "cold ".repeat(400) }, NOW, HEAT_LOG);
+    expect(s.length).toBeLessThanOrEqual(600);
+    expect(s.endsWith("Heat log: 3 of 5 readings below the legal minimum since Jan 3, 2026. Dated photos available.")).toBe(true);
   });
 });
 
