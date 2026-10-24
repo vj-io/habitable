@@ -20,6 +20,9 @@ export default defineConfig({
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: "retain-on-failure",
+    // page.route() can't see requests from a page a service worker controls (WebKit), and several specs mock
+    // /api routes. Only e2e/offline.spec.ts turns the service worker back on.
+    serviceWorkers: "block",
   },
   projects: [
     { name: "phone", use: { ...chromium, viewport: { width: 375, height: 812 }, hasTouch: true } },

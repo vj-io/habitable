@@ -252,7 +252,7 @@ export function CaseFile({ caseFile, issues, persistent }: { caseFile: CaseFileT
             <NextStepsCard caseFile={caseFile} issues={issues} />
           </div>
 
-          <aside className="lg:sticky lg:top-6 lg:self-start">
+          <aside className="lg:self-start">
             <BuildingPanel state={building} related={related} />
           </aside>
         </div>

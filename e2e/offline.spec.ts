@@ -2,6 +2,8 @@ import { expect, test } from "@playwright/test";
 import { startDemo } from "./helpers";
 
 // Service workers are reliable in Chromium under Playwright; WebKit and Firefox skip this one.
+test.use({ serviceWorkers: "allow" });
+
 test("the case opens with no connection once the app has been loaded", async ({ page, context, browserName }) => {
   test.skip(browserName !== "chromium", "service worker test runs in Chromium");
   await startDemo(page);

@@ -148,6 +148,9 @@ Public data and public web services, used at runtime. No data files are redistri
 |---|---|---|
 | NYC Open Data, HPD Housing Maintenance Code Violations (`wvxf-dwi5`) | open violations for a building (BBL): counts, class, recent related items | NYC Open Data Terms of Use: <https://www.nyc.gov/html/data/terms.html> (public data; dataset page: <https://data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Violations/wvxf-dwi5>) |
 | NYC Open Data / NYC Planning, PLUTO (`64uk-42ks`) | year built for the tax lot | same Open Data terms; NYC Planning data page: <https://www.nyc.gov/site/planning/data-maps/open-data.page> (dataset page: <https://data.cityofnewyork.us/City-Government/Primary-Land-Use-Tax-Lot-Output-PLUTO-/64uk-42ks>) |
+| NYC Open Data, HPD Multiple Dwelling Registrations (`tesw-yqqr`) and Registration Contacts (`feu5-w2e2`) | the building's registered managing agent, owner and head officer (names and business addresses as published) | same Open Data terms |
+| NYC Open Data, HPD Complaints and Problems (`ygpa-z7cr`), HPD Litigations (`59kj-x8nc`), Alternative Enforcement Program (`hcir-3275`) | aggregate counts per building (no apartments, no names) and the AEP flag | same Open Data terms |
+| National Weather Service API (`api.weather.gov`) | latest outdoor temperature at Central Park, LaGuardia or JFK for the heat log | US government work, public domain; docs: <https://www.weather.gov/documentation/services-web-api> |
 | NYC Planning Labs GeoSearch | address autocomplete, borough, BBL and BIN | public API, no key; docs and terms: <https://geosearch.planninglabs.nyc/docs/> |
 | Vercel AI Gateway; Anthropic and Google vision models | the AI proposes a problem type for a photo | commercial services used under the account holder's own agreements; model output is not redistributed |
 | Vercel | hosting | Vercel's terms, under the account holder's plan |

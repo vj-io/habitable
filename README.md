@@ -20,9 +20,12 @@ Built for the Devpost **Build With AI: Basics** hackathon with the Devpost Learn
 2. **Snap.** Take or choose a photo. On the phone, Habitable fingerprints the original (SHA-256), reads the capture time inside the photo (EXIF), strips location data, and gets a signed server receipt for the fingerprint.
 3. **The AI proposes.** A vision model picks one of seven answers — leak, mold, no heat/hot water, pests, broken lock/door, peeling paint, or "not covered" — with a confidence and one sentence of why. Below 70% confidence, code asks you one clarifying question. You can always correct it.
 4. **The code disposes.** A cited rules table — not the model — decides the hazard class and the correction window. If the rule needs a fact a photo can't show (mold area, a child under 6 in a pre-1960 building, heat vs. hot water), it asks you. The card shows the class stamp, the window, the code section, a live countdown to the requested repair-by date, and a "Why?" drawer with the exact rule, a short official quote and the source links.
-5. **Building context.** "This building already has 291 open HPD violations — 37 for leaks." Live from NYC Open Data.
+5. **Building context.** "This building already has 291 open HPD violations — 37 for leaks." Plus who is registered with HPD as the managing agent and owner, problems reported to HPD in the last 12 months, litigation on record and whether the building is in HPD's Alternative Enforcement Program. Live from NYC Open Data for your address; the demo uses a saved snapshot.
 6. **Log.** Every issue lands on a dated timeline with follow-ups ("still dripping, day 12") and "mark fixed".
-7. **Notice.** One tap makes a print-ready PDF (English or Spanish) listing every open issue with dates, photos, fingerprints, receipt links, citations and requested repair-by dates, plus pre-filled 311 complaint text.
+7. **Notice.** Addressed to the registered managing agent (copying the owner) — prefilled from HPD's registration, editable. One tap makes a print-ready PDF (English or Spanish) listing every open issue with dates, photos, fingerprints, receipt links, citations and requested repair-by dates, plus pre-filled 311 complaint text.
+8. **Heat and hot water log.** A photo can't show a temperature, so cold apartments get a dated log: indoor reading, outdoor temperature filled in from the National Weather Service (Central Park, falling back to LaGuardia or JFK when it's stale), and each reading stamped against NYC's minimums — 68°F by day when it's below 55°F outside, 62°F at night, hot water at least 120°F year-round — in plain cited code. Readings below the minimum go into the notice.
+9. **What next.** A plain-language ladder — write to the landlord, file with 311 for an HPD inspection, an HP Action in Housing Court — plus free legal help, hotlines, DHCR rent reduction for rent-stabilized tenants, the warranty of habitability and protection from retaliation, every line linked to its official page. A card on the case file says which step fits right now.
+10. **Keep it safe.** Back up the whole case (photos included) to a file and restore it on another phone; add any repair-by date to your calendar; the app opens with no signal once it has loaded. Light and dark themes.
 
 ## Who it's for
 
@@ -71,7 +74,7 @@ Verified 2026-10-24 against HPD's *Clear Violations* page, HPD's mold/pest, heat
 
 - **Fingerprint:** SHA-256 of the original photo bytes, computed on the device.
 - **Capture time:** read from the photo's EXIF; an offset tag fixes the zone, otherwise it is read as New York time (the app is NYC-only), so a viewer's timezone never shifts the evidence.
-- **Server receipt:** `/api/receipt` returns `receivedAt` and an HMAC-SHA256 code over `sha256|receivedAt`. Anyone can check it at [`/verify`](https://habitable-blush.vercel.app/verify); every photo in the notice links to its own check. Production refuses to sign without `RECEIPT_SECRET`.
+- **Server receipt:** `/api/receipt` returns `receivedAt` and an HMAC-SHA256 code over `sha256|receivedAt`. Anyone can check it at [`/verify`](https://habitable-blush.vercel.app/verify) — "Try a real receipt" signs a sample in one tap, "Change one character" shows a tampered one fail; every photo in the notice links to its own check. Production refuses to sign without `RECEIPT_SECRET`.
 - **Privacy:** the stored copy is re-encoded on a canvas, which drops all metadata including GPS. The case lives only in the browser (IndexedDB). What leaves the device: a downscaled photo and your note to the AI, the fingerprint to the receipt service, and typed addresses to NYC GeoSearch.
 
 ## Reliability
@@ -80,6 +83,8 @@ Verified 2026-10-24 against HPD's *Clear Violations* page, HPD's mold/pest, heat
 - **AI unavailable** (no key, quota, outage, timeout) → "Pick what it is — the rules still apply." The rest of the journey works.
 - **Gemini free tier:** Gemini 3.5 Flash (thinking off, ~3 s) with 3.5 Flash-Lite as fallback, each with its own quota; no retries inside a model; a model that answers 429 rests for the delay the provider gives; identical requests are cached for an hour; 12 live photos per visitor per 10 minutes and 16 per minute per server instance; a 768 px image (one Gemini tile).
 - **NYC Open Data down** → saved fixtures for the demo buildings; "Building records are unavailable right now" for others. Building lookups are cached for an hour.
+- **Weather service stale or down** → the heat log asks for the outdoor temperature instead; the rule says what it needs.
+- **No signal** → a service worker serves the pages and code this phone already loaded; the case itself lives in IndexedDB.
 
 ## Run it locally
 
@@ -114,7 +119,7 @@ npm test
 npm run test:e2e
 ```
 
-- **Vitest — 137 tests:** rules engine (every fact combination reaches a cited outcome), countdown and DST, EXIF time zones, receipts (known-answer HMAC, tamper checks), classifier threshold/fallback/rate-limit cooldown/cache with a mock model, HPD violation text → issue mapping on real wordings, GeoSearch parsing, notice text in English and Spanish, storage fallback.
+- **Vitest — 276 tests:** rules engine (every fact combination reaches a cited outcome), heat and hot water minimums (hour edges, season edges, the 55°F outdoor line, DST days), countdown and DST, EXIF time zones, receipts (known-answer HMAC, tamper checks), classifier threshold/fallback/rate-limit cooldown/cache with a mock model, HPD violation text → issue mapping on real wordings, HPD registration parsing on real rows (multi-building lots, duplicates, addressee priority), weather-station fallback, backup validation, calendar files (escaping, folding, CRLF), GeoSearch parsing, notice text in English and Spanish, storage fallback.
 - **Playwright — 35 tests:** the full demo journey (photo → stamp → log → reload → follow-up → PDF download → Spanish), every rules branch, error and empty states, receipt verification, API contracts, and smoke checks on phone and desktop. The suite builds and starts the production server itself and blanks all AI keys, so it never spends quota.
 
 ## How it was planned and built
@@ -133,14 +138,16 @@ The commit history follows the plan: scope → PRD → spec → checklist → on
 
 ## Stack
 
-Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · AI SDK 7 (`@ai-sdk/google`, Vercel AI Gateway) · Zod 4 · exifr · idb-keyval · @react-pdf/renderer · Vitest · Playwright · Vercel. Visual identity: the "doodle" style (grid paper, hand-drawn ink, lime highlighter) with violet as the colour of everything the AI proposes.
+Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · AI SDK 7 (`@ai-sdk/google`, Vercel AI Gateway) · Zod 4 · exifr · idb-keyval · @react-pdf/renderer · Vitest · Playwright · Vercel. Visual identity: the "doodle" style (grid paper, hand-drawn ink) with a felt-tip palette — sunflower marker for actions and what the code decided, violet for everything the AI proposes, red / amber / sky for HPD Class C / B / A, mint for done — and a "night notebook" dark theme.
 
 ```
 src/
-├── app/            pages (/, /issue/[id], /notice, /how-it-works, /verify), API routes, PWA manifest
-├── components/     doodle/ (hand-drawn UI kit), case/, snap/, issue/, notice/, site/
-└── lib/            rules.json + rules.ts (the kernel), classify.ts, evidence.ts, receipt.ts,
-                    building.ts, geosearch.ts, countdown.ts, notice-text.ts, store.ts, demo/
+├── app/            pages (/, /issue/[id], /notice, /heat, /next-steps, /how-it-works, /verify),
+│                   API routes (classify, receipt, building, outdoor), PWA manifest, service worker
+├── components/     doodle/ (hand-drawn UI kit), case/, snap/, issue/, heat/, notice/, site/
+└── lib/            rules.json + rules.ts and heat.ts (the kernel), classify.ts, evidence.ts, receipt.ts,
+                    building.ts, registration.ts, signals.ts, outdoor.ts, geosearch.ts, countdown.ts,
+                    notice-text.ts, next-step.ts, backup.ts, ics.ts, store.ts, demo/
 e2e/                Playwright suite
 devpost/            planning documents
 ```
@@ -154,4 +161,4 @@ devpost/            planning documents
 
 ## Credits and licenses
 
-MIT — see [`LICENSE`](LICENSE). Third-party notices (Devpost Learn skill pack, fonts, data sources, npm packages): [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md). Data: NYC Open Data (HPD Housing Maintenance Code Violations, PLUTO), NYC Planning Labs GeoSearch, NYC HPD and NYC311 pages. Sample scenes are illustrations drawn for this project.
+MIT — see [`LICENSE`](LICENSE). Third-party notices (Devpost Learn skill pack, fonts, data sources, npm packages): [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md). Data: NYC Open Data (HPD Housing Maintenance Code Violations, Multiple Dwelling Registrations and Registration Contacts, Complaints and Problems, Litigations, Alternative Enforcement Program, PLUTO), NYC Planning Labs GeoSearch, the National Weather Service API, NYC HPD, NYC311, NYS HCR and NY Senate pages. Sample scenes are illustrations drawn for this project.
