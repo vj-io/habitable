@@ -134,7 +134,7 @@ Every step used the Devpost Learn skill pack (`.agents/skills/`, MIT):
 | `4-spec` | [`devpost/spec.md`](devpost/spec.md) · [visual companion](devpost/spec.html) |
 | `5-build` | [`devpost/checklist.md`](devpost/checklist.md) (slices, checkpoints, revisions) · [`devpost/app-map.html`](devpost/app-map.html) |
 
-The commit history follows the plan: scope → PRD → spec → checklist → one commit per build slice. What the build discovered that changed the plan is recorded under **Revisions** in the checklist.
+The commit history follows the plan: scope → PRD → spec → checklist → one commit per build slice. The slices were built in parallel by subagents and committed together after integration checks, so the intermediate slice commits were not each built and tested on their own; later work (palette and dark theme, heat log, landlord on record, next steps, case tools, offline) landed as feature branches merged into main. What the build discovered that changed the plan is recorded under **Revisions** in the checklist.
 
 ## Stack
 

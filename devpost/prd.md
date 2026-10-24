@@ -29,8 +29,8 @@ Mobile-first single column (375px and up); on desktop the same column sits centr
 - **How it works / rules page** — the "AI proposes, code disposes" diagram, the full rules table with sources, what the countdown means, privacy, disclaimer.
 
 ## Look and Feel
-- **Style:** the brag-styles **doodle** kit, chosen by BD — a hand-drawn notebook come alive. Grid paper background (warm off-white paper, faint ink grid), black ink lines that look drawn by hand, cards that spring in.
-- **Colour:** ink black on paper; **lime highlighter** as the main accent (key words, the primary button, things the code verified). BD asked for one additional complementary colour: **violet "pencil"** for everything the AI proposes (tentative, correctable). A **stamp red** is reserved for hazard stamps and deadlines. Pastel sticky-note tints of those colours for backgrounds. Every colour is always paired with a word or number.
+- **Style:** the brag-styles **doodle** kit, chosen by the builder — a hand-drawn notebook come alive. Grid paper background (warm off-white paper, faint ink grid), black ink lines that look drawn by hand, cards that spring in.
+- **Colour** (revised after the first build: the lime became a sunflower marker in a felt-tip set, and a dark theme was added — see the checklist's Revisions): ink black on paper; **lime highlighter** as the main accent (key words, the primary button, things the code verified). The builder asked for one additional complementary colour: **violet "pencil"** for everything the AI proposes (tentative, correctable). A **stamp red** is reserved for hazard stamps and deadlines. Pastel sticky-note tints of those colours for backgrounds. Every colour is always paired with a word or number.
 - **Type:** a heavy bold sans for headlines and claims; a handwriting face for notes, labels and the AI's voice; a monospace for numbers, dates, hashes and countdowns.
 - **Signature move in the UI:** strokes draw themselves when something appears (the box around the rules card, check marks, arrows), a highlighter swipes under the key word, and the hazard stamp thuds down. Motion is skipped for people who prefer reduced motion.
 - **Tone of copy:** plain, warm, direct, a little wry. Never alarmist, never legal-sounding advice.
@@ -108,11 +108,11 @@ Mobile-first single column (375px and up); on desktop the same column sits centr
 
 ## Product Decisions
 - **The model only picks from a fixed list; a rules table decides class and window.** — trust and verifiability; the core of the idea.
-- **Countdown = requested repair-by date mirroring the legal window**, labelled as such — the legal clock runs from HPD's service of a violation, not the photo (BD's brief flagged this).
+- **Countdown = requested repair-by date mirroring the legal window**, labelled as such — the legal clock runs from HPD's service of a violation, not the photo (the builder's brief flagged this).
 - **NYC only, six problem types** — keeps the legal table small enough to cite accurately.
 - **No accounts; on-device storage** — privacy and proof-of-concept size.
 - **Seeded demo mode** — the video and judges never depend on a live AI call.
-- **Doodle style + violet complementary colour** — BD's choice; violet marks what the AI proposes, lime marks what the code verified.
+- **Doodle style + violet complementary colour** — the builder's choice; violet marks what the AI proposes, lime marks what the code verified.
 - **Facts the rules need are asked by the rules, not guessed by the AI** — mold size, child under 6, heat vs. hot water.
 - **Spanish notice toggle and 311 text are in** — small, high-value for the audience. **Email is out** (cut order item 1 in the brief).
 

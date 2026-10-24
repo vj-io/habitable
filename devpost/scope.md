@@ -18,8 +18,7 @@ Secondary: tenant-association organizers and legal-aid intake workers who need s
 Open the app on a phone → snap the problem (plus one optional line like "ceiling dripping since Tuesday") → see the class card with its clock and the "why" → it lands on a dated timeline. They come back to add another issue or a follow-up ("still broken on day 12"), and when ready, produce the notice.
 
 ## Inspiration & Identity
-- Visual: the **brag-styles doodle kit** — hand-drawn ink lines on grid paper, a lime highlighter swipe under the key word, cards that spring in, Patrick Hand handwriting with a bold display sans and mono numbers — plus one complementary colour (BD's direction). Stamp-style badges for the hazard class carry over from the brief's "legal paper" idea.
-- Strong entries in this event share visible guardrails ("AI proposes, code disposes"), a specific named user, and a deliberate visual identity rather than default component-library styling.
+- Visual: the **brag-styles doodle kit** — hand-drawn ink lines on grid paper, a lime highlighter swipe under the key word, cards that spring in, Patrick Hand handwriting with a bold display sans and mono numbers — plus one complementary colour (the builder's direction). Stamp-style badges for the hazard class carry over from the brief's "legal paper" idea.
 - Data: NYC HPD "Clear Violations" correction windows (https://www.nyc.gov/site/hpd/services-and-information/clear-violations.page), NYC311 heat and hot water rules, NYC Open Data HPD violations (`wvxf-dwi5`) and complaints (`ygpa-z7cr`).
 
 ## Why This Matters to the Learner
@@ -52,4 +51,12 @@ On a phone: enter an address once, photograph a stained, dripping ceiling, and w
 - **Filing 311 complaints automatically** — no public filing API; we hand the user pre-filled text and the link instead.
 
 ## How This Plan Was Made
-The interview answers come from BD's written research brief (kept private) and BD's direction in the build session (doodle style, build end to end). BD approved by asking for the full build.
+"The builder" in these documents is the author of the private research brief (which calls them BD).
+
+The interview answers came from the builder's written research brief (kept private: problem, user, flow, feature tiers, stack, risks and cut order) rather than a live back-and-forth; the builder approved the plan by asking for the full build. The decisions the builder made directly, in the build sessions:
+- **Look:** the brag-styles doodle kit plus one complementary colour (violet for what the AI proposes); later, after seeing it live, dropping the neon lime for colours that match the style, and adding a dark theme with a toggle.
+- **How it was built:** subagents matched to each task's complexity, built end to end with everything tested.
+- **AI:** a direct Gemini key (the AI Gateway needed a card on file), and a classifier that respects Gemini's free-tier limits.
+- **Shipping:** a public GitHub repo and a Vercel production deploy that redeploys on every push; the Gemini key added to Vercel as a sensitive variable.
+- **Scope after the first build:** fix the UI papercuts, research and add what a renter needs next — which became the heat log, the landlord on record, the next-steps page, backup and restore, calendar reminders and offline use.
+- **From the brief:** the honest clock — HPD's correction windows run from service of a violation, not from the photo, so the countdown is labelled as a requested repair-by date.

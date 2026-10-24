@@ -46,8 +46,8 @@ PRD ref: `prd.md > The Core Journey`.
 - Deploy (chosen): Vercel — `vercel --prod`. Public GitHub repo for the submission. The demo video records the deployed app on a phone.
 
 ## Look and Feel
-Carried from `prd.md > Look and Feel` (brag-styles doodle kit, BD's choice):
-- **Palette:** paper `#f0ede8` with a faint ink grid and grain; ink `#0a0a0a`; lime highlighter `#c8ff00` (primary actions, key words, "verified by code"); **violet** `#6b4eff` (text-safe darker shade) for everything the AI proposes — BD's complementary colour; stamp red for Class C / deadlines and amber for Class B, ink for Class A; pastel tints for sticky notes. Colour is always paired with a word or number.
+Carried from `prd.md > Look and Feel` (brag-styles doodle kit, the builder's choice):
+- **Palette (revised after the first build — the neon lime became a felt-tip set and a dark theme was added; see the checklist's Revisions and `src/app/globals.css`):** paper `#f0ede8` with a faint ink grid and grain; ink `#0a0a0a`; lime highlighter `#c8ff00` (primary actions, key words, "verified by code"); **violet** `#6b4eff` (text-safe darker shade) for everything the AI proposes — the builder's complementary colour; stamp red for Class C / deadlines and amber for Class B, ink for Class A; pastel tints for sticky notes. Colour is always paired with a word or number.
 - **Type:** Archivo 800 for claims, Patrick Hand for handwriting (notes, labels, the AI's voice), JetBrains Mono for numbers, dates, hashes and countdowns.
 - **Motion:** strokes draw themselves on appear, highlighter swipes, cards spring in, stamps thud; all disabled under `prefers-reduced-motion`.
 - **Density:** one column, generous spacing, big tap targets, one primary action per screen.
@@ -75,7 +75,7 @@ PRD ref: `prd.md > Evidence timeline`.
 ### Classifier (AI proposes)
 `POST /api/classify {image (data URL ≤768px JPEG), note?, answer?: {question, answer}, sampleId?}` → `ClassifyResponse`.
 - `sampleId` of a demo sample → saved answer from `src/lib/demo/samples.ts` (labelled `source: "demo"`).
-- Otherwise: system prompt lists the seven allowed answers with one-line definitions; output schema `{issue: enum, confidence: 0..1, rationale: ≤200 chars, clarifyingQuestion: string|null, clarifyingOptions: string[]}`; temperature 0; one retry; fallback model.
+- Otherwise: system prompt lists the seven allowed answers with one-line definitions; output schema `{issue: enum, confidence: 0..1, rationale: ≤200 chars, clarifyingQuestion: string|null, clarifyingOptions: string[]}`; temperature 0; ~~one retry~~ no retries (revised — see the rate-limit line below and the checklist's Revisions); fallback model.
 - **Code** applies the threshold (0.7): below it and no `answer` → return the question (the model's, or a default per issue); with an `answer` → return the second proposal whatever its confidence (the UI offers the manual picker when it's still low).
 - Input limits: body ≤ 2 MB, image must be `data:image/jpeg|png|webp`, note ≤ 280 chars.
 - **Free-tier rate limits** (Gemini allows a few requests per minute per model): no retry inside a model; a model that answers 429 rests for the delay the provider gives (503 "high demand" rests 15 s) and the next model, which has its own quota, answers; identical requests (same photo, note, answer) come from a one-hour cache; at most 12 live photos per visitor per 10 minutes and 16 per minute per server instance. When every model is resting the renter sees "The AI is at its free-tier limit for the moment. Pick the problem yourself — the rules still apply." Demo samples never call the AI.
@@ -207,19 +207,19 @@ All on the device (IndexedDB via idb-keyval), shapes in `src/lib/types.ts`:
 - **Demo buildings** (public building records only): 618 West 136th Street, Manhattan (BBL 1020020091, built 1905, 291 open violations, 37 leak-related); fixtures in `src/lib/demo/`.
 
 ## Important Failure Modes
-- **AI unavailable (no key, quota, outage, timeout 20 s)** → manual picker: "The AI couldn't read this photo right now. Pick what it is — the rules still apply."
+- **AI unavailable (no key, quota, outage, timeout — revised from 20 s to 8 s per model so the fallback model gets its turn)** → manual picker: "The AI couldn't read this photo right now. Pick what it is — the rules still apply."
 - **NYC Open Data slow, down or no match** → "Building records are unavailable right now" + retry; demo building uses saved fixtures; no records → "No open HPD violations on record."
 - **IndexedDB unavailable** → banner "This browser may not keep your log after you close it"; the session continues in memory.
 
 ## What Was Simplified and Why
 - **On-device storage** instead of accounts + database — the kernel needs neither; also the privacy story. Fuller version: hosted Postgres + auth for organizer sharing.
-- **Illustrated sample scenes** instead of real demo photos — no licensing risk and no private photos in a public repo; real photos still work live. The video uses BD's real photos.
+- **Illustrated sample scenes** instead of real demo photos — no licensing risk and no private photos in a public repo; real photos still work live. The video uses the builder's real photos.
 - **Saved AI answers for samples** instead of a live call in demo mode — the demo never depends on a quota.
 - **Receipt = HMAC over the hash and time** instead of a timestamping authority — proves Habitable's server saw the fingerprint then; a fuller version would anchor to an RFC 3161 timestamp service.
 - **One city, six problem types** — keeps every rule citable.
 
 ## Decisions and Open Issues
-- **Model choice** (implementation detail): Claude Haiku 5.5 through AI Gateway with Gemini Flash fallback; direct Gemini key also supported. Temperature 0, one retry.
+- **Model choice** (implementation detail, revised): planned as Claude Haiku 5.5 through AI Gateway with Gemini Flash fallback and one retry. Built: Gemini 3.5 Flash with 3.5 Flash-Lite fallback on a direct key (the Gateway needs a card on file), temperature 0, no retries — see the checklist's Revisions. The Gateway path still works when its key is set.
 - **Confidence threshold 0.7** (implementation detail), tuned on the sample photos.
 - **Learner uncertainty discussed:** when does the legal clock start? Resolved from HPD's own page: correction periods run from HPD's service of a violation, so the countdown is labelled as the repair-by date the notice requests, mirroring that window.
 - Resolved by research: mold area thresholds (Local Law 55), pests split B/C, self-closing doors are §27-2041.1 (not 2041/2042), ordinary peeling paint is Class A, night heat is 62°F regardless of outside temperature. Still unverified (and not claimed): what makes HPD escalate a leak or lock to Class C; whether a tenant letter starts any clock.

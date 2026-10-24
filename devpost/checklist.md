@@ -71,8 +71,8 @@ Build mode: fast
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — after slice 1 (the kernel). Pending BD: the build ran end to end on BD's instruction; agent-side checks were Playwright walk-throughs and screenshots, which don't replace BD trying it.
-- [ ] Final kick-the-tires exploration and feedback completed — pending BD on the live URL (https://habitable-blush.vercel.app) on a phone.
+- [ ] Early usable behavior explored — after slice 1 (the kernel). Pending the builder: the build ran end to end on the builder's instruction; agent-side checks were Playwright walk-throughs and screenshots, which don't replace the builder trying it.
+- [ ] Final kick-the-tires exploration and feedback completed — pending the builder on the live URL (https://habitable-blush.vercel.app) on a phone.
 
 ## Final Review
 
@@ -84,7 +84,7 @@ Build mode: fast
 - [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
 - [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
 
-Activity and evidence: not yet done with BD; `devpost/app-map.html` prepared from the finished code as a reference.
+Activity and evidence: not yet done with the builder; `devpost/app-map.html` prepared from the finished code as a reference.
 Route and stops: reference route in the app map (snap sheet → `decide()` → `evaluate()`); not toured.
 Edit outcome: not applicable yet.
 Reflection: not offered yet.
