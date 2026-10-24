@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Archivo, JetBrains_Mono, Patrick_Hand } from "next/font/google";
 import { BoilFilter } from "@/components/doodle/BoilFilter";
+import { Offline } from "@/components/site/Offline";
 import { SiteFooter, SkipLink } from "@/components/site/SiteFooter";
 import "./globals.css";
 
@@ -63,6 +64,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="flex flex-col">
         <SkipLink />
+        <Offline />
         <BoilFilter />
         {children}
         <SiteFooter />
