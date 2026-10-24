@@ -62,12 +62,12 @@ const NODE_STYLE = {
 function Diagram() {
   return (
     <figure className="space-y-4">
-      <ol className="flex flex-col items-stretch gap-1 lg:flex-row lg:items-stretch lg:gap-0">
+      <ol className="mx-auto flex max-w-xl flex-col items-stretch gap-1 2xl:max-w-none 2xl:flex-row 2xl:items-stretch 2xl:gap-0">
         {FLOW.map((n, i) => {
           const s = NODE_STYLE[n.tone];
           return (
-            <li key={n.title} className="flex flex-col items-center lg:flex-1 lg:flex-row">
-              <SketchBox seed={200 + i} fill={s.fill} color={s.color} strokeWidth={2.5} className={`w-full space-y-1.5 p-4 lg:h-full ${s.text}`}>
+            <li key={n.title} className="flex flex-col items-center 2xl:flex-1 2xl:flex-row">
+              <SketchBox seed={200 + i} fill={s.fill} color={s.color} strokeWidth={2.5} className={`w-full space-y-1.5 p-4 2xl:h-full ${s.text}`}>
                 <span className="flex items-center gap-2">
                   {n.icon}
                   <span className={`font-display text-lg leading-tight font-extrabold ${n.tone === "violet" ? "font-hand text-[1.4rem] font-normal" : ""}`}>{n.title}</span>
@@ -76,14 +76,14 @@ function Diagram() {
               </SketchBox>
               {i < FLOW.length - 1 &&
                 (i === 1 ? (
-                  <span className="my-2 flex flex-col items-center gap-1 text-center lg:mx-1 lg:my-0 lg:w-14 lg:shrink-0 lg:justify-center">
-                    <span className="h-6 border-l-[3px] border-dashed border-red lg:h-14" aria-hidden="true" />
+                  <span className="my-2 flex flex-col items-center gap-1 text-center 2xl:mx-1 2xl:my-0 2xl:w-14 2xl:shrink-0 2xl:justify-center">
+                    <span className="h-6 border-l-[3px] border-dashed border-red 2xl:h-14" aria-hidden="true" />
                     <span className="font-hand text-base leading-tight text-red-ink">AI stops here</span>
                   </span>
                 ) : (
-                  <span className="flex justify-center py-1 lg:w-7 lg:shrink-0 lg:items-center lg:py-0" aria-hidden="true">
-                    <Arrow direction="down" size={26} className="lg:hidden" />
-                    <Arrow size={24} className="hidden lg:block" />
+                  <span className="flex justify-center py-1 2xl:w-7 2xl:shrink-0 2xl:items-center 2xl:py-0" aria-hidden="true">
+                    <Arrow direction="down" size={26} className="2xl:hidden" />
+                    <Arrow size={24} className="hidden 2xl:block" />
                   </span>
                 ))}
             </li>
