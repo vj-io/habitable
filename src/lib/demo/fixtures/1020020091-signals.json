@@ -1,0 +1,62 @@
+{
+  "since": "2025-10-25",
+  "complaints": [
+    {
+      "major_category": "UNSANITARY CONDITION",
+      "n": "46"
+    },
+    {
+      "major_category": "PAINT/PLASTER",
+      "n": "42"
+    },
+    {
+      "major_category": "WATER LEAK",
+      "n": "36"
+    },
+    {
+      "major_category": "PLUMBING",
+      "n": "26"
+    },
+    {
+      "major_category": "FLOORING/STAIRS",
+      "n": "22"
+    },
+    {
+      "major_category": "ELECTRIC",
+      "n": "19"
+    },
+    {
+      "major_category": "GENERAL",
+      "n": "14"
+    },
+    {
+      "major_category": "DOOR/WINDOW",
+      "n": "14"
+    },
+    {
+      "major_category": "HEAT/HOT WATER",
+      "n": "13"
+    },
+    {
+      "major_category": "APPLIANCE",
+      "n": "10"
+    },
+    {
+      "major_category": "SAFETY",
+      "n": "6"
+    }
+  ],
+  "litigation": [
+    {
+      "n": "16"
+    }
+  ],
+  "aep": [
+    {
+      "current_status": "AEP Active"
+    },
+    {
+      "current_status": "AEP Discharged"
+    }
+  ]
+}

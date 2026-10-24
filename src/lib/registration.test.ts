@@ -165,6 +165,14 @@ describe("buildRegistration", () => {
     expect(one({ businesscity: "Brooklyn" })).toBeNull();
   });
 
+  it("drops a trailing comma HPD kept in a company name (live: 'LOSOKA LLC,') without touching a mid-name comma", () => {
+    const agent = (corporationname: string) =>
+      buildRegistration(row, [{ registrationcontactid: "1", type: "Agent", firstname: "A", lastname: "B", corporationname }]).agent?.name;
+    expect(agent("LOSOKA LLC,")).toBe("A B, LOSOKA LLC");
+    expect(agent("NEW PARK MANAGEMENT, LLC")).toBe("A B, NEW PARK MANAGEMENT, LLC");
+    expect(agent(" , ")).toBe("A B");
+  });
+
   it("tolerates a registration with no contacts at all", () => {
     expect(buildRegistration(row, [])).toMatchObject({ agent: null, headOfficer: null, owner: null });
   });

@@ -99,7 +99,8 @@ const clean = (v?: string) => (v ?? "").replace(/\s+/g, " ").trim();
 /** "person, company" when both are published; whichever exists otherwise. Names stay as HPD wrote them. */
 function contactName(c: ContactRow): string {
   const person = [c.firstname, c.middleinitial, c.lastname].map(clean).filter(Boolean).join(" ");
-  return [person, clean(c.corporationname)].filter(Boolean).join(", ");
+  const company = clean(c.corporationname).replace(/[,;\s]+$/, ""); // some are filed as "LOSOKA LLC,"
+  return [person, company].filter(Boolean).join(", ");
 }
 
 /** "579 5th ave, 2nd fl, New York, NY 10017"; null without a street. (Some PO boxes arrive as "POB" + "319".) */

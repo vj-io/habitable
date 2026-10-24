@@ -11,7 +11,8 @@ import {
   type ContactRow,
   type RegistrationRow,
 } from "@/lib/registration";
-import type { BuildingRecord, HazardClass, RegistrationInfo } from "@/lib/types";
+import { AEP_DATASET, COMPLAINTS_DATASET, LITIGATIONS_DATASET, buildSignals, complaintsSince, type SignalRows } from "@/lib/signals";
+import type { BuildingRecord, BuildingSignals, HazardClass, RegistrationInfo } from "@/lib/types";
 
 // GET /api/building?bbl=<10 digits>[&bin=<7 digits>&hn=<house number>] -> BuildingRecord (open HPD violations,
 // PLUTO year built, and the HPD registration contacts). `bin` and `hn` only choose between several buildings on one lot.
@@ -91,6 +92,27 @@ async function loadRegistration(bbl: string, bin: string, houseNumber: string): 
   return registrationInfo(rows, contacts, hint, newest[0]?.max_lastregistrationdate ?? null);
 }
 
+/**
+ * Complaints by category over the last 12 months, litigation count and AEP status, cached an hour per BBL and day.
+ * Complaints are aggregated in the query itself, so apartment numbers (public in that dataset, but other tenants')
+ * never reach this server. Throws when Open Data is unreachable.
+ */
+async function loadSignals(bbl: string, since: string): Promise<BuildingSignals> {
+  "use cache";
+  cacheLife("hours");
+  const [complaints, litigation, aep] = await Promise.all([
+    socrata<SignalRows["complaints"][number]>(COMPLAINTS_DATASET, {
+      $select: "major_category,count(*) as n",
+      $where: `bbl=${bbl} AND received_date>'${since}'`, // complaints.bbl is a NUMBER; the date is ours, not user input
+      $group: "major_category",
+      $order: "n DESC",
+    }),
+    socrata<SignalRows["litigation"][number]>(LITIGATIONS_DATASET, { $select: "count(*) as n", $where: `bbl='${bbl}'` }), // TEXT bbl
+    socrata<SignalRows["aep"][number]>(AEP_DATASET, { $select: "current_status", $where: `bbl='${bbl}'` }), // TEXT bbl
+  ]);
+  return buildSignals(since, { complaints, litigation, aep });
+}
+
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
   const bbl = params.get("bbl") ?? "";
@@ -103,9 +125,13 @@ export async function GET(request: Request) {
   const fixture = demoBuilding(bbl);
   if (fixture && params.get("demo") === "1") return Response.json(fixture, { headers: CACHEABLE });
   try {
-    // The registration lookup can fail on its own without costing the renter the violations record.
-    const [record, registration] = await Promise.all([loadLive(bbl), loadRegistration(bbl, bin, houseNumber).catch(() => undefined)]);
-    return Response.json({ ...record, registration }, { headers: registration ? CACHEABLE : NO_STORE });
+    // The registration and signals lookups can fail on their own without costing the renter the violations record.
+    const [record, registration, signals] = await Promise.all([
+      loadLive(bbl),
+      loadRegistration(bbl, bin, houseNumber).catch(() => undefined),
+      loadSignals(bbl, complaintsSince(new Date())).catch(() => undefined),
+    ]);
+    return Response.json({ ...record, registration, signals }, { headers: registration && signals ? CACHEABLE : NO_STORE });
   } catch {
     if (fixture) return Response.json(fixture, { headers: NO_STORE }); // demo buildings only; others have no saved summary
     return Response.json({ error: "Building records are unavailable right now." }, { status: 502, headers: NO_STORE });

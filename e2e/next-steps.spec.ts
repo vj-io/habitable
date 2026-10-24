@@ -33,6 +33,20 @@ test("demo building shows who it is registered with at HPD, managing agent first
   await expect(panel).not.toContainText(/expired/i);
 });
 
+test("demo building shows recent HPD complaints by category, litigation, and the AEP flag", async ({ page }) => {
+  await startDemo(page);
+  const panel = page.getByRole("region", { name: "Also on HPD's record" });
+  await expect(panel).toBeVisible({ timeout: 20_000 });
+  await expect(panel).toContainText("In HPD's Alternative Enforcement Program");
+  await expect(panel).toContainText("problems reported to HPD since Oct 25, 2025");
+  await expect(panel.getByRole("list", { name: "Problems reported to HPD by category" })).toContainText("Unsanitary condition");
+  await expect(panel).toContainText("16 HPD litigation cases on record");
+  // Categories and counts only: every list row is "<number> <category>".
+  const rows = await panel.getByRole("list", { name: "Problems reported to HPD by category" }).getByRole("listitem").allInnerTexts();
+  expect(rows.length).toBeGreaterThan(0);
+  for (const row of rows) expect(row).toMatch(/^\d+\s+[A-Za-z/ ]+$/);
+});
+
 test("a building missing from HPD's file, or a failed lookup, says so plainly", async ({ page }) => {
   // Same demo record, with the registration part swapped.
   let registration: unknown = { asOf: "2026-07-31", current: null };

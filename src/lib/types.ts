@@ -189,6 +189,18 @@ export interface RegistrationInfo {
   current: Registration | null;
 }
 
+/** What HPD's other public datasets say about the building's recent history. Counts only: no apartment numbers, no names. */
+export interface BuildingSignals {
+  /** Start of the 12-month window for `complaints` (ISO date). */
+  since: string;
+  /** Problems reported to HPD since `since`, by category, most first. */
+  complaints: { category: string; n: number }[];
+  /** HPD litigation cases on record for the building, all years. */
+  litigations: number;
+  /** In HPD's Alternative Enforcement Program right now (the file's current status is "AEP Active"). */
+  aep: boolean;
+}
+
 /** Response of GET /api/building?bbl=… */
 export interface BuildingRecord {
   bbl: string;
@@ -209,6 +221,8 @@ export interface BuildingRecord {
   source: "live" | "demo-fixture";
   /** HPD registration contacts. Undefined when that lookup failed (the rest of the record is still good). */
   registration?: RegistrationInfo;
+  /** Complaints, litigation and AEP. Undefined when that lookup failed. */
+  signals?: BuildingSignals;
 }
 
 /** Response of POST /api/receipt. */
