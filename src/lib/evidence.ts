@@ -143,7 +143,8 @@ export async function readEvidence(file: File): Promise<EvidenceRead> {
   try {
     const [sha256, taken] = await Promise.all([sha256Hex(file), captureTime(file)]);
     const stored = encode(d, 1600, 0.82);
-    const ai = encode(d, 1024, 0.8);
+    // 768px: Gemini bills images in 768px tiles, so this is one tile per photo (fewer tokens per minute).
+    const ai = encode(d, 768, 0.8);
     return {
       sha256,
       capturedAt: taken,

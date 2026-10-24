@@ -6,6 +6,7 @@
 
 import { z } from "zod";
 import {
+  ClassifyBusy,
   ClassifyUnavailable,
   IMAGE_DATA_URL,
   classifyImage,
@@ -35,22 +36,29 @@ const BodySchema = z
 // ponytail: per-instance memory only. Each serverless instance counts on its own and a cold start
 // resets it, so this slows casual abuse but is not a hard limit. Use a shared store (KV/Redis) or
 // Vercel's firewall rate limit if it ever needs to be strict.
-const RATE_LIMIT = 20;
-const RATE_WINDOW_MS = 10 * 60 * 1000;
+// Per person: 12 live photos per 10 minutes. Whole instance: 16 per minute, under the combined
+// free-tier per-minute quota of the two Gemini models, so one busy visitor can't drain it for everyone.
+const PER_IP_LIMIT = 12;
+const PER_IP_WINDOW_MS = 10 * 60 * 1000;
+const GLOBAL_LIMIT = 16;
+const GLOBAL_WINDOW_MS = 60 * 1000;
 const hits = new Map<string, number[]>();
 
-function rateLimited(ip: string, now = Date.now()): boolean {
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
-  if (recent.length >= RATE_LIMIT) {
-    hits.set(ip, recent);
-    return true;
-  }
-  recent.push(now);
-  hits.set(ip, recent);
+function limited(key: string, limit: number, windowMs: number, now: number): boolean {
+  const recent = (hits.get(key) ?? []).filter((t) => now - t < windowMs);
+  hits.set(key, recent);
+  return recent.length >= limit;
+}
+
+function rateLimited(ip: string, now = Date.now()): "ip" | "global" | null {
+  if (limited(`ip:${ip}`, PER_IP_LIMIT, PER_IP_WINDOW_MS, now)) return "ip";
+  if (limited("global", GLOBAL_LIMIT, GLOBAL_WINDOW_MS, now)) return "global";
+  hits.get(`ip:${ip}`)!.push(now);
+  hits.get("global")!.push(now);
   if (hits.size > 5000) {
-    for (const [key, times] of hits) if (times.every((t) => now - t >= RATE_WINDOW_MS)) hits.delete(key);
+    for (const [key, times] of hits) if (times.every((t) => now - t >= PER_IP_WINDOW_MS)) hits.delete(key);
   }
-  return false;
+  return null;
 }
 
 const unavailable = (reason: string, status = 200) =>
@@ -98,8 +106,12 @@ export async function POST(request: Request) {
 
   // Only real model calls count toward the limit; saved demo answers cost nothing.
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  if (rateLimited(ip)) {
-    return unavailable("Too many photos in a short time — try again in a few minutes.", 429);
+  const limit = rateLimited(ip);
+  if (limit === "ip") {
+    return unavailable("Too many photos in a short time — try again in a few minutes. You can pick the problem yourself; the rules still apply.", 429);
+  }
+  if (limit === "global") {
+    return unavailable("Lots of photos right now, so the AI is taking a breather. Pick the problem yourself — the rules still apply.", 429);
   }
 
   try {
@@ -110,6 +122,10 @@ export async function POST(request: Request) {
     return Response.json(decide(raw, { answered, source: "ai", model }));
   } catch (error) {
     // The message lists model ids and error text only; the photo is never logged.
+    if (error instanceof ClassifyBusy) {
+      console.warn("[classify] busy:", error.message);
+      return unavailable("The AI is at its free-tier limit for the moment. Pick the problem yourself — the rules still apply.");
+    }
     if (error instanceof ClassifyUnavailable) console.warn("[classify] unavailable:", error.message);
     else console.warn("[classify] unexpected error:", error instanceof Error ? error.name : "unknown");
     return unavailable("The AI couldn't read this photo right now.");

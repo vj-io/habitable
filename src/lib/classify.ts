@@ -2,6 +2,7 @@
 // rationale. This file applies the confidence threshold (decide) and talks to the model
 // (classifyImage). It never decides a hazard class or a deadline; that is the rules table's job.
 
+import { createHash } from "node:crypto";
 import { google } from "@ai-sdk/google";
 import { generateText, Output, type LanguageModel } from "ai";
 import { z } from "zod";
@@ -116,14 +117,17 @@ export function decide(
   return { status: "proposal", proposal, clarifyingQuestion };
 }
 
-const GOOGLE_MODEL = "gemini-2.5-flash";
+// Direct Gemini (verified 2026-10-25): gemini-2.5-flash is closed to new API keys and 3.8 Flash took
+// > 30 s per photo, so 3.5 Flash (thinking off, ~3 s) leads and 3.5 Flash-Lite (~4 s) follows. On the
+// free tier each model has its own quota, so the fallback also doubles the photos per minute.
+const GOOGLE_MODELS = ["gemini-3.5-flash", "gemini-3.5-flash-lite"];
 // Ids verified against https://ai-gateway.vercel.sh/v1/models (both list "vision"). Gateway ids use
 // a dot in version numbers: "anthropic/claude-haiku-5.5", not "claude-haiku-5-5".
-const GATEWAY_MODELS = ["anthropic/claude-haiku-5.5", "google/gemini-2.5-flash"];
+const GATEWAY_MODELS = ["anthropic/claude-haiku-5.5", "google/gemini-3.5-flash"];
 
 /** Which provider to use, in order (primary, fallback). [] means no AI is configured. */
 export function pickModels(env: Record<string, string | undefined> = process.env): LanguageModel[] {
-  if (env.GOOGLE_GENERATIVE_AI_API_KEY) return [google(GOOGLE_MODEL)];
+  if (env.GOOGLE_GENERATIVE_AI_API_KEY) return GOOGLE_MODELS.map((m) => google(m));
   if (env.AI_GATEWAY_API_KEY || env.VERCEL_OIDC_TOKEN || env.VERCEL) return [...GATEWAY_MODELS];
   return [];
 }
@@ -137,28 +141,95 @@ export class ClassifyUnavailable extends Error {
 
 export const IMAGE_DATA_URL = /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/;
 
-/** Tries each model in order; one retry within a model, then the next model. */
+// Rate limits (Gemini free tier allows a handful of requests per minute per model):
+// - no retry within a model: a retry after a 429 burns quota and time; the next model has its own quota;
+// - a model that answers 429 sits out until its cooldown ends, so we stop hammering it;
+// - identical requests (same photo, note and answer) are answered from a small cache.
+// ponytail: all three live in instance memory; on serverless each instance keeps its own. Move to a
+// shared store (KV) if traffic ever needs a strict global budget.
+const DEFAULT_COOLDOWN_MS = 60_000;
+const MAX_COOLDOWN_MS = 5 * 60_000;
+const cooldownUntil = new Map<string, number>();
+
+const CACHE_TTL_MS = 60 * 60_000;
+const CACHE_MAX = 200;
+const cache = new Map<string, { at: number; value: { raw: RawProposal; model: string } }>();
+
+const OVERLOAD_COOLDOWN_MS = 15_000;
+
+/**
+ * How long to rest a model after an error, or null to keep using it. Rate/quota limits (429) wait as
+ * long as the provider asks; "high demand" overloads (503) rest briefly.
+ */
+export function rateLimitDelay(error: unknown): number | null {
+  const e = error as { statusCode?: number; message?: string; responseBody?: string } | null;
+  const text = `${e?.message ?? ""} ${typeof e?.responseBody === "string" ? e.responseBody : ""}`;
+  if (e?.statusCode === 503 || /high demand|overloaded/i.test(text)) return OVERLOAD_COOLDOWN_MS;
+  if (e?.statusCode !== 429 && !/RESOURCE_EXHAUSTED|rate limit|quota/i.test(text)) return null;
+  const seconds = /retry (?:in|after)\s*([\d.]+)\s*s/i.exec(text) ?? /"retryDelay":\s*"([\d.]+)s"/.exec(text);
+  const ms = seconds ? Math.ceil(Number(seconds[1]) * 1000) : DEFAULT_COOLDOWN_MS;
+  return Math.min(Math.max(ms, 1000), MAX_COOLDOWN_MS);
+}
+
+export class ClassifyBusy extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "ClassifyBusy";
+  }
+}
+
+/**
+ * Thinking adds seconds and quota for a one-label answer, so turn it off where the model allows it.
+ * Flash-Lite rejects a zero budget ("invalid argument") and already answers without thinking.
+ */
+function thinkingOff(id: string) {
+  return /gemini-[\d.]+-flash$/.test(id) ? { google: { thinkingConfig: { thinkingBudget: 0 } } } : undefined;
+}
+
+/** Test hook: forget cooldowns and cached answers. */
+export function resetClassifyState() {
+  cooldownUntil.clear();
+  cache.clear();
+}
+
+/**
+ * Tries each available model once, in order. Throws ClassifyBusy when every model is rate-limited
+ * (cooling down), ClassifyUnavailable for any other failure.
+ */
 export async function classifyImage(
   input: { image: string; note?: string; answer?: ClassifyAnswer },
-  { models, timeoutMs = 20_000 }: { models: LanguageModel[]; timeoutMs?: number },
+  { models, timeoutMs = 20_000, now = Date.now }: { models: LanguageModel[]; timeoutMs?: number; now?: () => number },
 ): Promise<{ raw: RawProposal; model: string }> {
   if (models.length === 0) throw new ClassifyUnavailable("No AI model configured");
   const match = IMAGE_DATA_URL.exec(input.image);
   if (!match) throw new ClassifyUnavailable("Image is not a base64 jpeg, png or webp data URL");
   const [, mediaType, data] = match;
-  const { system, user } = buildPrompt(input);
 
+  const key = createHash("sha256")
+    .update(JSON.stringify([input.image, input.note ?? "", input.answer ?? null]))
+    .digest("hex");
+  const hit = cache.get(key);
+  if (hit && now() - hit.at < CACHE_TTL_MS) return hit.value;
+
+  const { system, user } = buildPrompt(input);
   const failures: string[] = [];
+  let tried = 0;
   for (const model of models) {
     const id = typeof model === "string" ? model : model.modelId;
+    if ((cooldownUntil.get(id) ?? 0) > now()) {
+      failures.push(`${id}: cooling down`);
+      continue;
+    }
+    tried++;
     try {
       const { output } = await generateText({
         model,
         output: Output.object({ schema: ProposalSchema }),
         temperature: 0,
-        maxRetries: 1,
+        maxRetries: 0,
         abortSignal: AbortSignal.timeout(timeoutMs),
         instructions: system,
+        providerOptions: thinkingOff(id),
         messages: [
           {
             role: "user",
@@ -169,11 +240,18 @@ export async function classifyImage(
           },
         ],
       });
-      return { raw: output, model: id };
+      const value = { raw: output, model: id };
+      cache.set(key, { at: now(), value });
+      if (cache.size > CACHE_MAX) cache.delete(cache.keys().next().value as string);
+      return value;
     } catch (error) {
+      const wait = rateLimitDelay(error);
+      if (wait !== null) cooldownUntil.set(id, now() + wait);
       // Message only: AI SDK error objects can carry the request body, which holds the photo.
-      failures.push(`${id}: ${error instanceof Error ? error.message.slice(0, 200) : "failed"}`);
+      failures.push(`${id}: ${wait !== null ? `resting ${Math.round(wait / 1000)}s` : error instanceof Error ? error.message.slice(0, 200) : "failed"}`);
     }
   }
+  const allLimited = models.every((m) => (cooldownUntil.get(typeof m === "string" ? m : m.modelId) ?? 0) > now());
+  if (allLimited) throw new ClassifyBusy(failures.join(" | ") + (tried === 0 ? " (skipped: all cooling down)" : ""));
   throw new ClassifyUnavailable(failures.join(" | "));
 }

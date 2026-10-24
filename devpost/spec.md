@@ -20,7 +20,7 @@ Why this shape: one deployable app, no database, no login, one external AI call 
 PRD ref: `prd.md > The Core Journey`.
 1. **Arrive / set up** — the renter types an address → the browser asks NYC GeoSearch directly (it allows cross-origin requests) → suggestions come back with borough, BBL and BIN → the renter picks one and types a unit → the browser saves the `CaseFile` in IndexedDB → it asks `/api/building?bbl=` for year built and violations (shown on the case file).
 2. **Snap** — the camera input returns a file → `evidence.ts` reads EXIF capture time (exifr), hashes the original bytes (Web Crypto), and re-encodes a ≤1600px JPEG on a canvas (which drops every metadata tag, GPS included) → in parallel the browser posts the hash to `/api/receipt` and gets `{receivedAt, receipt}`.
-3. **AI proposes** — the browser posts a ≤1024px copy + the optional note to `/api/classify` → in demo mode with a sample photo the server returns the saved answer; otherwise it calls the vision model with a fixed list and a Zod schema at temperature 0 → **code** checks confidence: below 0.7 with no answer yet → returns a clarifying question; else the proposal. Errors / no key → `{status: "unavailable"}` and the UI shows the manual picker.
+3. **AI proposes** — the browser posts a ≤768px copy + the optional note to `/api/classify` → in demo mode with a sample photo the server returns the saved answer; otherwise it calls the vision model with a fixed list and a Zod schema at temperature 0 → **code** checks confidence: below 0.7 with no answer yet → returns a clarifying question; else the proposal. Errors / no key → `{status: "unavailable"}` and the UI shows the manual picker.
 4. **Code disposes** — the browser runs `evaluate(issue, facts, {now, yearBuilt})` from `rules.ts` → if a rule needs a fact it returns questions → the renter answers → it returns the class, window, citation and source → `countdown.ts` computes the requested repair-by date in America/New_York.
 5. **Building context** — the case file's `BuildingRecord` is filtered to the issue's category (`byIssue`, `recent[].issue`).
 6. **Log** — the browser saves an `Issue` in IndexedDB; follow-ups and "mark fixed" update it.
@@ -29,7 +29,7 @@ PRD ref: `prd.md > The Core Journey`.
 ## Stack
 - **Next.js 16.4 (App Router) + React 19 + TypeScript** — one app for pages and API routes; deploys to Vercel in one command. Docs: https://nextjs.org/docs (the installed version's docs are in `node_modules/next/dist/docs/` and take precedence — this version enables `cacheComponents`).
 - **Tailwind CSS v4** — styling via CSS variables for the doodle tokens. https://tailwindcss.com/docs
-- **AI SDK 7 (`ai`)** — one `generateText` call with a structured `Output.object` schema. Model ids route through **Vercel AI Gateway** (`anthropic/claude-haiku-5.5` primary, `google/gemini-2.5-flash` fallback). If `GOOGLE_GENERATIVE_AI_API_KEY` is set, `@ai-sdk/google` is used directly instead. https://ai-sdk.dev/docs · https://vercel.com/docs/ai-gateway
+- **AI SDK 7 (`ai`)** — one `generateText` call with a structured `Output.object` schema. Model ids route through **Vercel AI Gateway** (`anthropic/claude-haiku-5.5` primary, `google/gemini-3.5-flash` fallback). If `GOOGLE_GENERATIVE_AI_API_KEY` is set, `@ai-sdk/google` is used directly instead. https://ai-sdk.dev/docs · https://vercel.com/docs/ai-gateway
 - **Zod 4** — validates the model's answer and every API input. https://zod.dev
 - **exifr** — reads EXIF capture time in the browser. https://github.com/MikeKovarik/exifr
 - **idb-keyval** — tiny IndexedDB wrapper for the on-device case. https://github.com/jakearchibald/idb-keyval
@@ -65,7 +65,7 @@ PRD ref: `prd.md > Look and Feel`.
 PRD ref: `prd.md > Address setup`.
 
 ### Evidence capture
-`src/lib/evidence.ts`: `readEvidence(file: File): Promise<{sha256, capturedAt, captureSource, addedAt, photo, width, height, aiImage}>` — EXIF via exifr, SHA-256 via `crypto.subtle.digest`, canvas re-encode (≤1600px stored copy, ≤1024px copy for the AI). Rejects non-images and files > 20 MB with a typed error.
+`src/lib/evidence.ts`: `readEvidence(file: File): Promise<{sha256, capturedAt, captureSource, addedAt, photo, width, height, aiImage}>` — EXIF via exifr, SHA-256 via `crypto.subtle.digest`, canvas re-encode (≤1600px stored copy, ≤768px copy for the AI — one Gemini image tile). Rejects non-images and files > 20 MB with a typed error.
 PRD ref: `prd.md > Snap and AI proposal`, `prd.md > Evidence timeline`.
 
 ### Receipt service
@@ -73,11 +73,12 @@ PRD ref: `prd.md > Snap and AI proposal`, `prd.md > Evidence timeline`.
 PRD ref: `prd.md > Evidence timeline`.
 
 ### Classifier (AI proposes)
-`POST /api/classify {image (data URL ≤1024px JPEG), note?, answer?: {question, answer}, sampleId?}` → `ClassifyResponse`.
+`POST /api/classify {image (data URL ≤768px JPEG), note?, answer?: {question, answer}, sampleId?}` → `ClassifyResponse`.
 - `sampleId` of a demo sample → saved answer from `src/lib/demo/samples.ts` (labelled `source: "demo"`).
 - Otherwise: system prompt lists the seven allowed answers with one-line definitions; output schema `{issue: enum, confidence: 0..1, rationale: ≤200 chars, clarifyingQuestion: string|null, clarifyingOptions: string[]}`; temperature 0; one retry; fallback model.
 - **Code** applies the threshold (0.7): below it and no `answer` → return the question (the model's, or a default per issue); with an `answer` → return the second proposal whatever its confidence (the UI offers the manual picker when it's still low).
 - Input limits: body ≤ 2 MB, image must be `data:image/jpeg|png|webp`, note ≤ 280 chars.
+- **Free-tier rate limits** (Gemini allows a few requests per minute per model): no retry inside a model; a model that answers 429 rests for the delay the provider gives (503 "high demand" rests 15 s) and the next model, which has its own quota, answers; identical requests (same photo, note, answer) come from a one-hour cache; at most 12 live photos per visitor per 10 minutes and 16 per minute per server instance. When every model is resting the renter sees "The AI is at its free-tier limit for the moment. Pick the problem yourself — the rules still apply." Demo samples never call the AI.
 PRD ref: `prd.md > Snap and AI proposal`, `prd.md > States and Boundaries`.
 
 ### Rules engine (code disposes)
@@ -199,8 +200,8 @@ All on the device (IndexedDB via idb-keyval), shapes in `src/lib/types.ts`:
   - HPD violations `wvxf-dwi5`: `GET https://data.cityofnewyork.us/resource/wvxf-dwi5.json?$where=bbl='<bbl>' AND violationstatus='Open'&$select=violationid,class,inspectiondate,novissueddate,originalcorrectbydate,currentstatus,novdescription&$order=inspectiondate DESC&$limit=1000` (`bbl` is TEXT → quoted; "open" = `violationstatus='Open'`, not `currentstatus`). Counts by class: `$select=class,count(*) as n&$group=class`. https://data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Violations/wvxf-dwi5
   - PLUTO `64uk-42ks`: `GET …/64uk-42ks.json?$where=bbl=<bbl>&$select=bbl,yearbuilt,unitsres` (`bbl` is a NUMBER → unquoted). https://data.cityofnewyork.us/City-Government/Primary-Land-Use-Tax-Lot-Output-PLUTO-/64uk-42ks
   - Violation → issue mapping (first match wins, case-insensitive): mold `27-2017.3` or the word MOLD (never "MOLDING"); pests `27-2017.4`, "INFESTATION CONSISTING OF", MICE, ROACHES, RATS, BEDBUGS (drop "FILE ANNUAL BEDBUG REPORT"); heat `27-2029`, `27-2031`, "SUPPLY OF HEAT", "HOT WATER" (drop boiler-room rows); lock/door LOCK, LATCH, DEAD BOLT, `27-2043` (not `27-2043.1`), SELF-CLOSING (drop BOILER, signage, WINDOW GUARD); paint `27-2056`, LEAD-BASED PAINT, PEELING PAINT, "PLASTERED SURFACES AND PAINT", word PAINT (never bare "LEAD"); leak "WATER LEAK", LEAK, DAMPNESS, MOISTURE, SEEPAGE (never bare "WATER").
-- **Vercel AI Gateway** — model ids `anthropic/claude-haiku-5.5` (vision, structured output; $0.10/$0.50 per M tokens) then `google/gemini-2.5-flash`. Auth: OIDC on Vercel / `vercel env pull`, or `AI_GATEWAY_API_KEY`. Requires a card on the Vercel account to unlock free credits. https://vercel.com/docs/ai-gateway
-- **Google Gemini API (optional)** — `GOOGLE_GENERATIVE_AI_API_KEY`, model `gemini-2.5-flash` via `@ai-sdk/google`. https://ai.google.dev/gemini-api/docs
+- **Vercel AI Gateway** — model ids `anthropic/claude-haiku-5.5` (vision, structured output; $0.10/$0.50 per M tokens) then `google/gemini-3.5-flash`. Auth: OIDC on Vercel / `vercel env pull`, or `AI_GATEWAY_API_KEY`. Requires a card on the Vercel account to unlock free credits. https://vercel.com/docs/ai-gateway
+- **Google Gemini API (optional)** — `GOOGLE_GENERATIVE_AI_API_KEY`, models `gemini-3.5-flash` (thinking off, ~3 s) then `gemini-3.5-flash-lite` (~4 s) via `@ai-sdk/google`. `gemini-2.5-flash` is closed to new keys and `gemini-3.8-flash` took > 30 s (both checked 2026-10-25). https://ai.google.dev/gemini-api/docs
 - **Vercel** — hosting (Hobby, free). https://vercel.com/docs
 - **NYC 311 articles** (links only, no API): KA-01074 apartment maintenance, KA-02262 mold, KA-02278 pests, KA-01036 heat/hot water, KA-02134 lead paint — `https://portal.311.nyc.gov/article/?kanumber=<id>`.
 - **Demo buildings** (public building records only): 618 West 136th Street, Manhattan (BBL 1020020091, built 1905, 291 open violations, 37 leak-related); fixtures in `src/lib/demo/`.

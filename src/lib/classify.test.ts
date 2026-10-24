@@ -1,7 +1,9 @@
 import { MockLanguageModelV4 } from "ai/test";
-import { describe, expect, it } from "vitest";
+import { APICallError } from "ai";
+import { beforeEach, describe, expect, it } from "vitest";
 import {
   CONFIDENCE_THRESHOLD,
+  ClassifyBusy,
   ClassifyUnavailable,
   DEFAULT_QUESTIONS,
   ISSUE_DEFINITIONS,
@@ -10,6 +12,8 @@ import {
   classifyImage,
   decide,
   pickModels,
+  rateLimitDelay,
+  resetClassifyState,
   type RawProposal,
 } from "@/lib/classify";
 import { DEMO_SAMPLES } from "@/lib/demo/samples";
@@ -105,8 +109,8 @@ describe("buildPrompt", () => {
 
 describe("pickModels", () => {
   it("prefers a Google key, then the gateway, else none", () => {
-    expect(pickModels({ GOOGLE_GENERATIVE_AI_API_KEY: "k" })).toHaveLength(1);
-    expect(pickModels({ AI_GATEWAY_API_KEY: "k" })).toEqual(["anthropic/claude-haiku-5.5", "google/gemini-2.5-flash"]);
+    expect(pickModels({ GOOGLE_GENERATIVE_AI_API_KEY: "k" })).toHaveLength(2);
+    expect(pickModels({ AI_GATEWAY_API_KEY: "k" })).toEqual(["anthropic/claude-haiku-5.5", "google/gemini-3.5-flash"]);
     expect(pickModels({ VERCEL_OIDC_TOKEN: "t" })).toHaveLength(2);
     expect(pickModels({ VERCEL: "1" })).toHaveLength(2);
     expect(pickModels({})).toEqual([]);
@@ -134,6 +138,24 @@ const failing = (modelId: string) =>
     modelId,
     doGenerate: async () => {
       throw new Error("boom");
+    },
+  });
+
+beforeEach(() => resetClassifyState());
+
+const limitedError = (retry = "12s") =>
+  new APICallError({
+    message: `Resource has been exhausted (e.g. check quota). Please retry in ${retry}.`,
+    url: "https://generativelanguage.googleapis.com",
+    requestBodyValues: {},
+    statusCode: 429,
+    isRetryable: true,
+  });
+const rateLimited = (modelId: string) =>
+  new MockLanguageModelV4({
+    modelId,
+    doGenerate: async () => {
+      throw limitedError();
     },
   });
 
@@ -179,6 +201,52 @@ describe("classifyImage", () => {
     await expect(
       classifyImage({ image: "data:text/html;base64,AAAA" }, { models: [replying(raw(), "m")] }),
     ).rejects.toBeInstanceOf(ClassifyUnavailable);
+  });
+});
+
+describe("rate limits", () => {
+  it("reads the provider's retry delay from a 429, and ignores other errors", () => {
+    expect(rateLimitDelay(limitedError("12s"))).toBe(12_000);
+    expect(rateLimitDelay(limitedError("0.4s"))).toBe(1000); // floor
+    expect(rateLimitDelay(new Error("RESOURCE_EXHAUSTED"))).toBe(60_000); // no hint → default
+    expect(rateLimitDelay(new Error("This model is currently experiencing high demand."))).toBe(15_000);
+    expect(rateLimitDelay(new Error("boom"))).toBeNull();
+  });
+
+  it("never retries a rate-limited model and falls through to the next one", async () => {
+    const first = rateLimited("mock-a");
+    const second = replying(raw({ issue: "leak" }), "mock-b");
+    const out = await classifyImage({ image: IMAGE }, { models: [first, second] });
+    expect(out.model).toBe("mock-b");
+    expect(first.doGenerateCalls.length).toBe(1);
+  });
+
+  it("skips a cooling-down model on the next photo, then uses it again after the cooldown", async () => {
+    let t = 1_000_000;
+    const now = () => t;
+    const first = rateLimited("mock-a");
+    const second = replying(raw(), "mock-b");
+    await classifyImage({ image: IMAGE }, { models: [first, second], now });
+    await classifyImage({ image: "data:image/jpeg;base64,BBBB" }, { models: [first, second], now });
+    expect(first.doGenerateCalls.length).toBe(1); // skipped while cooling down
+    t += 13_000;
+    await classifyImage({ image: "data:image/jpeg;base64,CCCC" }, { models: [first, second], now });
+    expect(first.doGenerateCalls.length).toBe(2); // tried again after 12 s
+  });
+
+  it("throws ClassifyBusy when every model is rate-limited", async () => {
+    await expect(
+      classifyImage({ image: IMAGE }, { models: [rateLimited("mock-a"), rateLimited("mock-b")] }),
+    ).rejects.toBeInstanceOf(ClassifyBusy);
+  });
+
+  it("answers an identical request from the cache without calling the model again", async () => {
+    const model = replying(raw({ issue: "pests" }), "mock-a");
+    await classifyImage({ image: IMAGE, note: "x" }, { models: [model] });
+    await classifyImage({ image: IMAGE, note: "x" }, { models: [model] });
+    expect(model.doGenerateCalls.length).toBe(1);
+    await classifyImage({ image: IMAGE, note: "different" }, { models: [model] });
+    expect(model.doGenerateCalls.length).toBe(2);
   });
 });
 
