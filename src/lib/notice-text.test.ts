@@ -157,6 +157,12 @@ describe("noticeText (es)", () => {
     expect(l.followUpLine).toBe("Di seguimiento 2 veces; el más reciente fue el 20 de octubre de 2026 — worse, bucket fills daily.");
   });
 
+  it("translates an amended-law citation", () => {
+    const heat = issue("h", "heat_hot_water", { problem: "no_heat" }, "2026-10-20T12:00:00Z");
+    const item = noticeText(CASE, [heat], "es", NOW, ORIGIN).items[0];
+    expect(item.citation).toBe("Código Administrativo de NYC §27-2029(a) (modificado por la Ley Local 86 de 2017)");
+  });
+
   it("maps every issue label", () => {
     const more = [
       issue("h", "heat_hot_water", { problem: "no_heat" }, "2026-10-20T10:58:02Z"),

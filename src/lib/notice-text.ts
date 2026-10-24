@@ -271,6 +271,7 @@ function citationOf(citation: string, lang: NoticeLang): string {
   return citation
     .replace("NYC Admin. Code", "Código Administrativo de NYC")
     .replace("NYC Housing Maintenance Code", "Código de Mantenimiento de Viviendas de NYC")
+    .replace("as amended by", "modificado por la")
     .replace(/Local Law (\d+) of (\d{4})/g, "Ley Local $1 de $2")
     .replace("bedbugs also", "chinches, también");
 }
