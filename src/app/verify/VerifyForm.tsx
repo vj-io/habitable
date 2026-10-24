@@ -7,6 +7,22 @@ import { Field, inputClass } from "@/components/site/Field";
 
 type Result = { key: string; valid: boolean | null };
 
+/** SHA-256 of public/samples/leak-ceiling.jpg: a stand-in photo fingerprint for "Try a real receipt". */
+const SAMPLE_SHA256 = "97f1f7ffe504df3df811f9c14dcaa48022ab40c0211ac38e4a2ada656429890e";
+
+/** Asks the server to sign the sample fingerprint now, exactly as it does for a photo being logged. */
+async function stampSample(): Promise<{ receivedAt: string; receipt: string } | null> {
+  try {
+    const res = await fetch("/api/receipt", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sha256: SAMPLE_SHA256 }) });
+    return res.ok ? ((await res.json()) as { receivedAt: string; receipt: string }) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** The same hex string with its first digit changed, so it is guaranteed different. */
+const flipFirstDigit = (hex: string) => ((parseInt(hex[0], 16) + 1) % 16).toString(16) + hex.slice(1);
+
 async function check(sha256: string, receivedAt: string, receipt: string): Promise<boolean | null> {
   try {
     const qs = new URLSearchParams({ sha256: sha256.trim().toLowerCase(), receivedAt: receivedAt.trim(), receipt: receipt.trim().toLowerCase() });
@@ -36,12 +52,38 @@ export function VerifyForm() {
     void check(s, r, c).then((valid) => setResult({ key: initial, valid }));
   }, [initial]);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
+  async function run(s: string, r: string, c: string) {
     setBusy(true);
-    setResult({ key, valid: await check(sha256, receivedAt, receipt) });
+    setResult({ key: `${s}|${r}|${c}`, valid: await check(s, r, c) });
     setBusy(false);
     requestAnimationFrame(() => resultRef.current?.scrollIntoView({ block: "center" }));
+  }
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    return run(sha256, receivedAt, receipt);
+  }
+
+  // One tap: have the server sign a sample fingerprint, fill the form with it and check it.
+  async function trySample() {
+    setBusy(true);
+    const stamp = await stampSample();
+    if (!stamp) {
+      setResult({ key, valid: null });
+      setBusy(false);
+      return;
+    }
+    setSha(SAMPLE_SHA256);
+    setReceivedAt(stamp.receivedAt);
+    setReceipt(stamp.receipt);
+    await run(SAMPLE_SHA256, stamp.receivedAt, stamp.receipt);
+  }
+
+  // After a valid result: change one character of the fingerprint and check again.
+  function tamper() {
+    const changed = flipFirstDigit(sha256.trim().toLowerCase());
+    setSha(changed);
+    return run(changed, receivedAt, receipt);
   }
 
   const shown = result?.key === key ? result.valid : undefined;
@@ -55,6 +97,9 @@ export function VerifyForm() {
               Valid
             </Stamp>
             <p className="max-w-xs font-hand text-xl leading-snug">This fingerprint reached Habitable&apos;s server at exactly that time.</p>
+            <DoodleButton variant="secondary" loading={busy} onClick={() => void tamper()}>
+              Change one character
+            </DoodleButton>
           </div>
         )}
         {shown === false && (
@@ -77,9 +122,14 @@ export function VerifyForm() {
         <Field id="v-rc" label="Receipt code">
           <input id="v-rc" value={receipt} onChange={(e) => setReceipt(e.target.value)} spellCheck={false} autoComplete="off" placeholder="12 characters" className={`${inputClass} font-mono text-sm`} />
         </Field>
-        <DoodleButton type="submit" size="lg" loading={busy} disabled={!sha256 || !receivedAt || !receipt}>
-          Check receipt
-        </DoodleButton>
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <DoodleButton type="submit" size="lg" loading={busy} disabled={!sha256 || !receivedAt || !receipt}>
+            Check receipt
+          </DoodleButton>
+          <DoodleButton variant="ghost" disabled={busy} onClick={() => void trySample()}>
+            Try a real receipt
+          </DoodleButton>
+        </div>
       </DoodleCard>
 
     </form>

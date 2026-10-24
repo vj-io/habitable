@@ -33,3 +33,13 @@ test("no horizontal scroll at 375px on /", async ({ page }) => {
   }));
   expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
 });
+
+test("security headers and a fresh service worker", async ({ request }) => {
+  const page = await request.get("/");
+  expect(page.headers()["x-content-type-options"]).toBe("nosniff");
+  expect(page.headers()["x-frame-options"]).toBe("DENY");
+  expect(page.headers()["permissions-policy"]).toContain("camera=(self)");
+  const sw = await request.get("/sw.js");
+  expect(sw.status()).toBe(200);
+  expect(sw.headers()["cache-control"]).toContain("no-cache");
+});

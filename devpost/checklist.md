@@ -103,3 +103,7 @@ Activity mode: pending.
 - Gemini free-tier limits shaped the classifier: no retries inside a model, per-model cooldown from the provider's retry delay, a one-hour cache for identical requests, per-visitor and per-instance caps, and a 768 px AI image.
 - Review fixes: production refuses to sign receipts without `RECEIPT_SECRET` (a missing secret would have let anyone forge receipts); client timeouts on every request; the notice links each photo to its receipt check.
 
+- Palette revised after review: the neon lime read as harsh, so the doodle kit now uses a felt-tip set — sunflower marker for actions and highlights, violet still only for the AI, red / amber / sky for HPD Class C / B / A, mint for done — with every text pair at 4.5:1 or better. A "night notebook" dark theme with a toggle follows the system setting until the renter picks one.
+- Cross-browser runs found Safari formats dates as "Oct 15, 2026 at 7:42 AM" (and "a las" in Spanish) where Chrome and Firefox use a comma; evidence text is now normalised so it reads the same on every phone. The e2e suite runs on Chromium, WebKit (iPhone 14) and Firefox.
+- The case menu popover was clipped on phones because the sketch box forced `position: relative` over the menu's `absolute`; fixed in the kit and covered by an e2e check.
+- Offline: a service worker keeps already-loaded pages and code so the case opens with no signal; the case data was already on the device.

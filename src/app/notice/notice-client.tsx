@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useId, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { Arrow, Check, Chip, Doc, DoodleButton, DoodleCard, Highlight, MonoLabel, PencilLoader, Tag } from "@/components/doodle";
 import { useBuilding } from "@/components/case/useBuilding";
 import { NoticePreview } from "@/components/notice/NoticePreview";
@@ -110,6 +110,17 @@ function NoticeBuilder({ caseFile, issues }: { caseFile: CaseFile; issues: Issue
   );
   const text = useMemo(() => noticeText(named, issues, lang, now, window.location.origin), [named, issues, lang, now]);
   const fileName = noticeFileName(caseFile, now);
+  const hasItems = text.items.length > 0;
+
+  // Warm the PDF code path in the background (renderer, notice component, fonts) so the first Download or Share
+  // is quick. Waits a moment so it doesn't compete with the first paint; ignores failures.
+  useEffect(() => {
+    if (!hasItems) return;
+    const timer = setTimeout(() => {
+      void import("@/components/notice/NoticeDocument").then((m) => m.warmPdf()).catch(() => {});
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [hasItems]);
 
   // Saved with the case when a field loses focus, so it persists and prefills next time. The "To" fields are only
   // saved once the renter has touched one of them; until then they keep following HPD's registration.
