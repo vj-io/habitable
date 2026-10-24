@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Arrow, Building, Camera, Doc, DoodleButton, DoodleCard, Highlight, MonoLabel, Stamp } from "@/components/doodle";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { readBackupFile, restoreCase } from "@/lib/backup";
 import { DEMO_ADDRESS, DEMO_UNIT, DEMO_YEAR_BUILT } from "@/lib/demo/building";
 import { saveCase } from "@/lib/store";
 import { AddressSetup } from "./AddressSetup";
@@ -44,6 +45,18 @@ function StepStrip() {
 
 export function Welcome() {
   const [demoBusy, setDemoBusy] = useState(false);
+  const [restoreError, setRestoreError] = useState<string | null>(null);
+
+  // No case exists on this screen, so there is nothing to replace and no need to ask first.
+  async function restoreFrom(file: File) {
+    const result = await readBackupFile(file);
+    if (!result.ok) return setRestoreError(result.error);
+    try {
+      await restoreCase(result.backup);
+    } catch {
+      setRestoreError("Couldn't save the backup to this device. Check that your browser allows site storage, then try again.");
+    }
+  }
 
   async function startDemo() {
     setDemoBusy(true);
@@ -102,6 +115,26 @@ export function Welcome() {
             <p className="text-center font-hand text-lg leading-snug text-muted">
               A real Harlem building with a public HPD record, sample photos, everything labelled DEMO.
             </p>
+            <p className="text-center text-[0.9375rem] text-muted">
+              <label className="inline-flex min-h-11 cursor-pointer items-center gap-1.5 has-[:focus-visible]:outline-3 has-[:focus-visible]:outline-violet-ink">
+                Have a backup file? <span className="font-bold text-ink underline decoration-2 underline-offset-4">Restore it</span>
+                <input
+                  type="file"
+                  accept="application/json,.json"
+                  className="sr-only"
+                  onChange={(e) => {
+                    const f = e.target.files?.[0];
+                    e.target.value = "";
+                    if (f) void restoreFrom(f);
+                  }}
+                />
+              </label>
+            </p>
+            {restoreError && (
+              <p role="alert" className="text-center font-hand text-lg leading-snug text-red-ink">
+                {restoreError}
+              </p>
+            )}
           </div>
 
           <p className="px-1 text-center text-[0.9375rem] leading-relaxed text-muted">

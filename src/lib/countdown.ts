@@ -107,6 +107,13 @@ const formats = {
   short: new Intl.DateTimeFormat("en-US", { timeZone: NY_TZ, month: "short", day: "numeric" }),
 };
 
+const dayFormat = new Intl.DateTimeFormat("en-CA", { timeZone: NY_TZ, year: "numeric", month: "2-digit", day: "2-digit" });
+
+/** "2026-10-15": the New York calendar date of an instant. */
+export function nyDay(d: Date): string {
+  return dayFormat.format(d);
+}
+
 /** "Oct 15, 2026" | "Oct 15, 2026, 7:42 AM" | "Oct 15" — always in America/New_York. */
 export function formatNY(iso: string, style: "date" | "datetime" | "short"): string {
   // Newer ICU puts a narrow no-break space before AM/PM; normalise to a plain space.
