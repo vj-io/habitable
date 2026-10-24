@@ -9,7 +9,7 @@ status: approved
 Habitable is one website that works like a phone app. It has three parts:
 
 1. **The app on your phone (the browser).** It reads your photo, computes its fingerprint (a SHA-256 hash — a code that changes if a single pixel changes), reads the time the photo was taken from inside the file (EXIF), removes location data, and keeps your whole case — address, issues, photos, follow-ups — in the browser's own storage (IndexedDB). There is no account and nothing is uploaded except what the next part needs.
-2. **A small server (Next.js API routes on Vercel).** It does three jobs the phone can't do safely: asks the vision AI to *propose* a problem type (the AI key stays on the server), stamps a receipt saying "I saw this fingerprint at this time", fetches the building's public record from NYC Open Data, and keeps the AI key secret.
+2. **A small server (Next.js API routes on Vercel).** It does three jobs the phone can't do safely: asks the vision AI to *propose* a problem type (the AI key stays on the server), stamps a receipt saying "I saw this fingerprint at this time", and fetches the building's public record from NYC Open Data.
 3. **The rules table (`src/lib/rules.json`) and the rules engine (`src/lib/rules.ts`).** Plain data plus plain code. Given the problem type and any facts it needs (mold size, a child under 6, heat or hot water, the date), it returns the hazard class, the correction window, the code section and the source link. The AI never touches this step. That is the kernel: **AI proposes, code disposes.**
 
 The notice PDF is drawn in the browser from the saved case, so the document never passes through a server.

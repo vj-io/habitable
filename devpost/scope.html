@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Habitable Scope (planning companion)</title>
+<meta name="description" content="Visual companion to Habitable’s scope: the user, the core loop, the proof, and what is now, later and cut.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23c8ff00'/%3E%3Cpath d='M7 25V8l9 7 9-7v17' fill='none' stroke='%230a0a0a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=JetBrains+Mono:wght@500;700&family=Patrick+Hand&display=swap">
+<style>
+:root{--paper:#f0ede8;--paper2:#faf8f4;--ink:#0a0a0a;--muted:#5d5a54;--lime:#c8ff00;--lime-tint:#f1ffc2;
+--violet:#5534e6;--violet-stroke:#6b4eff;--violet-tint:#e8e2ff;--red:#d63a2a;--red-ink:#b3261a;--red-tint:#ffe1dc;
+--amber:#b85c00;--amber-ink:#9c4c00;--amber-tint:#ffedd1;--yellow-tint:#fff4a8;
+--f-head:"Archivo","Helvetica Neue",Arial,sans-serif;--f-hand:"Patrick Hand","Comic Neue","Segoe Print",cursive;--f-mono:ui-monospace,"JetBrains Mono",Menlo,monospace}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;color:var(--ink);font:17px/1.55 var(--f-head);background-color:var(--paper);
+background-image:linear-gradient(rgba(10,10,10,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(10,10,10,.06) 1px,transparent 1px);background-size:28px 28px;overflow-wrap:break-word}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+a{color:var(--violet);text-underline-offset:3px}
+a:hover{background:var(--lime-tint)}
+:focus-visible{outline:3px solid var(--violet);outline-offset:3px;border-radius:3px}
+code,.mono{font-family:var(--f-mono);font-size:.84em;background:rgba(10,10,10,.06);padding:.08em .35em;border-radius:4px;overflow-wrap:anywhere}
+pre{font-family:var(--f-mono);font-size:.8rem;line-height:1.5;background:var(--paper2);border:2.5px solid var(--ink);border-radius:10px 7px 11px 8px;padding:.9rem 1rem;overflow-x:auto;margin:.6rem 0}
+pre code{background:none;padding:0;font-size:inherit}
+.skip{position:absolute;left:-999px;top:0;background:var(--lime);padding:.5rem 1rem;border:2.5px solid var(--ink);z-index:10}
+.skip:focus{left:8px;top:8px}
+/* top bar */
+.top{border-bottom:3px solid var(--ink);background:var(--paper2)}
+.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1.2rem;padding-top:.7rem;padding-bottom:.7rem}
+.brand{display:flex;align-items:baseline;gap:.6rem;font-weight:800}
+.logo{font-size:1.25rem;letter-spacing:-.01em}
+.kicker{font:1.1rem var(--f-hand);color:var(--muted)}
+.top nav{display:flex;gap:.35rem}
+.top nav a{font:800 .86rem var(--f-mono);text-transform:uppercase;letter-spacing:.04em;text-decoration:none;color:var(--ink);padding:.55rem .75rem;min-height:44px;display:inline-flex;align-items:center;border:2.5px solid transparent;border-radius:9px 6px 10px 7px}
+.top nav a:hover{background:var(--lime-tint);border-color:var(--ink)}
+.top nav a[aria-current=page]{background:var(--lime);border-color:var(--ink)}
+.top .meta{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem;margin-left:auto}
+.top .src{font:600 .8rem var(--f-mono);color:var(--ink);padding:.5rem .1rem;min-height:44px;display:inline-flex;align-items:center}
+/* chips */
+.chip{display:inline-block;font:700 .72rem/1 var(--f-mono);letter-spacing:.05em;text-transform:uppercase;padding:.34rem .5rem;border:2px solid var(--ink);border-radius:8px 5px 9px 6px;background:var(--paper2);white-space:nowrap;vertical-align:middle}
+.chip.lime{background:var(--lime)}.chip.ai{background:var(--violet-tint);border-color:var(--violet);color:var(--violet)}
+.chip.haz{background:var(--red-tint);border-color:var(--red-ink);color:var(--red-ink)}.chip.amber{background:var(--amber-tint);border-color:var(--amber-ink);color:var(--amber-ink)}
+a.chip{text-decoration:none;color:var(--ink)}a.chip:hover{background:var(--lime-tint)}
+a.chip.ai{color:var(--violet)}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.5rem 0}
+/* type */
+.hl{background:linear-gradient(transparent 52%,var(--lime) 52%,var(--lime) 90%,transparent 90%);padding:0 .12em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.ai-t{color:var(--violet)}
+.hand{font-family:var(--f-hand);font-size:1.18em}
+h1,h2,h3{font-family:var(--f-head);font-weight:800;line-height:1.1;letter-spacing:-.015em;margin:0}
+h1{font-size:clamp(2.4rem,7vw,4.4rem);letter-spacing:-.03em}
+h2{font-size:clamp(1.55rem,3.6vw,2.25rem);display:flex;align-items:center;gap:.7rem;margin-bottom:.9rem}
+h3{font-size:1.12rem;margin:1.4rem 0 .4rem}
+.num{flex:none;display:inline-grid;place-items:center;width:2.3rem;height:2.3rem;border:2.5px solid var(--ink);border-radius:55% 45% 50% 50%/50% 55% 45% 50%;background:var(--lime);font:800 .95rem var(--f-mono)}
+.lede{font-size:clamp(1.15rem,2.4vw,1.45rem);line-height:1.4;max-width:46rem;margin:1rem 0}
+.hero{padding:2.2rem 0 .5rem}
+main section{margin:3.2rem 0;scroll-margin-top:12px}
+p{margin:.5rem 0}
+.sub{color:var(--muted);font-size:.95rem}
+.src-line{font:600 .78rem var(--f-mono);color:var(--muted);margin:.2rem 0}
+/* cards + notes */
+.card{background:var(--paper2);border:2.5px solid var(--ink);border-radius:14px 10px 16px 9px/10px 15px 9px 14px;box-shadow:3px 4px 0 var(--ink);padding:1rem 1.15rem}
+.card>:first-child{margin-top:0}.card>:last-child{margin-bottom:0}
+.card.ai{background:var(--violet-tint);border-color:var(--violet);box-shadow:3px 4px 0 var(--violet)}
+.card.code{background:var(--lime-tint)}
+.card.haz{background:var(--red-tint);border-color:var(--red-ink);box-shadow:3px 4px 0 var(--red-ink)}
+.card h3:first-child{margin-top:0}
+.grid{display:grid;gap:1.1rem}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.g5{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media (max-width:900px){.g3,.g4,.g5{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:700px){.g2,.g3,.g4,.g5{grid-template-columns:minmax(0,1fr)}}
+.note{font-family:var(--f-hand);font-size:1.2rem;line-height:1.3;background:var(--yellow-tint);padding:.6rem .85rem;border:2px solid var(--ink);border-radius:4px 8px 5px 9px;transform:rotate(-.8deg);display:inline-block;max-width:100%}
+.note.ai{background:var(--violet-tint);border-color:var(--violet);color:var(--violet)}
+.note.code{background:var(--lime-tint)}.note.haz{background:var(--red-tint);border-color:var(--red-ink);color:var(--red-ink)}
+.quote{font-family:var(--f-hand);font-size:1.3rem;line-height:1.3;border-left:5px solid var(--lime);padding:.2rem 0 .2rem .9rem;margin:.8rem 0}
+ul.plain{margin:.4rem 0;padding-left:1.2rem}ul.plain li{margin:.25rem 0}
+/* reveals */
+details.rv{background:var(--paper2);border:2.5px solid var(--ink);border-radius:12px 9px 13px 8px/9px 12px 8px 13px;margin:.6rem 0}
+details.rv>summary{cursor:pointer;list-style:none;padding:.7rem .9rem .7rem 2.5rem;font-weight:800;position:relative;min-height:44px;display:flex;align-items:center;flex-wrap:wrap;gap:.2rem .6rem}
+details.rv>summary::-webkit-details-marker{display:none}
+details.rv>summary::before{content:"";position:absolute;left:.95rem;top:50%;width:.62rem;height:.62rem;margin-top:-.45rem;border-right:3px solid var(--ink);border-bottom:3px solid var(--ink);transform:rotate(-45deg);transition:transform .15s}
+details[open].rv>summary::before{transform:rotate(45deg);margin-top:-.55rem}
+details.rv>summary:hover{background:var(--lime-tint);border-radius:10px}
+details.rv>.body{padding:.1rem 1rem 1rem 2.5rem}
+details.rv>.body>:first-child{margin-top:0}
+details.rv.ai{border-color:var(--violet)}details.rv.haz{border-color:var(--red-ink)}
+details.rv.ai>summary::before{border-color:var(--violet)}details.rv.haz>summary::before{border-color:var(--red-ink)}
+.why{font:1rem var(--f-hand);font-size:1.12rem;color:var(--muted);font-weight:400}
+.col-h{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.3rem}
+.col-h h3{margin:0;font-size:1.35rem}
+.btn{font:800 .8rem var(--f-mono);text-transform:uppercase;letter-spacing:.04em;min-height:44px;padding:.5rem .85rem;border:2.5px solid var(--ink);border-radius:9px 6px 10px 7px;background:var(--paper2);color:var(--ink);cursor:pointer}
+.btn:hover:not(:disabled){background:var(--lime)}.btn:disabled{opacity:.4;cursor:default}
+.btn.sm{min-height:36px;padding:.3rem .6rem;font-size:.72rem}
+.only-js{display:none!important}.js .only-js{display:inline-block!important}.js .filters.only-js{display:flex!important}
+/* criteria */
+ul.crit{list-style:none;margin:.5rem 0;padding:0}
+ul.crit li{position:relative;padding:.3rem 0 .3rem 2.15rem}
+ul.crit li::before{content:"";position:absolute;left:.1rem;top:.5rem;width:1.15rem;height:1.15rem;border:2.5px solid var(--ink);border-radius:3px 5px 3px 6px;background:var(--paper2)}
+.lbl{font:700 .74rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:1rem 0 .2rem}
+.lbl.ai{color:var(--violet)}.lbl.haz{color:var(--red-ink)}
+/* diagram */
+.diagram{margin:1rem 0;padding:.6rem;background:var(--paper2);border:2.5px solid var(--ink);border-radius:14px 10px 16px 9px/10px 15px 9px 14px;box-shadow:3px 4px 0 var(--ink)}
+.diagram svg{display:block;width:100%;height:auto;overflow:visible}
+.diagram .mob{display:none;max-width:500px;margin:0 auto}
+@media (max-width:860px){.diagram .dsk{display:none}.diagram .mob{display:block}}
+.legend{display:flex;flex-wrap:wrap;gap:.5rem 1rem;margin:.6rem .2rem .2rem;font:.82rem var(--f-mono)}
+.legend span{display:inline-flex;align-items:center;gap:.4rem}
+.sw{display:inline-block;width:1.1rem;height:1.1rem;border:2.5px solid var(--ink);border-radius:3px 5px 3px 6px}
+svg .t{font-family:var(--f-head);fill:var(--ink)}
+svg .t-h{font-weight:800;font-size:15px}svg .t-b{font-size:13px}svg .t-s{font-size:12px;fill:var(--muted)}
+svg .t-hand{font-family:var(--f-hand);font-size:17px}svg .t-mono{font-family:var(--f-mono);font-size:11.5px;font-weight:600}
+svg .t-k{font-size:12px}svg .t-cap{font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.06em;fill:var(--muted)}
+svg .t-num{font-family:var(--f-mono);font-weight:800;font-size:13px;fill:var(--paper2)}
+svg .t-stamp{font-weight:800;font-size:15px;fill:var(--red-ink);letter-spacing:.02em}
+svg .t-ai{fill:var(--violet)}svg .t-haz{fill:var(--red-ink)}
+svg .t-big{font-weight:800;font-size:18px}
+.n .box{fill:var(--paper2);stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.n .badge{fill:var(--ink);stroke:var(--ink);stroke-width:1.5}
+.n.k-ai .box{fill:var(--violet-tint);stroke:var(--violet-stroke)}.n.k-ai .t-h{fill:var(--violet)}.n.k-ai .badge{fill:var(--violet);stroke:var(--violet)}
+.n.k-code .box{fill:var(--lime-tint);stroke:var(--ink);stroke-width:3}.n.k-code .badge{fill:var(--ink)}
+.n.k-haz .box{fill:var(--red-tint);stroke:var(--red-ink)}.n.k-haz .t-h{fill:var(--red-ink)}
+.n.k-sticky .box{fill:var(--yellow-tint)}
+.n.k-ghost .box{fill:transparent;stroke-dasharray:7 6}
+.n.k-ext .box{fill:var(--paper);stroke-dasharray:7 5}
+.n.k-cont .box{fill:rgba(255,255,255,.35);stroke-dasharray:9 6;stroke-width:2.4}
+.n.k-lime .box{fill:var(--lime);stroke:var(--ink)}
+.ink-s path,.ink-s{fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.edge path{fill:none;stroke:var(--ink);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.edge.ai path{stroke:var(--violet-stroke)}.edge.haz path{stroke:var(--red-ink)}
+.hlr{fill:var(--lime)}
+.sbox{fill:var(--red-tint);stroke:var(--red-ink);stroke-width:3;stroke-linejoin:round}.sbox2{fill:none;stroke:var(--red-ink);stroke-width:1.6}
+a.nl{cursor:pointer;text-decoration:none}
+a.nl:hover .n .box,a.nl:hover .box{fill:var(--lime-tint)}
+a.nl:hover{background:none}
+a.nl:focus-visible{outline:none}
+a.nl:focus-visible .box{stroke:var(--violet);stroke-width:4.5}
+.dim{opacity:.22;transition:opacity .2s}
+svg [data-steps]{transition:opacity .2s}
+/* html storyboard bits */
+.stamp{display:inline-block;transform:rotate(-4deg);border:4px double var(--red-ink);color:var(--red-ink);background:var(--red-tint);padding:.45rem .8rem;font-weight:800;letter-spacing:.03em;text-transform:uppercase;border-radius:5px;line-height:1.25}
+.beats{counter-reset:b}
+.beat{position:relative;padding-top:2.4rem}
+.beat::before{counter-increment:b;content:counter(b);position:absolute;top:.7rem;left:.9rem;width:1.8rem;height:1.8rem;display:grid;place-items:center;background:var(--ink);color:var(--paper2);font:800 .85rem var(--f-mono);border-radius:50%}
+.beat.key{background:var(--lime-tint)}
+.swatches{display:flex;flex-wrap:wrap;gap:.7rem;margin:.7rem 0}
+.swatch{width:7.4rem;font:.74rem var(--f-mono)}
+.swatch i{display:block;height:3.2rem;border:2.5px solid var(--ink);border-radius:8px 5px 9px 6px;margin-bottom:.3rem}
+/* tables */
+.tw{margin:.8rem 0}
+table.rt{width:100%;border-collapse:separate;border-spacing:0;background:var(--paper2);border:2.5px solid var(--ink);border-radius:12px 9px 13px 8px;font-size:.93rem}
+table.rt th{font:800 .72rem var(--f-mono);text-transform:uppercase;letter-spacing:.06em;text-align:left;padding:.6rem .7rem;background:var(--lime);border-bottom:2.5px solid var(--ink)}
+table.rt td{padding:.55rem .7rem;vertical-align:top;border-bottom:1.5px dashed rgba(10,10,10,.35)}
+table.rt tr:last-child td{border-bottom:0}
+table.rt th:first-child{border-top-left-radius:9px}table.rt th:last-child{border-top-right-radius:7px}
+table.rt tr.grp td{border-top:2.5px solid var(--ink)}
+table.rt tbody tr:first-child td{border-top:0}
+.cls{display:inline-block;font:800 .74rem var(--f-mono);padding:.25rem .45rem;border:2px solid var(--ink);border-radius:6px 4px 7px 5px;text-transform:uppercase;white-space:nowrap}
+.cls.C{background:var(--red-tint);border-color:var(--red-ink);color:var(--red-ink)}.cls.B{background:var(--amber-tint);border-color:var(--amber-ink);color:var(--amber-ink)}
+.cls.A{background:var(--paper);}.cls.none{border-style:dashed;color:var(--muted)}
+@media (max-width:760px){
+ table.rt,table.rt tbody,table.rt tr,table.rt td{display:block;width:100%}
+ table.rt thead{position:absolute;left:-9999px}
+ table.rt{background:none;border:0}
+ table.rt tr{background:var(--paper2);border:2.5px solid var(--ink);border-radius:12px 9px 13px 8px;margin:.8rem 0;padding:.3rem .2rem}
+ table.rt td{border:0!important;padding:.3rem .7rem}
+ table.rt td::before{content:attr(data-l);display:block;font:700 .68rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+}
+.filters{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0}
+.filters .btn[aria-pressed=true]{background:var(--lime)}
+/* stepper */
+.stepper .tabs{display:none}
+.js .stepper .tabs{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:.8rem 0}
+.tab{min-width:44px;min-height:44px;font:800 1rem var(--f-mono);border:2.5px solid var(--ink);border-radius:50% 45% 52% 48%/48% 52% 45% 50%;background:var(--paper2);cursor:pointer;color:var(--ink)}
+.tab[aria-selected=true]{background:var(--lime);box-shadow:2px 3px 0 var(--ink)}
+.tab:hover{background:var(--lime-tint)}
+.panel{margin:1rem 0}
+.panel>.card{padding:1.1rem 1.2rem}
+.panel h3.ph{display:flex;align-items:center;gap:.6rem;font-size:1.35rem;margin:0 0 .5rem;flex-wrap:wrap}
+.panel .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:1.2rem 2rem}
+@media (max-width:800px){.panel .two{grid-template-columns:minmax(0,1fr)}}
+.js .panel[hidden]{display:none}
+.stepper .stepnav{display:none}.js .stepper .stepnav{display:flex;flex-wrap:wrap;gap:.5rem;margin:.2rem 0 .6rem}
+/* expansion pairs */
+.xp{display:grid;grid-template-columns:minmax(0,1fr) 3.2rem minmax(0,1.9fr);gap:.4rem;align-items:start;margin:.9rem 0}
+.xp .said{align-self:center}
+.xp .arrow{align-self:center;justify-self:center}
+.xp .arrow svg{width:3rem;height:1.6rem;overflow:visible}
+@media (max-width:760px){.xp{grid-template-columns:minmax(0,1fr)}.xp .arrow{transform:rotate(90deg);height:2.2rem}}
+.xp .now ul{margin:.3rem 0;padding-left:1.1rem}
+/* phones */
+.phones{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:1rem}
+.ph-svg{display:block;width:100%;max-width:230px;height:auto;margin:.4rem auto 0}
+.two-c{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:1.2rem;align-items:start}
+@media (max-width:760px){.two-c{grid-template-columns:minmax(0,1fr)}}
+footer.foot{border-top:3px solid var(--ink);background:var(--paper2);margin-top:4rem;padding:1.5rem 0 2.5rem;font-size:.92rem}
+footer.foot .wrap{display:flex;flex-wrap:wrap;gap:.6rem 1.5rem;align-items:center}
+.tree{white-space:pre;font-size:.74rem;line-height:1.45}
+.toc{display:flex;flex-wrap:wrap;gap:.4rem;margin:1rem 0 0}
+.toc a{font:700 .78rem var(--f-mono);text-transform:uppercase;letter-spacing:.04em;text-decoration:none;color:var(--ink);padding:.5rem .65rem;min-height:44px;display:inline-flex;align-items:center;border:2px solid var(--ink);border-radius:8px 5px 9px 6px;background:var(--paper2)}
+.toc a:hover{background:var(--lime)}
+@media (max-width:520px){.kicker{display:none}.top .meta{margin-left:0}.card{padding:.85rem .9rem}details.rv>.body{padding-left:1rem}}
+@media print{.top nav,.toc,.btn{display:none}body{background:#fff}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="top"><div class="wrap">
+<div class="brand"><span class="logo hl">Habitable</span><span class="kicker">planning companion</span></div>
+<nav aria-label="Planning companions"><a href="scope.html" aria-current="page">Scope</a><a href="prd.html">PRD</a><a href="spec.html">Spec</a></nav>
+<div class="meta"><span class="chip">doc: scope</span><span class="chip lime">status: approved</span><a class="src" href="scope.md">scope.md (canonical)</a></div>
+</div></header>
+<main id="main" class="wrap">
+<div class="hero">
+<h1>Habitable</h1>
+<p class="lede">Snap a photo of what’s broken in your NYC apartment; get a dated, housing-code-classified evidence log and a ready-to-send repair notice.</p>
+<p><span class="note ai">AI proposes,</span> <span class="note code">code disposes.</span></p>
+<nav class="toc" aria-label="On this page"><a href="#picture">The picture</a><a href="#kernel">Kernel</a><a href="#who">Who</a><a href="#loop">Core loop</a><a href="#working">“Working”</a><a href="#boundary">Now / later / cut</a><a href="#identity">Identity</a></nav>
+</div><section id="picture"><h2><span class="num" aria-hidden="true">1</span><span>The whole idea on one page</span></h2><figure class="diagram" id="scope-diagram" style="margin-left:0;margin-right:0">
+<svg class="dsk" role="group" aria-label="Habitable on one page: the user, the core loop and the proof" viewBox="0 0 1000 690" xmlns="http://www.w3.org/2000/svg"><title>Habitable on one page</title><g><g class="n k-plain"><path class="box" d="M21.7 17.7 Q332.6 17.1 640.5 15.5 Q639.6 87.9 639.4 162.8 Q331 161.2 18.4 163.2 Q19.4 89.7 23.7 20.8"/></g></g><g class="ink-s"><path d="M63.1 41.7 C71.4 42.7 77.7 48.8 76.7 57.1 C77.8 65.4 69.2 69.7 60.9 69.8 C52.6 68.6 46 65.4 46.5 57.1 C47.6 48.8 54.8 42.9 65.1 42.7" fill="var(--paper2)"/><path d="M62 72 L62 108 M42 86 Q62 80 83 87 M62 108 L47 134 M62 108 L78 134"/></g><text x="110" y="40" class="t t-h" text-anchor="start">The user: a NYC renter</text><text x="110" y="60" class="t t-b" text-anchor="start"><tspan x="110" dy="0">Older, often rent-stabilized building: a leak, mold, no heat, pests,</tspan><tspan x="110" dy="16">a broken lock or peeling paint.</tspan><tspan x="110" dy="16">Today: texts or calls the landlord, keeps no dated record, and</tspan><tspan x="110" dy="16">doesn’t know what the code requires or how long the landlord has.</tspan><tspan x="110" dy="16">At 311, an HPD inspection or housing court: a scattered camera</tspan><tspan x="110" dy="16">roll and no paper trail.</tspan></text><g><g class="n k-ghost"><path class="box" d="M671.5 15 Q827.3 14.9 980.4 15 Q980.4 87.7 981.6 161 Q825 162.8 671 161.8 Q670.7 88.3 674 17.9"/><text x="682" y="42" class="t t-h" text-anchor="start">Secondary users</text><text x="682" y="64" class="t t-b" text-anchor="start"><tspan x="682" dy="0">Tenant-association organizers</tspan><tspan x="682" dy="16">and legal-aid intake workers</tspan><tspan x="682" dy="16">who need structured evidence.</tspan></text></g></g><g class="edge "><path class="draw" pathLength="1" d="M70 166 Q71.6 206.6 70 246"/><path class="draw" pathLength="1" d="M75.8 235.5 L70 246 L64.2 235.5"/></g><text x="86" y="214" class="t t-hand" text-anchor="start">opens the app on a phone</text><g><g class="n k-plain"><path class="box" d="M21.4 251.2 Q102.1 250.7 179.8 249.5 Q182.1 333.1 181.4 413.6 Q98.3 412.9 18.3 415.2 Q20.9 331.3 22.4 255.7"/><path class="badge" d="M40.6 259.3 C47.3 258.5 52.8 264.5 52.1 271.1 C51.4 277.7 47.5 283.5 40.9 282.8 C34.3 282.5 26.5 277.4 27.2 270.8 C28.1 264.1 34 258.8 42.6 260.3"/><text x="40" y="276" class="t t-num" text-anchor="middle">1</text><text x="58" y="276" class="t t-h" text-anchor="start">Snap</text><text x="34" y="298" class="t t-b" text-anchor="start"><tspan x="34" dy="0">A photo of the</tspan><tspan x="34" dy="16">problem, plus one</tspan><tspan x="34" dy="16">optional line:</tspan><tspan x="34" dy="16">“ceiling dripping</tspan><tspan x="34" dy="16">since Tuesday”</tspan></text></g></g><g><g class="n k-ai"><path class="box" d="M218.9 250.1 Q298.2 249.9 379.9 250 Q378 332.6 379.8 414.1 Q300.3 414.3 218.9 412.2 Q220.8 331.7 219.9 254.9"/><path class="badge" d="M239.5 258.2 C246.1 258.2 251.7 264.2 252.5 270.8 C252.4 277.4 246 283.6 239.3 283.4 C232.7 283.5 228.2 276.7 228.9 270.1 C228.5 263.4 232.8 258.4 241.5 259.2"/><text x="240" y="276" class="t t-num" text-anchor="middle">2</text><text x="258" y="276" class="t t-h" text-anchor="start">AI proposes</text><text x="234" y="298" class="t t-b" text-anchor="start"><tspan x="234" dy="0">Picks only from a</tspan><tspan x="234" dy="16">fixed list: six</tspan><tspan x="234" dy="16">problem types plus</tspan><tspan x="234" dy="16">“not covered”.</tspan><tspan x="234" dy="16">Gives a confidence</tspan><tspan x="234" dy="16">score; asks one</tspan><tspan x="234" dy="16">question if unsure</tspan></text></g></g><g><g class="n k-code"><path class="box" d="M418.6 251.8 Q499.8 251.8 578.3 250.4 Q579.2 333.8 581.7 414 Q500.6 415.1 419.1 415.8 Q419.4 331.9 419.1 255.6"/><path class="badge" d="M439.1 259.7 C445.7 260.4 451 265 451.7 271.6 C450.9 278.3 446.4 282.7 439.8 282.1 C433.2 281.8 427.7 278.1 427.2 271.4 C427 264.8 432.4 259.2 441.1 260.7"/><text x="440" y="276" class="t t-num" text-anchor="middle">3</text><text x="458" y="276" class="t t-h" text-anchor="start">Code disposes</text><text x="434" y="298" class="t t-b" text-anchor="start"><tspan x="434" dy="0">A cited rules table</tspan><tspan x="434" dy="16">— never the model —</tspan><tspan x="434" dy="16">sets the hazard</tspan><tspan x="434" dy="16">class and the legal</tspan><tspan x="434" dy="16">correction window.</tspan><tspan x="434" dy="16">“Why?” drawer +</tspan><tspan x="434" dy="16">countdown.</tspan></text></g></g><g><g class="n k-plain"><path class="box" d="M620.7 250.1 Q700.7 251.7 778.4 251.4 Q782 334.3 781.7 415.4 Q700 415.9 619.4 412.3 Q620.3 332.1 621 254.2"/><path class="badge" d="M640.5 259.1 C647.1 259.5 652.7 265.1 651.8 271.7 C651 278.3 645.9 282 639.3 282.1 C632.6 282.8 628 278.3 628.1 271.7 C628.2 265.1 633.9 259 642.5 260.1"/><text x="640" y="276" class="t t-num" text-anchor="middle">4</text><text x="658" y="276" class="t t-h" text-anchor="start">Log</text><text x="634" y="298" class="t t-b" text-anchor="start"><tspan x="634" dy="0">A dated timeline:</tspan><tspan x="634" dy="16">photo, capture time,</tspan><tspan x="634" dy="16">content hash.</tspan><tspan x="634" dy="16">Follow-ups: “still</tspan><tspan x="634" dy="16">broken on day 12”.</tspan></text></g></g><g><g class="n k-plain"><path class="box" d="M818.2 251.6 Q897.7 249.6 981.6 248.4 Q980.3 329.3 980.8 413.2 Q902.1 412.4 821.6 413.4 Q820.5 334.5 819.9 256.3"/><path class="badge" d="M839.4 259.8 C846 260.7 853 263.8 852.3 270.5 C851.4 277.1 846.4 282.8 839.8 282.8 C833.1 282.5 827.6 277.7 828.3 271.1 C828.1 264.5 832.8 258.9 841.4 260.8"/><text x="840" y="276" class="t t-num" text-anchor="middle">5</text><text x="858" y="276" class="t t-h" text-anchor="start">Notice</text><text x="834" y="298" class="t t-b" text-anchor="start"><tspan x="834" dy="0">One tap: a print-</tspan><tspan x="834" dy="16">ready notice PDF.</tspan><tspan x="834" dy="16">Plus a 311/HPD next</tspan><tspan x="834" dy="16">step. Not legal</tspan><tspan x="834" dy="16">advice.</tspan></text></g></g><g class="edge "><path class="draw" pathLength="1" d="M184 332 Q201.2 332.3 216 332"/><path class="draw" pathLength="1" d="M205.5 326.2 L216 332 L205.5 337.8"/></g><g class="edge ai"><path class="draw" pathLength="1" d="M384 332 Q398.6 333.8 416 332"/><path class="draw" pathLength="1" d="M405.5 326.2 L416 332 L405.5 337.8"/></g><g class="edge "><path class="draw" pathLength="1" d="M584 332 Q600.9 331.1 616 332"/><path class="draw" pathLength="1" d="M605.5 326.2 L616 332 L605.5 337.8"/></g><g class="edge "><path class="draw" pathLength="1" d="M784 332 Q798.2 331.5 816 332"/><path class="draw" pathLength="1" d="M805.5 326.2 L816 332 L805.5 337.8"/></g><g class="edge "><path class="draw" pathLength="1" d="M690 418 L690.1 439.8 Q690.2 455.8 674.2 455.8 L115.6 455.8 Q99.6 455.8 99.8 439.8 L100 420"/><path class="draw" pathLength="1" d="M94.1 430.5 L100 420 L105.6 430.6"/></g><text x="130" y="482" class="t t-hand" text-anchor="start">come back: add another issue, or a follow-up</text><g class="edge "><path class="draw" pathLength="1" d="M500 418 Q499.9 469.1 500 524"/><path class="draw" pathLength="1" d="M505.8 513.5 L500 524 L494.2 513.5"/></g><g class="edge "><path class="draw" pathLength="1" d="M900 418 Q897.9 471.1 900 524"/><path class="draw" pathLength="1" d="M905.8 513.5 L900 524 L894.2 513.5"/></g><g><g class="n k-ghost"><path class="box" d="M20.8 528.2 Q501.1 529.3 978.5 529.4 Q979.8 586.7 980.7 639.7 Q499.4 640.1 19.2 639 Q19.9 584.4 23 532.1"/></g></g><text x="36" y="549" class="t t-cap" text-anchor="start">THE PROOF: what “working” looks like</text><g class="stampg" transform="rotate(-3 169 591)"><path class="sbox" d="M45.1 561.3 Q171.5 559.3 294.4 559 Q293.3 590 292.5 622 Q167.8 622.1 45.2 621 Q45.6 590.7 46.5 566.1"/><path class="sbox2" d="M48.1 564.4 Q168.4 563.5 288.8 564.3 Q289.7 590.9 288.7 617 Q169.3 617.2 48.8 616.5 Q48.6 590.8 49.3 568.4"/><text x="169" y="584" class="t t-stamp" text-anchor="middle"><tspan x="169" dy="0">CLASS B · HAZARDOUS</tspan><tspan x="169" dy="19">30-day correction window</tspan></text></g><g><g class="n k-sticky"><path class="box" d="M329.8 558 Q433.7 558.2 540.6 560.7 Q537.6 593.2 539 624.7 Q434.1 626.8 328.2 624.8 Q327.4 590.4 330.5 562.5"/><text x="342" y="586" class="t t-b" text-anchor="start"><tspan x="342" dy="0">This building already has</tspan><tspan x="342" dy="16">N open violations, M for</tspan><tspan x="342" dy="16">leaks.</tspan></text></g></g><g><g class="n k-plain"><path class="box" d="M558.2 558.9 Q653.9 557 749.7 558.6 Q751.3 591.8 749.5 624 Q655.7 624.4 559.6 623.1 Q559.2 591.6 559 562.8"/><text x="572" y="586" class="t t-b" text-anchor="start"><tspan x="572" dy="0">A dated timeline entry:</tspan><tspan x="572" dy="16">photo, hash, timestamps</tspan><tspan x="572" dy="16">+ a running countdown</tspan></text></g></g><g><g class="n k-plain"><path class="box" d="M769.2 561.6 Q863.2 560.9 960.9 561.8 Q961 591.3 961.3 624 Q864.6 626 768.4 625.7 Q768.2 594.1 770.8 566.2"/><text x="782" y="586" class="t t-b" text-anchor="start"><tspan x="782" dy="0">One tap: a print-ready</tspan><tspan x="782" dy="16">notice PDF with the</tspan><tspan x="782" dy="16">cited code section</tspan></text></g></g><text x="500" y="668" class="t t-hand" text-anchor="middle">The “oh, that’s cool” beat: the photo becoming a stamped legal clock, then proof the building has a history.</text></svg>
+<svg class="mob" role="group" aria-label="Habitable on one page: the user, the core loop and the proof" viewBox="0 0 360 1340" xmlns="http://www.w3.org/2000/svg"><title>Habitable on one page</title><g><g class="n k-plain"><path class="box" d="M11.7 11.7 Q182.6 11.1 350.5 9.5 Q349.6 104.9 349.4 202.8 Q181 201.2 8.4 203.2 Q9.4 106.7 13.7 14.8"/></g></g><g class="ink-s"><path d="M43.1 35.7 C51.4 36.7 57.7 42.8 56.7 51.1 C57.8 59.4 49.2 63.7 40.9 63.8 C32.6 62.6 26 59.4 26.5 51.1 C27.6 42.8 34.8 36.9 45.1 36.7" fill="var(--paper2)"/><path d="M42 66 L42 102 M22 80 Q42 74 63 81 M42 102 L27 128 M42 102 L58 128"/></g><text x="76" y="36" class="t t-h" text-anchor="start">The user: a NYC renter</text><text x="76" y="58" class="t t-b" text-anchor="start"><tspan x="76" dy="0">Older, often rent-stabilized</tspan><tspan x="76" dy="16">building: leak, mold, no heat,</tspan><tspan x="76" dy="16">pests, broken lock, peeling paint.</tspan><tspan x="76" dy="16">Today: texts or calls the landlord,</tspan><tspan x="76" dy="16">no dated record, no idea what the</tspan><tspan x="76" dy="16">code requires or how long it takes.</tspan><tspan x="76" dy="16">At 311, HPD or housing court:</tspan><tspan x="76" dy="16">a scattered camera roll, no trail.</tspan></text><g><g class="n k-ghost"><path class="box" d="M11.5 213 Q182.3 212.9 350.4 213 Q350.4 240.7 351.6 269 Q180 270.8 11 269.8 Q10.7 241.3 14 215.9"/><text x="22" y="240" class="t t-b" text-anchor="start"><tspan x="22" dy="0">Also: tenant-association organizers</tspan><tspan x="22" dy="17">and legal-aid intake workers.</tspan></text></g></g><g class="edge "><path class="draw" pathLength="1" d="M180 274 Q181.6 293.6 180 312"/><path class="draw" pathLength="1" d="M185.8 301.5 L180 312 L174.2 301.5"/></g><text x="190" y="298" class="t t-hand" text-anchor="start">opens the app on a phone</text><g><g class="n k-plain"><path class="box" d="M15.4 317.2 Q161.1 316.7 303.8 315.5 Q306.1 363.1 305.4 407.6 Q157.3 406.9 12.3 409.2 Q14.9 361.3 16.4 321.7"/><path class="badge" d="M34.6 325.3 C41.3 324.5 46.8 330.5 46.1 337.1 C45.4 343.7 41.5 349.5 34.9 348.8 C28.3 348.5 20.5 343.4 21.2 336.8 C22.1 330.1 28 324.8 36.6 326.3"/><text x="34" y="342" class="t t-num" text-anchor="middle">1</text><text x="52" y="342" class="t t-h" text-anchor="start">Snap</text><text x="28" y="364" class="t t-b" text-anchor="start"><tspan x="28" dy="0">A photo of the problem plus one</tspan><tspan x="28" dy="16">optional line, e.g. “ceiling dripping</tspan><tspan x="28" dy="16">since Tuesday”</tspan></text></g></g><g><g class="n k-ai"><path class="box" d="M12.9 440.1 Q157.2 439.9 303.9 440 Q302 496.6 303.8 552.1 Q159.3 552.3 12.9 550.2 Q14.8 495.7 13.9 444.9"/><path class="badge" d="M33.5 448.2 C40.1 448.2 45.7 454.2 46.5 460.8 C46.4 467.4 40 473.6 33.3 473.4 C26.7 473.5 22.2 466.7 22.9 460.1 C22.5 453.4 26.8 448.4 35.5 449.2"/><text x="34" y="466" class="t t-num" text-anchor="middle">2</text><text x="52" y="466" class="t t-h" text-anchor="start">AI proposes</text><text x="28" y="488" class="t t-b" text-anchor="start"><tspan x="28" dy="0">Picks only from a fixed list: six</tspan><tspan x="28" dy="16">problem types plus “not covered”.</tspan><tspan x="28" dy="16">Gives a confidence score; asks one</tspan><tspan x="28" dy="16">question if unsure.</tspan></text></g></g><g><g class="n k-code"><path class="box" d="M12.6 585.8 Q158.8 585.8 302.3 584.4 Q303.2 641.8 305.7 696 Q159.6 697.1 13.1 697.8 Q13.4 639.9 13.1 589.6"/><path class="badge" d="M33.1 593.7 C39.7 594.4 45 599 45.7 605.6 C44.9 612.3 40.4 616.7 33.8 616.1 C27.2 615.8 21.7 612.1 21.2 605.4 C21 598.8 26.4 593.2 35.1 594.7"/><text x="34" y="610" class="t t-num" text-anchor="middle">3</text><text x="52" y="610" class="t t-h" text-anchor="start">Code disposes</text><text x="28" y="632" class="t t-b" text-anchor="start"><tspan x="28" dy="0">A cited rules table, never the model,</tspan><tspan x="28" dy="16">sets the hazard class and the legal</tspan><tspan x="28" dy="16">correction window. “Why?” drawer +</tspan><tspan x="28" dy="16">countdown.</tspan></text></g></g><g><g class="n k-plain"><path class="box" d="M14.7 728.1 Q159.7 729.7 302.4 729.4 Q306 780.3 305.7 829.4 Q159 829.9 13.4 826.3 Q14.3 778.1 15 732.2"/><path class="badge" d="M34.5 737.1 C41.1 737.5 46.7 743.1 45.8 749.7 C45 756.3 39.9 760 33.3 760.1 C26.6 760.8 22 756.3 22.1 749.7 C22.2 743.1 27.9 737 36.5 738.1"/><text x="34" y="754" class="t t-num" text-anchor="middle">4</text><text x="52" y="754" class="t t-h" text-anchor="start">Log</text><text x="28" y="776" class="t t-b" text-anchor="start"><tspan x="28" dy="0">A dated timeline: photo, capture</tspan><tspan x="28" dy="16">time, content hash. Follow-ups:</tspan><tspan x="28" dy="16">“still broken on day 12”.</tspan></text></g></g><g><g class="n k-plain"><path class="box" d="M12.2 861.6 Q156.7 859.6 305.6 858.4 Q304.3 907.3 304.8 959.2 Q161.1 958.4 15.6 959.4 Q14.5 912.5 13.9 866.3"/><path class="badge" d="M33.4 869.8 C40 870.7 47 873.8 46.3 880.5 C45.4 887.1 40.4 892.8 33.8 892.8 C27.1 892.5 21.6 887.7 22.3 881.1 C22.1 874.5 26.8 868.9 35.4 870.8"/><text x="34" y="886" class="t t-num" text-anchor="middle">5</text><text x="52" y="886" class="t t-h" text-anchor="start">Notice</text><text x="28" y="908" class="t t-b" text-anchor="start"><tspan x="28" dy="0">One tap: a print-ready notice PDF,</tspan><tspan x="28" dy="16">plus a 311/HPD next step.</tspan><tspan x="28" dy="16">Not legal advice.</tspan></text></g></g><g class="edge "><path class="draw" pathLength="1" d="M159 411 Q160.2 424.3 159 437"/><path class="draw" pathLength="1" d="M164.8 426.5 L159 437 L153.2 426.5"/></g><g class="edge ai"><path class="draw" pathLength="1" d="M159 555 Q157.6 569.8 159 581"/><path class="draw" pathLength="1" d="M164.8 570.5 L159 581 L153.2 570.5"/></g><g class="edge "><path class="draw" pathLength="1" d="M159 699 Q159.9 711.1 159 725"/><path class="draw" pathLength="1" d="M164.8 714.5 L159 725 L153.2 714.5"/></g><g class="edge "><path class="draw" pathLength="1" d="M159 831 Q157.2 843.5 159 857"/><path class="draw" pathLength="1" d="M164.8 846.5 L159 857 L153.2 846.5"/></g><g class="edge "><path class="draw" pathLength="1" d="M306 778 L318.1 777.9 Q330.2 777.8 330.2 761.8 L329.6 377.8 Q329.6 361.8 317.8 361.9 L306 362"/><path class="draw" pathLength="1" d="M316.6 367.7 L306 362 L316.5 356.2"/></g><text x="349" y="590" class="t t-hand" text-anchor="middle" transform="rotate(-90 349 590)">come back: another issue or follow-up</text><g class="edge "><path class="draw" pathLength="1" d="M159 963 Q158.9 979.6 159 1000"/><path class="draw" pathLength="1" d="M164.8 989.5 L159 1000 L153.2 989.5"/></g><g><g class="n k-ghost"><path class="box" d="M10.8 1004.2 Q181.1 1005.3 348.5 1005.4 Q349.8 1122.7 350.7 1235.7 Q179.4 1236.1 9.2 1235 Q9.9 1120.4 13 1008.1"/></g></g><text x="24" y="1026" class="t t-cap" text-anchor="start">THE PROOF: what “working” looks like</text><g class="stampg" transform="rotate(-3 155 1066)"><path class="sbox" d="M31.1 1041.3 Q157.5 1039.3 280.4 1039 Q279.3 1065 278.5 1092 Q153.8 1092.1 31.2 1091 Q31.6 1065.7 32.5 1046.1"/><path class="sbox2" d="M34.1 1044.4 Q154.4 1043.5 274.8 1044.3 Q275.7 1065.9 274.7 1087 Q155.3 1087.2 34.8 1086.5 Q34.6 1065.8 35.3 1048.4"/><text x="155" y="1064" class="t t-stamp" text-anchor="middle"><tspan x="155" dy="0">CLASS B · HAZARDOUS</tspan><tspan x="155" dy="19">30-day correction window</tspan></text></g><g><g class="n k-sticky"><path class="box" d="M23.8 1104 Q178.7 1104.2 336.6 1106.7 Q333.6 1133.2 335 1158.7 Q179.1 1160.8 22.2 1158.8 Q21.4 1130.4 24.5 1108.5"/><text x="36" y="1132" class="t t-b" text-anchor="start"><tspan x="36" dy="0">This building already has N open</tspan><tspan x="36" dy="17">violations, M for leaks.</tspan></text></g></g><g><g class="n k-plain"><path class="box" d="M22.2 1166.9 Q178.9 1165 335.7 1166.6 Q337.3 1193.8 335.5 1220 Q180.7 1220.4 23.6 1219.1 Q23.2 1193.6 23 1170.8"/><text x="36" y="1194" class="t t-b" text-anchor="start"><tspan x="36" dy="0">Dated timeline entry with hash; one</tspan><tspan x="36" dy="17">tap makes the notice PDF.</tspan></text></g></g><text x="180" y="1266" class="t t-hand" text-anchor="middle"><tspan x="180" dy="0">The “oh, that’s cool” beat: the photo</tspan><tspan x="180" dy="20">becoming a stamped legal clock, then</tspan><tspan x="180" dy="20">proof the building has a history.</tspan></text></svg>
+<div class="legend"><span><i class="sw" style="background:var(--violet-tint);border-color:var(--violet-stroke)"></i>AI proposes</span><span><i class="sw" style="background:var(--lime-tint)"></i>code disposes</span><span><i class="sw" style="background:var(--red-tint);border-color:var(--red-ink)"></i>hazard stamp</span><span><i class="sw" style="background:var(--yellow-tint)"></i>building history</span></div>
+<details class="rv" style="margin:.8rem .2rem .2rem"><summary>Text version of this diagram</summary><div class="body"><ol class="plain">
+<li><strong>The user:</strong> a NYC renter in an older, often rent-stabilized building with a leak, mold, no heat, pests, a broken lock or peeling paint. Today they text or call the landlord, keep no dated record, and don’t know what the code requires or how long the landlord has. Secondary: tenant-association organizers and legal-aid intake workers.</li>
+<li><strong>Snap:</strong> a photo of the problem plus one optional line.</li>
+<li><strong>AI proposes:</strong> picks only from a fixed list (six problem types plus “not covered”), gives a confidence, asks one clarifying question if unsure.</li>
+<li><strong>Code disposes:</strong> a cited rules table, never the model, sets the hazard class and the legal correction window, with a “why” drawer and countdown.</li>
+<li><strong>Log:</strong> a dated timeline with photo, capture time, content hash and follow-ups. From here the renter comes back to add another issue or a follow-up.</li>
+<li><strong>Notice:</strong> one tap builds a print-ready notice PDF, with a 311/HPD next step. Not legal advice.</li>
+<li><strong>The proof:</strong> a stamped “Class B · Hazardous · 30-day correction window” card with a running countdown and cited code section; the building panel (“This building already has N open violations, M for leaks.”); a dated timeline entry with hash and timestamps; a print-ready notice PDF.</li>
+</ol></div></details>
+<figcaption class="sub" style="margin:.5rem .3rem 0">Read top to bottom: the renter enters the loop on a phone, the loop produces the proof. The arrow under the loop is the habit: add another issue or a follow-up.</figcaption>
+</figure></section><section id="kernel"><h2><span class="num" aria-hidden="true">2</span><span>The Unique Kernel</span></h2><div class="card code">
+<p><strong><span class="ai-t">AI proposes</span>, <span class="hl">code disposes.</span></strong> A vision model may only pick from a short, fixed list of problem types and must say how sure it is. A cited rules table — never the model — decides the NYC hazard class and the legal correction window. The photo, its capture time and a content hash become an evidence entry, and the building’s public violation history shows the tenant isn’t alone. Photo → code class → legal clock → building history → notice does not exist as one flow today.</p>
+</div>
+<div class="chips" aria-label="The chain that does not exist as one flow today"><span class="chip">Photo</span><span class="chip lime">code class</span><span class="chip lime">legal clock</span><span class="chip">building history</span><span class="chip">notice</span></div></section><section id="who"><h2><span class="num" aria-hidden="true">3</span><span>Who it’s for</span></h2><div class="grid g2">
+<div class="card"><h3>A New York City renter</h3><p>Typically in an older (often rent-stabilized) building, with a leak, mold, no heat, pests, a broken lock or peeling paint.</p>
+<p class="lbl">Today</p><p>They text or call the landlord, keep no dated record, and don’t know what the Housing Maintenance Code requires or how long the landlord has to fix it.</p>
+<p class="lbl haz">When it escalates</p><p>To a 311 complaint, an HPD inspection or housing court, they have a scattered camera roll and no paper trail.</p></div>
+<div class="card" style="background:transparent;box-shadow:none;border-style:dashed"><h3>Secondary</h3><p>Tenant-association organizers and legal-aid intake workers who need structured evidence.</p>
+<p class="note" style="margin-top:.8rem">“Every repair dispute turns on documentation.”</p></div></div></section><section id="loop"><h2><span class="num" aria-hidden="true">4</span><span>The core loop</span></h2><p>Open the app on a phone → snap the problem (plus one optional line like “ceiling dripping since Tuesday”) → see the class card with its clock and the “why” → it lands on a dated timeline. They come back to add another issue or a follow-up (“still broken on day 12”), and when ready, produce the notice.</p>
+<ol class="grid g5" style="list-style:none;padding:0;margin:1rem 0 0">
+<li class="card"><span class="chip">1 Snap</span><p>Photo plus one optional line.</p></li>
+<li class="card ai"><span class="chip ai">2 AI proposes</span><p>Fixed list, with a confidence; one question if unsure.</p></li>
+<li class="card code"><span class="chip lime">3 Code disposes</span><p>Cited table sets class and window; “why” drawer and countdown.</p></li>
+<li class="card"><span class="chip">4 Log</span><p>Dated timeline with follow-ups; they come back to add more.</p></li>
+<li class="card"><span class="chip">5 Notice</span><p>One tap: a print-ready notice PDF when they are ready.</p></li></ol></section><section id="working"><h2><span class="num" aria-hidden="true">5</span><span>What “working” looks like</span></h2><p>On a phone: enter an address once, photograph a stained, dripping ceiling, and watch it flip into a stamped “Class B · Hazardous · 30-day correction window” card with a running countdown and the cited code section. The building panel slides in: “This building already has N open violations, M for leaks.” The issue lands on a dated timeline with its hash and timestamps, and one tap produces a print-ready notice PDF.</p>
+<div class="grid g4 beats" style="margin-top:1rem">
+<div class="card beat"><p><strong>Photograph</strong> a stained, dripping ceiling (address entered once).</p></div>
+<div class="card beat key"><p class="stamp">Class B · Hazardous<br>30-day correction window</p><p>Running countdown and the cited code section.</p></div>
+<div class="card beat" style="background:var(--yellow-tint)"><p class="hand" style="margin:0">This building already has N open violations, M for leaks.</p></div>
+<div class="card beat"><p>A dated timeline entry with its hash and timestamps; one tap: a <strong>print-ready notice PDF</strong>.</p></div></div>
+<p style="margin-top:1rem"><span class="note">The “oh, that’s cool” beat: the photo becoming a stamped legal clock, followed by proof the building has a history.</span></p></section><section id="boundary"><h2><span class="num" aria-hidden="true">6</span><span>The POC boundary: now, later, cut</span></h2><p class="sub">Each item opens to show its reason. “Now” comes from the POC Boundary list; reasons for “later” are the ones the PRD records.</p>
+<div class="grid g3" style="align-items:start">
+<div id="now"><div class="col-h"><span class="chip lime">now</span><h3>9 in the POC</h3><button class="btn sm only-js" data-toggle="#now" type="button">Expand all</button></div><details class="rv "><summary>NYC only, one address per device, no accounts; everything stored on the device.</summary><div class="body"><p class="why">Why: Local-first is the privacy story, and it avoids auth and a database that would not prove the kernel (see the cut list).</p></div></details><details class="rv "><summary>Fixed taxonomy of six problem types plus “not covered”.</summary><div class="body"><p class="why">Why: The vision model may only pick from a short, fixed list; the legal table stays small enough to cite accurately (prd.md &gt; Product Decisions).</p></div></details><details class="rv "><summary>Vision classification with confidence + rationale; one clarifying question when unsure.</summary><div class="body"><p class="why">Why: The AI proposes and must say how sure it is; when unsure it asks one question instead of guessing.</p></div></details><details class="rv "><summary>Deterministic, cited rules table with a “why” drawer and countdown.</summary><div class="body"><p class="why">Why: Code disposes: a cited table, never the model, decides the hazard class and the correction window.</p></div></details><details class="rv "><summary>Evidence timeline (photo, capture time, hash, follow-ups).</summary><div class="body"><p class="why">Why: Today the renter has a scattered camera roll and no paper trail; this is the dated record.</p></div></details><details class="rv "><summary>Building history from NYC Open Data.</summary><div class="body"><p class="why">Why: It shows the tenant isn’t alone: the building’s public violation history.</p></div></details><details class="rv "><summary>Notice PDF.</summary><div class="body"><p class="why">Why: Civic tech with a real document at the end; the tools that exist are chatbots, not evidence.</p></div></details><details class="rv "><summary>A seeded demo mode so the demo never depends on a live API.</summary><div class="body"><p class="why">Why: The video and the judges never depend on a live AI call (prd.md &gt; Product Decisions).</p></div></details><details class="rv "><summary>“Not legal advice” plus a 311/HPD next step.</summary><div class="body"><p class="why">Why: The app documents and cites; it doesn’t advise. The next step hands the renter to 311/HPD.</p></div></details></div>
+<div id="later"><div class="col-h"><span class="chip amber">later</span><h3>4 after the POC</h3><button class="btn sm only-js" data-toggle="#later" type="button">Expand all</button></div><details class="rv "><summary>Email the notice (Resend).</summary><div class="body"><p class="why">Why: Needs a verified sending domain. Download and share cover it for now (prd.md &gt; Deferred From the POC).</p></div></details><details class="rv "><summary>Shareable read-only evidence link for an organizer.</summary><div class="body"><p class="why">Why: Needs hosted storage and access control.</p></div></details><details class="rv "><summary>Multi-unit view for tenant associations.</summary><div class="body"><p class="why">Why: Needs accounts and shared data.</p></div></details><details class="rv "><summary>More cities.</summary><div class="body"><p class="why">Why: Each city needs its own cited rules table.</p></div></details></div>
+<div id="cut"><div class="col-h"><span class="chip haz">cut</span><h3>4 explicitly cut</h3><button class="btn sm only-js" data-toggle="#cut" type="button">Expand all</button></div><details class="rv haz"><summary>Accounts and cloud sync</summary><div class="body"><p class="why">Why: They add auth and a database without proving the kernel; local-first is also the privacy story.</p></div></details><details class="rv haz"><summary>Letting the model decide class or deadline</summary><div class="body"><p class="why">Why: That is exactly the trust problem the kernel solves.</p></div></details><details class="rv haz"><summary>Rent-withholding or legal strategy advice</summary><div class="body"><p class="why">Why: Legal risk; the app documents and cites, it doesn’t advise.</p></div></details><details class="rv haz"><summary>Filing 311 complaints automatically</summary><div class="body"><p class="why">Why: No public filing API; we hand the user pre-filled text and the link instead.</p></div></details></div>
+</div></section><section id="identity"><h2><span class="num" aria-hidden="true">7</span><span>Inspiration &amp; identity</span></h2><div class="grid g2" style="align-items:start">
+<div class="card"><h3>Visual</h3><p>The <strong>brag-styles doodle kit</strong>: hand-drawn ink lines on grid paper, a lime highlighter swipe under the key word, cards that spring in, Patrick Hand handwriting with a bold display sans and mono numbers — plus one complementary colour (BD’s direction). Stamp-style badges for the hazard class carry over from the brief’s “legal paper” idea.</p>
+<div class="swatches"><div class="swatch"><i style="background:#f0ede8"></i>paper<br>#f0ede8</div><div class="swatch"><i style="background:#0a0a0a"></i>ink<br>#0a0a0a</div><div class="swatch"><i style="background:#c8ff00"></i>lime highlighter<br>#c8ff00</div><div class="swatch"><i style="background:#5534e6"></i>violet: AI proposes<br>#5534e6</div><div class="swatch"><i style="background:#b3261a"></i>red: hazards<br>#b3261a</div></div></div>
+<div class="card"><h3>What strong entries share</h3><p>Visible guardrails (“AI proposes, code disposes”), a specific named user, and a deliberate visual identity rather than default component-library styling.</p>
+<h3>Data</h3><ul class="plain"><li><a href="https://www.nyc.gov/site/hpd/services-and-information/clear-violations.page">NYC HPD “Clear Violations”</a> correction windows</li><li>NYC311 heat and hot water rules</li><li>NYC Open Data HPD violations <code>wvxf-dwi5</code> and complaints <code>ygpa-z7cr</code></li></ul></div></div>
+<div class="grid g2" style="margin-top:1.1rem"><div class="card"><h3>Why this matters to the learner</h3><p>Civic tech with a real document at the end. “Every repair dispute turns on documentation,” and the tools that exist are chatbots, not evidence.</p></div>
+<div class="card"><h3>How this plan was made</h3><p>The interview answers come from BD’s written research brief (kept private) and BD’s direction in the build session (doodle style, build end to end). BD approved by asking for the full build.</p></div></div></section>
+</main>
+<footer class="foot"><div class="wrap">
+<span>Companion to <a href="scope.md"><code>devpost/scope.md</code></a>. Markdown stays canonical; this page is regenerated after revisions.</span>
+<span>Also: <a href="prd.html">PRD</a> &middot; <a href="spec.html">Spec</a> &middot; <a href="../README.md">README</a></span>
+</div></footer>
+<script>(function(){
+var d=document,h=d.documentElement;h.classList.add('js');
+function openFor(el){for(var p=el;p;p=p.parentElement){if(p.tagName==='DETAILS')p.open=true;}}
+var steppers=[].slice.call(d.querySelectorAll('[data-stepper]')).map(function(st){
+ var tabs=[].slice.call(st.querySelectorAll('[role=tab]')),panels=[].slice.call(st.querySelectorAll('[role=tabpanel]')),cur=0,touched=false;
+ var sel=st.getAttribute('data-svg');
+ var prev=st.querySelector('[data-prev]'),next=st.querySelector('[data-next]'),clear=st.querySelector('[data-clear]');
+ function light(){if(!sel)return;d.querySelectorAll(sel+' [data-steps]').forEach(function(n){var on=!touched||(' '+n.getAttribute('data-steps')+' ').indexOf(' '+(cur+1)+' ')>-1;n.classList.toggle('dim',!on);});}
+ function show(i,focus,user){cur=Math.max(0,Math.min(tabs.length-1,i));if(user)touched=true;
+  tabs.forEach(function(t,k){var on=k===cur;t.setAttribute('aria-selected',on?'true':'false');t.tabIndex=on?0:-1;panels[k].hidden=!on;});
+  if(prev)prev.disabled=cur===0;if(next)next.disabled=cur===tabs.length-1;if(focus)tabs[cur].focus();light();}
+ tabs.forEach(function(t,k){t.addEventListener('click',function(){show(k,false,true);});
+  t.addEventListener('keydown',function(e){var k2=null;if(e.key==='ArrowRight'||e.key==='ArrowDown')k2=cur+1;else if(e.key==='ArrowLeft'||e.key==='ArrowUp')k2=cur-1;else if(e.key==='Home')k2=0;else if(e.key==='End')k2=tabs.length-1;
+   if(k2!==null){e.preventDefault();show(k2,true,true);}});});
+ if(prev)prev.addEventListener('click',function(){show(cur-1,false,true);});
+ if(next)next.addEventListener('click',function(){show(cur+1,false,true);});
+ if(clear)clear.addEventListener('click',function(){touched=false;light();});
+ show(0,false,false);
+ return {st:st,panels:panels,show:show};
+});
+function route(){var id=location.hash.slice(1);if(!id)return;var el=d.getElementById(decodeURIComponent(id));if(!el)return;
+ var pn=el.closest?el.closest('[role=tabpanel]'):null;steppers.forEach(function(s){var k=s.panels.indexOf(pn||el);if(k>-1){s.show(k,false,true);}});
+ openFor(el);setTimeout(function(){el.scrollIntoView({block:'start'});},0);}
+window.addEventListener('hashchange',route);route();
+if('IntersectionObserver' in window&&!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){
+ var io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;io.unobserve(e.target);
+  e.target.querySelectorAll('.edge path').forEach(function(p){if(p.animate&&p.getBoundingClientRect().width+p.getBoundingClientRect().height>0)p.animate([{strokeDasharray:'1',strokeDashoffset:1},{strokeDasharray:'1',strokeDashoffset:0}],{duration:800,easing:'ease-out'});});});},{threshold:.25});
+ d.querySelectorAll('figure.diagram').forEach(function(f){io.observe(f);});}
+d.querySelectorAll('[data-toggle]').forEach(function(b){b.addEventListener('click',function(){
+ var box=d.querySelector(b.getAttribute('data-toggle')),ds=[].slice.call(box.querySelectorAll('details')),open=ds.some(function(x){return !x.open;});
+ ds.forEach(function(x){x.open=open;});b.textContent=open?'Collapse all':'Expand all';});});
+d.querySelectorAll('[data-filter-for]').forEach(function(f){var tb=d.querySelector(f.getAttribute('data-filter-for'));
+ f.querySelectorAll('button').forEach(function(b){b.addEventListener('click',function(){var v=b.getAttribute('data-f');
+  f.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false');});
+  tb.querySelectorAll('tbody tr').forEach(function(r){r.hidden=!(v==='all'||r.getAttribute('data-issue')===v);});});});});
+})();</script>
+</body>
+</html>
