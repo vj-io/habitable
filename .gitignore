@@ -1,0 +1,13 @@
+# Devpost Learn: personal learning context stays out of commits
+/devpost/learner-profile.md
+
+# Private pre-hackathon research brief (strategy notes, not a planning doc)
+/prd.md
+
+# Local credentials (a secret-free .env.example is allowed)
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
