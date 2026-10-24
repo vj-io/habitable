@@ -120,7 +120,7 @@ npm run test:e2e
 ```
 
 - **Vitest — 276 tests:** rules engine (every fact combination reaches a cited outcome), heat and hot water minimums (hour edges, season edges, the 55°F outdoor line, DST days), countdown and DST, EXIF time zones, receipts (known-answer HMAC, tamper checks), classifier threshold/fallback/rate-limit cooldown/cache with a mock model, HPD violation text → issue mapping on real wordings, HPD registration parsing on real rows (multi-building lots, duplicates, addressee priority), weather-station fallback, backup validation, calendar files (escaping, folding, CRLF), GeoSearch parsing, notice text in English and Spanish, storage fallback.
-- **Playwright — 35 tests:** the full demo journey (photo → stamp → log → reload → follow-up → PDF download → Spanish), every rules branch, error and empty states, receipt verification, API contracts, and smoke checks on phone and desktop. The suite builds and starts the production server itself and blanks all AI keys, so it never spends quota.
+- **Playwright — 44 phone tests, run on Chromium, WebKit (iPhone 14) and Firefox, plus 11 desktop smoke checks (135 runs: 133 pass, 2 skipped — the offline test is Chromium-only):** the full demo journey (photo → stamp → log → reload → follow-up → PDF download → Spanish), every rules branch, the heat log into the notice, landlord on record and the addressed notice, next steps links, backup → delete → restore, the calendar file, receipt verification (valid and tampered), theme toggle, the case menu, offline, error and empty states, API contracts, security headers. The suite builds and starts the production server itself and blanks all AI keys, so it never spends quota.
 
 ## How it was planned and built
 
