@@ -280,6 +280,15 @@ describe("heat and hot water log section", () => {
     }
   });
 
+  it("opens with the heat log when it is the only thing in the notice", () => {
+    expect(noticeText(CASE, [], "en", NOW, ORIGIN, HEAT_LOG).intro).toBe(
+      "I am the tenant of the apartment named above. My apartment has not had the heat or hot water the law requires, as the dated log below shows.",
+    );
+    expect(noticeText(CASE, [], "es", NOW, ORIGIN, HEAT_LOG).intro).toMatch(/^Soy inquilino\/a .* registro con fechas a continuación\.$/);
+    // With photographed issues too, the usual opening stays.
+    expect(noticeText(CASE, [leak], "en", NOW, ORIGIN, HEAT_LOG).intro).toMatch(/Each one is documented with a dated photo/);
+  });
+
   it("is absent when no reading is below the minimum", () => {
     expect(noticeText(CASE, [leak], "en", NOW, ORIGIN).heat).toBeNull();
     expect(noticeText(CASE, [leak], "en", NOW, ORIGIN, []).heat).toBeNull();

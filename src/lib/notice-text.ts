@@ -131,6 +131,8 @@ const STRINGS = {
     followUp: (n: number, date: string, note: string) =>
       `Followed up ${n} ${n === 1 ? "time" : "times"}; most recent ${date}${note ? ` — ${note}` : ""}.`,
     heat: {
+      intro:
+        "I am the tenant of the apartment named above. My apartment has not had the heat or hot water the law requires, as the dated log below shows.",
       title: "Heat and hot water log",
       summary: (below: number, total: number, since: string) =>
         `${below} of ${total} ${total === 1 ? "reading" : "readings"} I logged since ${since} ${below === 1 ? "was" : "were"} below the legal minimum:`,
@@ -176,6 +178,8 @@ const STRINGS = {
     followUp: (n: number, date: string, note: string) =>
       `Di seguimiento ${n} ${n === 1 ? "vez" : "veces"}; el más reciente fue el ${date}${note ? ` — ${note}` : ""}.`,
     heat: {
+      intro:
+        "Soy inquilino/a del apartamento indicado arriba. Mi apartamento no ha tenido la calefacción o el agua caliente que exige la ley, como muestra el registro con fechas a continuación.",
       title: "Registro de calefacción y agua caliente",
       summary: (below: number, total: number, since: string) =>
         `${below} de ${total} ${total === 1 ? "lectura" : "lecturas"} que registré desde el ${since} ${below === 1 ? "estuvo" : "estuvieron"} por debajo del mínimo legal:`,
@@ -376,6 +380,11 @@ export function noticeText(
   const today = dateOf(now.toISOString(), lang);
   const tenant = c.tenantName?.trim();
   const base = origin.replace(/\/+$/, "");
+  const items = issues
+    .filter(listable)
+    .sort(byUrgency)
+    .map((issue, i) => itemOf(issue, i + 1, lang, now, base));
+  const heat = heatSectionOf(heatReadings, lang);
   return {
     lang,
     title: s.title,
@@ -383,12 +392,10 @@ export function noticeText(
     to: c.landlordName?.trim() || s.toDefault,
     from: tenant || s.fromDefault,
     re: `${c.address.label}, ${s.apt} ${c.unit}`,
-    intro: s.intro,
-    items: issues
-      .filter(listable)
-      .sort(byUrgency)
-      .map((issue, i) => itemOf(issue, i + 1, lang, now, base)),
-    heat: heatSectionOf(heatReadings, lang),
+    // A notice with only the heat log has no photos to speak of, so it gets its own opening.
+    intro: items.length === 0 && heat ? s.heat.intro : s.intro,
+    items,
+    heat,
     closing: s.closing,
     signature: tenant || s.fromDefault,
     footer: [s.disclaimer(today), s.verify(base)],
