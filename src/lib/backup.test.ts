@@ -90,6 +90,19 @@ describe("parseBackup", () => {
     if (r.ok) expect(r.backup).toEqual(backup());
   });
 
+  it("keeps the notice's To block, Cc line and the made-notice date", () => {
+    const named = {
+      ...caseFile,
+      landlordName: "EDWIN SHIRAZIAN",
+      landlordAddress: "579 5th ave, 2nd fl, New York, NY 10017",
+      landlordCc: "COLUMBIA HEIGHTS 136 LLC, 579 5th ave, 2nd fl, New York, NY 10017",
+      noticeMadeAt: "2026-10-24T14:00:00.000Z",
+    };
+    const r = parse(backup({ caseFile: named }));
+    expect(r.ok && r.backup.caseFile).toEqual(named);
+    expect(parse(backup({ caseFile: { ...named, noticeMadeAt: "yesterday" } })).ok).toBe(false);
+  });
+
   it("accepts a case with no issues and a not-applicable note", () => {
     expect(parse(backup({ issues: [] })).ok).toBe(true);
     const note = issue("n", { outcome: { status: "not_applicable", ruleId: "x", issue: "not_covered", reason: "r" }, repairBy: null, issue: "not_covered" });

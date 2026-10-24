@@ -1,10 +1,12 @@
 "use client";
 
-import { Building, DoodleButton, DoodleCard, Highlight, MonoLabel, PencilLoader, rough } from "@/components/doodle";
+import { Building, DoodleButton, DoodleCard, Highlight, MonoLabel, PencilLoader, Tag, rough } from "@/components/doodle";
 import { ISSUE_FOR, IssueBadge, IssueIcon } from "@/components/issue/meta";
 import { formatNY } from "@/lib/countdown";
+import { HPD_ONLINE_URL, REGISTRATION_SOURCE_URL, dayLabel, isOldRegistration, snapshotLabel } from "@/lib/registration";
 import { RULES } from "@/lib/rules";
-import { ISSUE_IDS, type BuildingRecord, type HazardClass, type IssueId } from "@/lib/types";
+import { AEP_URL, COMPLAINTS_URL, LITIGATIONS_URL, categoryLabel } from "@/lib/signals";
+import { ISSUE_IDS, type BuildingRecord, type BuildingSignals, type HazardClass, type IssueId, type RegistrationContact } from "@/lib/types";
 import type { BuildingState } from "./useBuilding";
 
 /** HPD dates are calendar days ("2026-10-12"); read them at noon UTC so no timezone shifts the day. */
@@ -71,10 +73,13 @@ export function BuildingPanel({ state, related }: { state: BuildingState; relate
             <p className="font-display text-xl leading-snug font-bold">No open HPD violations on record for this building.</p>
             <p className="text-muted">That can change quickly — an inspection is what puts a violation on record.</p>
             <SourceLine record={record} />
+            <Registered record={record} />
           </>
         )}
 
         {record && record.openTotal > 0 && <Record record={record} related={related} />}
+
+        {record?.signals && <Signals signals={record.signals} />}
       </div>
     </DoodleCard>
   );
@@ -120,6 +125,9 @@ function Record({ record, related }: { record: BuildingRecord; related: IssueId[
         </div>
       )}
 
+      {/* before the list of recent violations: this panel is sticky on desktop, so what's first stays in view */}
+      <Registered record={record} />
+
       {recent.length > 0 && (
         <div className="space-y-2">
           <MonoLabel as="h3">Most recent{related.length > 0 ? " · yours first" : ""}</MonoLabel>
@@ -144,6 +152,153 @@ function Record({ record, related }: { record: BuildingRecord; related: IssueId[
 
       <SourceLine record={record} />
     </>
+  );
+}
+
+function Contact({ label, contact }: { label: string; contact: RegistrationContact | null }) {
+  return (
+    <div className="space-y-0.5">
+      <MonoLabel as="dt">{label}</MonoLabel>
+      <dd className="leading-snug">
+        {contact ? (
+          <>
+            <span className="block font-bold break-words">{contact.name}</span>
+            {contact.address && <span className="block text-[0.9375rem] break-words text-muted">{contact.address}</span>}
+          </>
+        ) : (
+          <span className="text-muted">Not listed</span>
+        )}
+      </dd>
+    </div>
+  );
+}
+
+/** Who HPD has on record for the building: managing agent first (the person violations are mailed to), then owner and head officer. */
+function Registered({ record }: { record: BuildingRecord }) {
+  const info = record.registration;
+  const current = info?.current;
+  return (
+    <section aria-labelledby="registered-title" className="space-y-3 border-t-2 border-dashed border-ink/20 pt-5">
+      <MonoLabel as="h3">
+        <span id="registered-title">Registered with HPD</span>
+      </MonoLabel>
+
+      {!info && <p className="text-muted">The registered contacts are unavailable right now.</p>}
+
+      {info && !current && (
+        <>
+          <p className="font-display text-lg leading-snug font-bold">No HPD registration found for this building.</p>
+          <p className="text-[0.9375rem] leading-snug text-muted">
+            Many small buildings aren&apos;t registered, so there may be no name on file. Check your lease or rent bill: NYC law (Admin. Code §27-2105) says the
+            bill must name the managing agent or owner and a NYC address.
+          </p>
+        </>
+      )}
+
+      {current && (
+        <>
+          <dl className="space-y-3">
+            <Contact label="Managing agent" contact={current.agent} />
+            <Contact label="Owner" contact={current.owner} />
+            <Contact label="Head officer" contact={current.headOfficer} />
+          </dl>
+          <p className="font-mono text-[0.75rem] leading-relaxed tracking-[0.06em] text-muted">
+            Registration {current.registrationId}
+            {current.endDate && <> · end date {dayLabel(current.endDate)}</>}
+          </p>
+          <p className="text-[0.9375rem] leading-snug text-muted">
+            {isOldRegistration(current, info?.asOf ?? null)
+              ? "This is the newest registration on file for the building, and it is old. Check HPD Online for current contacts."
+              : "An end date in the past doesn't mean the building isn't registered; the snapshot may be missing a renewal."}
+          </p>
+        </>
+      )}
+
+      {info && (
+        <p className="font-mono text-[0.75rem] leading-relaxed tracking-[0.06em] text-muted">
+          {snapshotLabel(info.asOf)}
+          {record.source === "demo-fixture" && " · saved copy for the demo"}
+          <br />
+          <a href={HPD_ONLINE_URL} target="_blank" rel="noreferrer" className={`${linkClass} inline-flex min-h-11 items-center`}>
+            Verify on HPD Online
+          </a>
+          {" · "}
+          <a href={REGISTRATION_SOURCE_URL} target="_blank" rel="noreferrer" className={`${linkClass} inline-flex min-h-11 items-center`}>
+            NYC Open Data
+          </a>
+        </p>
+      )}
+    </section>
+  );
+}
+
+/** The building's recent HPD history beyond open violations: problems reported, litigation, and the AEP flag. Counts only. */
+function Signals({ signals }: { signals: BuildingSignals }) {
+  const total = signals.complaints.reduce((t, c) => t + c.n, 0);
+  const top = signals.complaints.slice(0, 5);
+  return (
+    <section aria-labelledby="signals-title" className="space-y-3 border-t-2 border-dashed border-ink/20 pt-5">
+      <MonoLabel as="h3">
+        <span id="signals-title">Also on HPD&apos;s record</span>
+      </MonoLabel>
+
+      {signals.aep && (
+        <div className="space-y-1">
+          <Tag tone="marker" className="text-lg">
+            In HPD&apos;s Alternative Enforcement Program
+          </Tag>
+          <p className="text-[0.9375rem] leading-snug text-muted">HPD&apos;s program for the city&apos;s most distressed buildings.</p>
+        </div>
+      )}
+
+      <div className="space-y-2">
+        <p className="leading-snug">
+          {total > 0 ? (
+            <>
+              <b className="font-bold tabular-nums">{total.toLocaleString("en-US")}</b> problems reported to HPD since {dayLabel(signals.since)}
+            </>
+          ) : (
+            <>No problems reported to HPD since {dayLabel(signals.since)}.</>
+          )}
+        </p>
+        {top.length > 0 && (
+          <ul className="grid grid-cols-1 gap-x-4 gap-y-1 min-[400px]:grid-cols-2" aria-label="Problems reported to HPD by category">
+            {top.map((c) => (
+              <li key={c.category} className="flex items-baseline gap-2">
+                <span className="font-mono tabular-nums">{c.n}</span>
+                <span className="leading-tight">{categoryLabel(c.category)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <p className="leading-snug">
+        {signals.litigations > 0 ? (
+          <>
+            <b className="font-bold tabular-nums">{signals.litigations}</b> HPD litigation {signals.litigations === 1 ? "case" : "cases"} on record
+          </>
+        ) : (
+          <>No HPD litigation cases on record.</>
+        )}
+      </p>
+
+      <p className="font-mono text-[0.75rem] leading-relaxed tracking-[0.06em] text-muted">
+        Counts by category: no apartments, no names.
+        <br />
+        <a href={COMPLAINTS_URL} target="_blank" rel="noreferrer" className={`${linkClass} inline-flex min-h-11 items-center`}>
+          HPD complaints
+        </a>
+        {" · "}
+        <a href={LITIGATIONS_URL} target="_blank" rel="noreferrer" className={`${linkClass} inline-flex min-h-11 items-center`}>
+          HPD litigation
+        </a>
+        {" · "}
+        <a href={AEP_URL} target="_blank" rel="noreferrer" className={`${linkClass} inline-flex min-h-11 items-center`}>
+          AEP list
+        </a>
+      </p>
+    </section>
   );
 }
 

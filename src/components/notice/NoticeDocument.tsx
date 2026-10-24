@@ -44,7 +44,7 @@ const s = StyleSheet.create({
   mono: { fontFamily: "JetBrains Mono", fontSize: 8, color: MUTED },
   metaRow: { flexDirection: "row", marginTop: 3 },
   metaLabel: { fontFamily: "JetBrains Mono", fontSize: 8, color: MUTED, textTransform: "uppercase", letterSpacing: 1, width: 50, paddingTop: 2 },
-  metaValue: { flex: 1, fontSize: 11, lineHeight: LEADING },
+  metaLine: { fontSize: 11, lineHeight: LEADING },
   intro: { marginTop: 14, lineHeight: LEADING },
   item: { marginTop: 14, paddingTop: 14, borderTopWidth: 0.75, borderTopColor: INK },
   itemHead: { flexDirection: "row", alignItems: "center" },
@@ -215,10 +215,12 @@ function HeatBlock({ heat }: { heat: NoticeHeatSection }) {
 
 export function NoticeDocument({ text }: { text: NoticeText }) {
   const L = text.labels;
-  const meta: [string, string][] = [
-    [L.to, safe(text.to)],
-    [L.from, safe(text.from)],
-    [L.re, safe(text.re)],
+  // Each value is a list of lines: the To block is the name, then the mailing address.
+  const meta: [string, string[]][] = [
+    [L.to, text.to.map(safe)],
+    ...(text.cc ? [[L.cc, [safe(text.cc)]] as [string, string[]]] : []),
+    [L.from, [safe(text.from)]],
+    [L.re, [safe(text.re)]],
   ];
   return (
     <Document title={text.title} author={safe(text.from)} creator="Habitable" producer="Habitable" language={text.lang}>
@@ -229,10 +231,16 @@ export function NoticeDocument({ text }: { text: NoticeText }) {
         </View>
         <Text style={s.title}>{text.title}</Text>
         <Text style={[s.mono, { marginTop: 6, marginBottom: 8 }]}>{text.dateLine}</Text>
-        {meta.map(([label, value]) => (
+        {meta.map(([label, lines]) => (
           <View key={label} style={s.metaRow}>
             <Text style={s.metaLabel}>{label}</Text>
-            <Text style={[s.metaValue, label === L.re ? s.strong : {}]}>{value}</Text>
+            <View style={{ flex: 1 }}>
+              {lines.map((line, i) => (
+                <Text key={i} style={[s.metaLine, label === L.re ? s.strong : {}]}>
+                  {line}
+                </Text>
+              ))}
+            </View>
           </View>
         ))}
         <Text style={s.intro}>{text.intro}</Text>

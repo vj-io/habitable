@@ -53,6 +53,9 @@ const caseFileSchema: z.ZodType<CaseFile> = z.object({
   createdAt: iso,
   tenantName: s(120).optional(),
   landlordName: s(120).optional(),
+  landlordAddress: s(300).optional(),
+  landlordCc: s(500).optional(),
+  noticeMadeAt: iso.optional(),
 });
 
 const outcomeSchema = z.discriminatedUnion("status", [

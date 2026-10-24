@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import { Arrow, Check, Chip, Doc, DoodleButton, DoodleCard, Highlight, MonoLabel, PencilLoader, Tag } from "@/components/doodle";
+import { useBuilding } from "@/components/case/useBuilding";
 import { NoticePreview } from "@/components/notice/NoticePreview";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import {
@@ -14,10 +15,11 @@ import {
   type NoticeLang,
   type NoticeText,
 } from "@/lib/notice-text";
-import { saveCase, useCaseData } from "@/lib/store";
-import type { CaseFile, HeatReading, Issue } from "@/lib/types";
+import { HPD_ONLINE_URL, snapshotLabel, suggestAddressee } from "@/lib/registration";
+import { updateCase, useCaseData } from "@/lib/store";
+import type { CaseFile, HeatReading, Issue, RegistrationInfo } from "@/lib/types";
 
-const HPD_NEXT_STEPS_URL = "https://www.nyc.gov/site/hpd/services-and-information/report-a-maintenance-issue.page";
+const HPD_WRITE_TO_LANDLORD_URL = "https://www.nyc.gov/site/hpd/services-and-information/tenants-rights-and-responsibilities.page";
 const WOBBLE = "14px 4px 12px 5px / 5px 12px 4px 14px";
 
 function Shell({ children }: { children: ReactNode }) {
@@ -79,15 +81,33 @@ function canShareFiles(): boolean {
 function NoticeBuilder({ caseFile, issues, heatReadings }: { caseFile: CaseFile; issues: Issue[]; heatReadings: HeatReading[] }) {
   const [now] = useState(() => new Date());
   const [lang, setLang] = useState<NoticeLang>("en");
-  const [tenant, setTenant] = useState(caseFile.tenantName ?? "");
-  const [landlord, setLandlord] = useState(caseFile.landlordName ?? "");
   const [busy, setBusy] = useState<"download" | "share" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [hint, setHint] = useState<string | null>(null);
   const canShare = useSyncExternalStore(subscribeNever, canShareFiles, () => false);
   const cache = useRef<{ text: NoticeText; blob: Blob } | null>(null);
 
-  const named = useMemo(() => ({ ...caseFile, tenantName: tenant, landlordName: landlord }), [caseFile, tenant, landlord]);
+  // Who the notice goes to: what the renter typed, else what they saved, else HPD's registered managing agent
+  // (owner copied). The three "To" fields move together: a saved name never gets another party's address.
+  const building = useBuilding(caseFile.address, caseFile.demo);
+  const registration = building.record?.registration;
+  const suggestion = registration?.current ? suggestAddressee(registration.current) : null;
+  const savedTo = caseFile.landlordName !== undefined || caseFile.landlordAddress !== undefined || caseFile.landlordCc !== undefined;
+  const base = savedTo
+    ? { name: caseFile.landlordName ?? "", address: caseFile.landlordAddress ?? "", cc: caseFile.landlordCc ?? "" }
+    : (suggestion ?? { name: "", address: "", cc: "" });
+  const [edits, setEdits] = useState<{ tenant?: string; name?: string; address?: string; cc?: string }>({});
+  const tenant = edits.tenant ?? caseFile.tenantName ?? "";
+  const landlord = edits.name ?? base.name;
+  const landlordAddress = edits.address ?? base.address;
+  const landlordCc = edits.cc ?? base.cc;
+  const edit = (field: keyof typeof edits) => (v: string) => setEdits((e) => ({ ...e, [field]: v }));
+  const prefilled = !savedTo && !!suggestion && edits.name === undefined && edits.address === undefined && edits.cc === undefined;
+
+  const named = useMemo(
+    () => ({ ...caseFile, tenantName: tenant, landlordName: landlord, landlordAddress, landlordCc }),
+    [caseFile, tenant, landlord, landlordAddress, landlordCc],
+  );
   const text = useMemo(
     () => noticeText(named, issues, lang, now, window.location.origin, heatReadings),
     [named, issues, lang, now, heatReadings],
@@ -106,12 +126,17 @@ function NoticeBuilder({ caseFile, issues, heatReadings }: { caseFile: CaseFile;
     return () => clearTimeout(timer);
   }, [hasItems]);
 
-  // Names are saved with the case when the field loses focus, so they persist and prefill next time.
+  // Saved with the case when a field loses focus, so it persists and prefills next time. The "To" fields are only
+  // saved once the renter has touched one of them; until then they keep following HPD's registration.
   function persistNames() {
-    const t = tenant.trim();
-    const l = landlord.trim();
-    if (t === (caseFile.tenantName ?? "") && l === (caseFile.landlordName ?? "")) return;
-    void saveCase({ ...caseFile, tenantName: t || undefined, landlordName: l || undefined });
+    const patch: Partial<CaseFile> = { tenantName: tenant.trim() || undefined };
+    if (edits.name !== undefined || edits.address !== undefined || edits.cc !== undefined) {
+      patch.landlordName = landlord.trim() || undefined;
+      patch.landlordAddress = landlordAddress.trim() || undefined;
+      patch.landlordCc = landlordCc.trim() || undefined;
+    }
+    if ((Object.keys(patch) as (keyof CaseFile)[]).every((k) => patch[k] === caseFile[k])) return;
+    void updateCase(patch);
   }
 
   // Rendering a PDF with photos takes a moment, so keep the last one until the notice text changes.
@@ -148,6 +173,8 @@ function NoticeBuilder({ caseFile, issues, heatReadings }: { caseFile: CaseFile;
       } else {
         await navigator.share({ files: [new File([blob], fileName, { type: "application/pdf" })], title: text.title });
       }
+      // Remember that the notice exists, so the case file moves on from "make the notice".
+      if (!caseFile.noticeMadeAt) void updateCase({ noticeMadeAt: new Date().toISOString() });
     } catch (e) {
       const name = e instanceof DOMException ? e.name : "";
       if (name === "NotAllowedError") setHint("Your PDF is ready. Tap Share once more to send it.");
@@ -175,8 +202,15 @@ function NoticeBuilder({ caseFile, issues, heatReadings }: { caseFile: CaseFile;
           <MonoLabel as="p">Language</MonoLabel>
           <LangToggle lang={lang} onChange={setLang} />
         </div>
-        <Field label="Your name" value={tenant} onChange={setTenant} onBlur={persistNames} autoComplete="name" />
-        <Field label="Landlord or managing agent" value={landlord} onChange={setLandlord} onBlur={persistNames} autoComplete="off" />
+        <Field label="Your name" value={tenant} onChange={edit("tenant")} onBlur={persistNames} autoComplete="name" />
+        {/* the "To:" block */}
+        <div className="space-y-4 border-t-2 border-dashed border-ink/20 pt-4">
+          <MonoLabel as="p">Send it to</MonoLabel>
+          <RegistrationHint status={building.status} registration={registration} prefilled={prefilled} demo={building.record?.source === "demo-fixture"} />
+          <Field label="Landlord or managing agent" value={landlord} onChange={edit("name")} onBlur={persistNames} autoComplete="off" />
+          <Field label="Their mailing address" value={landlordAddress} onChange={edit("address")} onBlur={persistNames} autoComplete="off" />
+          <Field label="Copy to the owner" value={landlordCc} onChange={edit("cc")} onBlur={persistNames} autoComplete="off" />
+        </div>
       </DoodleCard>
 
       {!hasItems ? (
@@ -233,6 +267,8 @@ function NoticeBuilder({ caseFile, issues, heatReadings }: { caseFile: CaseFile;
             )}
           </section>
 
+          {caseFile.noticeMadeAt && <AfterNotice />}
+
           {text.items.length > 0 && (
             <section aria-labelledby="h311" className="space-y-3">
               <MonoLabel as="h2">
@@ -252,16 +288,75 @@ function NoticeBuilder({ caseFile, issues, heatReadings }: { caseFile: CaseFile;
 
       <p className="space-y-1 text-sm text-muted">
         <span className="block font-mono text-xs uppercase tracking-[0.12em]">Not legal advice</span>
-        <a
-          href={HPD_NEXT_STEPS_URL}
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          href="/next-steps"
           className="inline-flex min-h-11 items-center text-ink underline decoration-2 underline-offset-4 hover:decoration-wavy"
         >
-          What happens next ↗
-        </a>
+          What happens next →
+        </Link>
       </p>
     </>
+  );
+}
+
+/** Where the prefilled "To:" came from, or why nothing was prefilled. */
+function RegistrationHint({
+  status,
+  registration,
+  prefilled,
+  demo,
+}: {
+  status: "loading" | "ready" | "error";
+  registration: RegistrationInfo | undefined;
+  prefilled: boolean;
+  demo: boolean;
+}) {
+  if (status === "loading") return <p className="font-hand text-lg leading-snug text-muted">Looking up who HPD has on record…</p>;
+  if (!registration?.current) {
+    return (
+      <p className="font-hand text-lg leading-snug text-muted">
+        {registration
+          ? "HPD has no registration on file for this building, so nothing is filled in."
+          : "We couldn't reach HPD's registration list, so nothing is filled in."}{" "}
+        Your lease or rent bill should say who to write to.
+      </p>
+    );
+  }
+  return (
+    <p className="text-[0.9375rem] leading-snug">
+      {prefilled
+        ? "Filled in from HPD's registration for this building: its managing agent if there is one, otherwise the head officer or owner, with the owner copied. Check it and fix anything that's wrong."
+        : "HPD's registration for this building is on your case file."}
+      <br />
+      <span className="font-mono text-xs text-muted">
+        {snapshotLabel(registration.asOf)}
+        {demo && " · saved copy for the demo"} —{" "}
+        <a href={HPD_ONLINE_URL} target="_blank" rel="noopener noreferrer" className="underline decoration-2 underline-offset-4 hover:decoration-wavy">
+          verify on HPD Online ↗
+        </a>
+      </span>
+    </p>
+  );
+}
+
+/** Shown once the PDF has been made: where it goes, and what comes after. */
+function AfterNotice() {
+  return (
+    <DoodleCard as="section" tone="mint" appear={false} seed={9} aria-labelledby="after-notice" className="space-y-3">
+      <h2 id="after-notice" className="flex items-center gap-2 font-display text-xl leading-tight font-extrabold">
+        <Check size={24} /> Your notice is made. What now?
+      </h2>
+      <p className="leading-snug">
+        HPD&apos;s advice: write to the owner and the management company by certified mail, and keep a copy.{" "}
+        <a href={HPD_WRITE_TO_LANDLORD_URL} target="_blank" rel="noopener noreferrer" className="underline decoration-2 underline-offset-4 hover:decoration-wavy">
+          HPD: tenants&apos; rights ↗
+        </a>
+      </p>
+      <p className="leading-snug">If nothing changes, the next steps are a 311 complaint and, after that, an HP Action in Housing Court.</p>
+      <DoodleButton href="/next-steps" variant="secondary" icon={<Arrow size={22} />}>
+        Next steps and your rights
+      </DoodleButton>
+    </DoodleCard>
   );
 }
 

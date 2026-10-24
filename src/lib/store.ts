@@ -87,6 +87,12 @@ export async function saveCase(c: CaseFile): Promise<void> {
   emit();
 }
 
+/** Merges `patch` into the saved case (re-read just now, so a stale copy in a component can't undo a newer write). No case: no-op. */
+export async function updateCase(patch: Partial<CaseFile>): Promise<void> {
+  const c = await getCase();
+  if (c) await saveCase({ ...c, ...patch });
+}
+
 /** Newest first. */
 export async function listIssues(): Promise<Issue[]> {
   const issues = (await read<Issue[]>(ISSUES_KEY)) ?? [];

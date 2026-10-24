@@ -42,6 +42,13 @@ export interface CaseFile {
   createdAt: string; // ISO
   tenantName?: string;
   landlordName?: string;
+  // -- notice "To:" block and what the renter has done with it --
+  /** Mailing address of the person the notice is addressed to (one line). */
+  landlordAddress?: string;
+  /** Who gets a copy, e.g. the owner (one line: name, address). */
+  landlordCc?: string;
+  /** When the renter first downloaded or shared the notice PDF, ISO. Drives the "what to do next" card. */
+  noticeMadeAt?: string;
 }
 
 /** The AI's (or the human's) proposal. Never decides class or deadline. */
@@ -186,6 +193,49 @@ export type ClassifyResponse =
     }
   | { status: "unavailable"; reason: string };
 
+/** One person or company named on an HPD registration, as published. */
+export interface RegistrationContact {
+  /** Company name, or the person's name; when both are published: "person, company". */
+  name: string;
+  /** One-line business address; null when HPD publishes none. */
+  address: string | null;
+}
+
+/** A building's registration with HPD (Multiple Dwelling Registrations + Registration Contacts). */
+export interface Registration {
+  registrationId: string;
+  buildingId: string;
+  /** Registered street address, e.g. "618-620 WEST 136 STREET". */
+  buildingAddress: string;
+  /** ISO dates, null when missing. `endDate` is the date in HPD's file, not a verdict on whether it lapsed. */
+  lastRegistered: string | null;
+  endDate: string | null;
+  /** Managing agent: who HPD mails violations to and who a repair notice should go to. */
+  agent: RegistrationContact | null;
+  headOfficer: RegistrationContact | null;
+  /** Corporate, individual or joint owner. */
+  owner: RegistrationContact | null;
+}
+
+export interface RegistrationInfo {
+  /** Newest registration date in HPD's file when it was read (ISO date): the snapshot this answer comes from. */
+  asOf: string | null;
+  /** The building's most recent registration, or null when the building is not in the file. */
+  current: Registration | null;
+}
+
+/** What HPD's other public datasets say about the building's recent history. Counts only: no apartment numbers, no names. */
+export interface BuildingSignals {
+  /** Start of the 12-month window for `complaints` (ISO date). */
+  since: string;
+  /** Problems reported to HPD since `since`, by category, most first. */
+  complaints: { category: string; n: number }[];
+  /** HPD litigation cases on record for the building, all years. */
+  litigations: number;
+  /** In HPD's Alternative Enforcement Program right now (the file's current status is "AEP Active"). */
+  aep: boolean;
+}
+
 /** Response of GET /api/building?bbl=… */
 export interface BuildingRecord {
   bbl: string;
@@ -204,6 +254,10 @@ export interface BuildingRecord {
   sourceUrl: string;
   fetchedAt: string;
   source: "live" | "demo-fixture";
+  /** HPD registration contacts. Undefined when that lookup failed (the rest of the record is still good). */
+  registration?: RegistrationInfo;
+  /** Complaints, litigation and AEP. Undefined when that lookup failed. */
+  signals?: BuildingSignals;
 }
 
 /** Response of POST /api/receipt. */

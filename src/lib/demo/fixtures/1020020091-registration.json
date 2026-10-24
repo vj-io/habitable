@@ -1,0 +1,57 @@
+{
+  "asOf": "2026-07-31T00:00:00.000",
+  "fetchedAt": "2026-10-25T00:00:00.000Z",
+  "rows": [
+    {
+      "registrationid": "109944",
+      "buildingid": "40948",
+      "housenumber": "618",
+      "lowhousenumber": "618",
+      "highhousenumber": "620",
+      "streetname": "WEST 136 STREET",
+      "bin": "1059976",
+      "lastregistrationdate": "2025-10-28T00:00:00.000",
+      "registrationenddate": "2026-09-01T00:00:00.000"
+    }
+  ],
+  "contacts": [
+    {
+      "registrationcontactid": "10994403",
+      "registrationid": "109944",
+      "type": "CorporateOwner",
+      "corporationname": "COLUMBIA HEIGHTS 136 LLC",
+      "businesshousenumber": "579",
+      "businessstreetname": "5th ave",
+      "businessapartment": "2nd fl",
+      "businesscity": "New York",
+      "businessstate": "NY",
+      "businesszip": "10017"
+    },
+    {
+      "registrationcontactid": "10994404",
+      "registrationid": "109944",
+      "type": "Agent",
+      "firstname": "EDWIN",
+      "lastname": "SHIRAZIAN",
+      "businesshousenumber": "579",
+      "businessstreetname": "5th ave",
+      "businessapartment": "2nd fl",
+      "businesscity": "New York",
+      "businessstate": "NY",
+      "businesszip": "10017"
+    },
+    {
+      "registrationcontactid": "10994405",
+      "registrationid": "109944",
+      "type": "HeadOfficer",
+      "firstname": "EDWIN",
+      "lastname": "SHIRAZ",
+      "businesshousenumber": "579",
+      "businessstreetname": "5th ave",
+      "businessapartment": "2nd fl",
+      "businesscity": "New York",
+      "businessstate": "NY",
+      "businesszip": "10017"
+    }
+  ]
+}

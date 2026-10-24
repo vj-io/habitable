@@ -12,6 +12,7 @@ import { downloadBlob } from "@/lib/download";
 import { clearAll } from "@/lib/store";
 import { ISSUE_IDS, type CaseFile as CaseFileT, type Issue, type IssueId } from "@/lib/types";
 import { BuildingPanel } from "./BuildingPanel";
+import { NextStepsCard } from "./NextStepsCard";
 import { Timeline } from "./Timeline";
 import { useBuilding } from "./useBuilding";
 
@@ -134,6 +135,11 @@ function Menu() {
             <>
               <ul>
                 <li>
+                  <Link href="/next-steps" className="flex min-h-11 items-center gap-2.5 rounded px-3 font-display font-bold hover:bg-ink/5">
+                    <Arrow size={20} /> Next steps &amp; rights
+                  </Link>
+                </li>
+                <li>
                   <Link href="/how-it-works" className="flex min-h-11 items-center gap-2.5 rounded px-3 font-display font-bold hover:bg-ink/5">
                     <Doc size={20} /> How it works
                   </Link>
@@ -182,11 +188,10 @@ function Menu() {
 }
 
 export function CaseFile({ caseFile, issues, persistent }: { caseFile: CaseFileT; issues: Issue[]; persistent: boolean }) {
-  const building = useBuilding(caseFile.address.bbl, caseFile.demo);
+  const building = useBuilding(caseFile.address, caseFile.demo);
   const [snapOpen, setSnapOpen] = useState(false);
   const [snapKey, setSnapKey] = useState(0);
   const [flashId, setFlashId] = useState<string | null>(null);
-  const openIssues = issues.filter((i) => !i.fixedAt);
   const related = ISSUE_IDS.filter((id) => issues.some((i) => i.issue === id)) as IssueId[];
   const yearBuilt = caseFile.yearBuilt ?? building.record?.yearBuilt ?? null;
 
@@ -244,17 +249,7 @@ export function CaseFile({ caseFile, issues, persistent }: { caseFile: CaseFileT
             {/* Heat and hot water log entry point (self-contained: reads the log itself). */}
             <HeatLogCard />
 
-            {openIssues.length > 0 && (
-              <DoodleCard tone="marker" seed={19} padding="1.25rem" appear={false} className="space-y-3">
-                <p className="font-display text-xl leading-snug font-bold">
-                  Ready when you are: a dated notice listing {openIssues.length === 1 ? "your open issue" : `all ${openIssues.length} open issues`}.
-                </p>
-                <DoodleButton href="/notice" size="lg" icon={<Doc size={24} />} className="w-full sm:w-auto">
-                  Make the notice
-                </DoodleButton>
-                <p className="font-hand text-lg leading-snug text-muted">Print-ready PDF in English or Spanish, plus pre-filled 311 text.</p>
-              </DoodleCard>
-            )}
+            <NextStepsCard caseFile={caseFile} issues={issues} />
           </div>
 
           <aside className="lg:sticky lg:top-6 lg:self-start">
