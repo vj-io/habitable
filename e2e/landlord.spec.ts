@@ -42,7 +42,7 @@ test("building panel card -> /landlord: the portfolio's numbers, the links betwe
 
   const links = page.getByRole("region", { name: "How these buildings are connected" });
   await expect(links.locator("dt")).toHaveText(["Same head officer", "Same corporate owner", "Same managing agent"]);
-  await expect(links.locator("dd")).toHaveText([/EDWIN SHIRAZ\b[\s\S]*2 buildings/, /COLUMBIA HEIGHTS 136 LLC[\s\S]*2 buildings/, /EDWIN SHIRAZIAN[\s\S]*4 buildings/]);
+  await expect(links.locator("dd")).toHaveText([/^EDWIN SHIRAZ(?!IAN)[\s\S]*2 buildings/, /COLUMBIA HEIGHTS 136 LLC[\s\S]*2 buildings/, /EDWIN SHIRAZIAN[\s\S]*4 buildings/]);
 
   const method = page.getByRole("region", { name: "How it's counted" });
   await expect(method).toContainText("1,974,942 ÷ 3,736,645, counted Oct 25, 2026");
