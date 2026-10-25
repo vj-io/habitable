@@ -55,9 +55,9 @@ export type CoachInput = z.infer<typeof CoachInputSchema>;
 
 const MEANING: Record<Placeholder, string> = {
   PROBLEM: "the kind of problem, a short phrase such as “mold” or “leak / water damage”",
-  CLASS: "HPD's hazard class for this kind of problem, written like “Class B (hazardous)”",
+  CLASS: "the class HPD's published rules give this KIND of problem, written like “Class B (hazardous)”. Say “HPD's published rules put this kind of problem in {{CLASS}}”; never say HPD classified, listed or rated this apartment's problem",
   WINDOW: "the correction window HPD publishes for it, as a length of time",
-  FIRST_DATE: "the date the renter first documented the problem",
+  FIRST_DATE: "the date the renter first documented the problem, NOT when it started: write “I first documented it on {{FIRST_DATE}}”, never “it started/began on {{FIRST_DATE}}”",
   REPAIR_BY: "the date the renter asks for the repair by",
   CITATION: "the code section HPD's rule comes from (email only, once at most)",
   UNIT: "the renter's apartment",

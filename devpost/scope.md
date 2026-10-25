@@ -25,7 +25,7 @@ Open the app on a phone → snap the problem (plus one optional line like "ceili
 Civic tech with a real document at the end. "Every repair dispute turns on documentation," and the tools that exist are chatbots, not evidence.
 
 ## What "Working" Looks Like
-On a phone: enter an address once, photograph a stained, dripping ceiling, and watch it flip into a stamped "Class B · Hazardous · 30-day correction window" card with a running countdown and the cited code section. The building panel slides in: "This building already has N open violations, M for leaks." The issue lands on a dated timeline with its hash and timestamps, and one tap produces a print-ready notice PDF. **The "oh, that's cool" beat:** the photo becoming a stamped legal clock, followed by proof the building has a history.
+On a phone: enter an address once, photograph a stained ceiling that is no longer dripping, and watch it flip into a stamped "Class B · Hazardous · 30-day correction window" card (corrected after the build: an active drip is Class C · 24 hours in the rules table) with a running countdown and the cited code section. The building panel slides in: "This building already has N open violations, M for leaks." The issue lands on a dated timeline with its hash and timestamps, and one tap produces a print-ready notice PDF. **The "oh, that's cool" beat:** the photo becoming a stamped legal clock, followed by proof the building has a history.
 
 ## The POC Boundary
 - NYC only, one address per device, no accounts; everything stored on the device.

@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Habitable App Map</title>
+<meta name="description" content="A compact take-home guide to Habitable: the main pieces, one action traced through the code, a short reference route, and where to start when you change something.">
+<style>
+:root {
+  --paper: #f0ede8; --paper-2: #faf8f4; --ink: #0a0a0a; --muted: #65625c;
+  --lime: #c8ff00; --violet: #5534e6; --violet-tint: #e8e2ff; --red: #b3261a;
+  --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --hand: "Patrick Hand", "Comic Neue", "Comic Sans MS", cursive;
+  --mono: ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0; color: var(--ink); font: 16px/1.5 var(--sans);
+  background-color: var(--paper);
+  background-image: linear-gradient(rgba(10,10,10,.055) 1px, transparent 1px), linear-gradient(90deg, rgba(10,10,10,.055) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+:focus-visible { outline: 3px solid var(--violet); outline-offset: 3px; }
+.skip { position: absolute; left: 8px; top: -60px; z-index: 5; background: var(--lime); color: var(--ink); border: 2.5px solid var(--ink); padding: 8px 12px; font-weight: 700; }
+.skip:focus { top: 8px; }
+
+h1, h2, h3 { font-family: var(--sans); line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(2rem, 6vw, 3.1rem); font-weight: 800; letter-spacing: -.02em; }
+h2 { font-size: 1.45rem; font-weight: 800; margin-bottom: 4px; }
+h3 { font-size: 1.05rem; font-weight: 800; }
+p { margin: 0 0 .6em; }
+mark { background: linear-gradient(transparent 50%, var(--lime) 50% 92%, transparent 92%); color: inherit; padding: 0 .12em; }
+a { color: var(--violet); text-underline-offset: 3px; text-decoration-thickness: 2px; }
+code { font: 600 .84em var(--mono); background: rgba(10,10,10,.07); padding: .06em .32em; border-radius: 3px; overflow-wrap: anywhere; }
+.muted { color: var(--muted); }
+.hand { font-family: var(--hand); font-size: 1.12rem; line-height: 1.3; }
+.eyebrow { font: 700 .75rem/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+
+header { padding: 26px 0 8px; }
+.lede { max-width: 62ch; font-size: 1.06rem; margin-top: 12px; }
+.snap { display: inline-block; margin: 2px 0 12px; font: 600 .82rem/1.4 var(--mono); border: 2px dashed var(--ink); border-radius: 4px; padding: 4px 8px; background: var(--paper-2); }
+nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+nav a { display: inline-block; min-height: 36px; padding: 7px 12px; border: 2px solid var(--ink); border-radius: 18px 4px 16px 4px / 4px 16px 4px 18px; background: var(--paper-2); color: var(--ink); font-weight: 700; font-size: .9rem; text-decoration: none; }
+nav a:hover { background: var(--lime); }
+
+section { padding: 26px 0 4px; }
+.sub { color: var(--muted); max-width: 70ch; margin-bottom: 14px; }
+
+.card { background: var(--paper-2); border: 2.5px solid var(--ink); border-radius: 14px 4px 12px 5px / 5px 12px 4px 14px; box-shadow: 3px 3px 0 var(--ink); padding: 14px 16px; }
+.card.ai { border-color: var(--violet); box-shadow: 3px 3px 0 var(--violet); background: #f6f3ff; }
+.tag { display: inline-block; font: 700 .66rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; padding: 4px 6px; border: 2px solid var(--ink); border-radius: 3px; margin-bottom: 8px; }
+.tag.ai { color: var(--violet); border-color: var(--violet); background: var(--violet-tint); }
+.tag.code { background: var(--lime); }
+
+/* three pieces */
+.pieces { display: grid; gap: 14px; grid-template-columns: 1fr; }
+.pieces p { font-size: .95rem; margin-bottom: .4em; }
+.slogan { margin-top: 14px; font-weight: 800; }
+
+/* the diagram */
+.flow { list-style: none; margin: 0; padding: 0; display: grid; gap: 30px; grid-template-columns: 1fr; counter-reset: n; }
+.flow > li { position: relative; display: flex; flex-direction: column; }
+.flow > li > .card { flex: 1; }
+.flow > li + li::before { content: "\2193"; content: "\2193" / ""; position: absolute; left: 50%; top: -28px; transform: translateX(-50%); font: 800 1.5rem/1 var(--sans); }
+.flow > li.ai + li::before { color: var(--violet); }
+.flow h3::before { counter-increment: n; content: counter(n); display: inline-grid; place-items: center; width: 1.55rem; height: 1.55rem; margin-right: 8px; border: 2.5px solid currentColor; border-radius: 50%; font-size: .85rem; background: var(--lime); color: var(--ink); }
+.flow .ai h3::before { background: var(--violet-tint); color: var(--violet); }
+.flow p { font-size: .9rem; line-height: 1.4; margin: 6px 0; }
+.where { font-size: .84rem; line-height: 1.5; margin: 8px 0; }
+.where code { display: inline-block; }
+.see { margin-top: 8px; padding-top: 8px; border-top: 2px dashed rgba(10,10,10,.25); }
+.see b { font: 700 .66rem/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 2px; }
+.ai .see { color: var(--violet); }
+.stamp { display: inline-block; transform: rotate(-4deg); border: 3px solid var(--red); color: var(--red); border-radius: 6px; padding: 1px 9px; font: 800 1rem/1.3 var(--sans); letter-spacing: .04em; text-transform: uppercase; margin-right: 6px; }
+.light { display: grid; gap: 12px; grid-template-columns: 1fr; margin-top: 18px; }
+.light > div { border: 2px dashed var(--ink); border-radius: 8px; padding: 10px 14px; background: rgba(250,248,244,.7); font-size: .88rem; }
+.light b { font: 700 .66rem/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; }
+
+/* route */
+.badge { display: inline-block; font: 700 .78rem/1.3 var(--mono); border: 2px solid var(--ink); background: var(--lime); padding: 4px 8px; border-radius: 4px; margin-bottom: 12px; }
+.route { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; grid-template-columns: 1fr; }
+.stop { display: flex; flex-direction: column; }
+.stop .path { font: 700 .88rem/1.35 var(--mono); overflow-wrap: anywhere; margin: 6px 0 2px; }
+.stop .anchor { font-size: .84rem; color: var(--muted); margin-bottom: 8px; }
+.stop p { font-size: .92rem; }
+.num { display: inline-grid; place-items: center; width: 2rem; height: 2rem; border: 2.5px solid var(--ink); border-radius: 50%; background: var(--lime); font-weight: 800; margin-right: 8px; vertical-align: middle; }
+.stop.ai .num { background: var(--violet-tint); border-color: var(--violet); color: var(--violet); }
+
+details { margin-top: auto; padding-top: 8px; font-size: .9rem; }
+details + details { margin-top: 6px; }
+summary { cursor: pointer; font-weight: 700; padding: 8px 0; min-height: 40px; }
+summary::marker { color: var(--violet); }
+details[open] > summary { margin-bottom: 4px; }
+details ul { margin: 4px 0 4px; padding-left: 1.1rem; }
+details li { margin-bottom: 4px; }
+pre { margin: 6px 0; padding: 10px 12px; background: var(--ink); color: var(--paper); border-radius: 6px; font: 500 .84rem/1.5 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; }
+pre .c { color: #a79bff; }
+pre .p { color: var(--lime); }
+
+/* change list */
+.changes { list-style: none; margin: 0; padding: 0; }
+.changes li { display: grid; gap: 4px; padding: 11px 0; border-top: 2px dashed rgba(10,10,10,.3); grid-template-columns: 1fr; }
+.changes li:last-child { border-bottom: 2px dashed rgba(10,10,10,.3); }
+.changes strong { font-weight: 800; }
+.changes .go { font-size: .92rem; }
+.changes .warn { color: var(--red); font-weight: 600; }
+
+/* reuse + run */
+.two { display: grid; gap: 16px; grid-template-columns: 1fr; }
+.facts { margin: 8px 0 0; padding: 0; list-style: none; }
+.facts li { margin-bottom: 8px; font-size: .95rem; }
+.facts b { display: block; font: 700 .68rem/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+.drift { margin-top: 10px; font-size: .9rem; }
+
+footer { padding: 22px 0 36px; color: var(--muted); font-size: .88rem; }
+
+@media (min-width: 720px) {
+  .pieces { grid-template-columns: repeat(3, 1fr); }
+  .route { grid-template-columns: repeat(3, 1fr); }
+  .light { grid-template-columns: 1fr 1fr; }
+  .changes li { grid-template-columns: 15rem 1fr; gap: 16px; }
+  .two { grid-template-columns: 1.15fr 1fr; }
+}
+@media (min-width: 1100px) {
+  .flow { grid-template-columns: repeat(5, 1fr); gap: 34px; }
+  .flow > li + li::before { content: "\2192"; content: "\2192" / ""; left: -27px; top: 42px; transform: none; }
+  header .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the map</a>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">App map &middot; take-home guide</p>
+    <div class="head">
+      <div>
+        <h1>Habitable, <mark>mapped</mark></h1>
+        <p class="lede">A New York City renter snaps a photo of something broken. The app fingerprints and dates it, an AI <em>proposes</em> what kind of problem it is, and a cited rules table <em>decides</em> the housing-code class and repair window. Everything lands in a dated log, and one tap makes a repair notice. This page traces one action through the code so you can find your way back in.</p>
+      </div>
+      <p class="snap">Snapshot of commit <code>28814de</code></p>
+    </div>
+    <nav aria-label="On this page">
+      <ul>
+        <li><a href="#pieces">Pieces</a></li>
+        <li><a href="#action">One action</a></li>
+        <li><a href="#route">Reference route</a></li>
+        <li><a href="#change">Change this</a></li>
+        <li><a href="#reuse">A practice to reuse</a></li>
+        <li><a href="#run">Run it again</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+
+<section id="pieces" aria-labelledby="h-pieces">
+  <h2 id="h-pieces">Three pieces</h2>
+  <p class="sub">One website that behaves like a phone app. No account, no database.</p>
+  <div class="pieces">
+    <div class="card">
+      <span class="tag">Phone app (the browser)</span>
+      <p>Reads your photo, computes its SHA-256 fingerprint, reads the capture time inside the file, and keeps your whole case on the device (IndexedDB). It also runs the rules and draws the notice PDF.</p>
+      <p class="muted"><code>src/app/</code> &middot; <code>src/components/</code> &middot; <code>src/lib/store.ts</code></p>
+    </div>
+    <div class="card ai">
+      <span class="tag ai">Small server (API routes)</span>
+      <p>Does what the phone can't do safely: holds the AI key and asks a vision model to <em>propose</em> a problem type, signs a receipt for the fingerprint, and fetches the building's public record from NYC Open Data.</p>
+      <p class="muted"><code>src/app/api/classify</code> &middot; <code>receipt</code> &middot; <code>building</code></p>
+    </div>
+    <div class="card">
+      <span class="tag code">Rules table</span>
+      <p>Plain data plus plain code. Given the problem type and a few facts, it returns the hazard class, the correction window, the code section and the source link. No AI past this point.</p>
+      <p class="muted"><code>src/lib/rules.json</code> &middot; <code>src/lib/rules.ts</code></p>
+    </div>
+  </div>
+  <p class="slogan"><mark>AI proposes, code disposes.</mark> The model only chooses from a fixed list; every consequential answer comes from the table.</p>
+</section>
+
+<section id="action" aria-labelledby="h-action">
+  <h2 id="h-action">One action, end to end: snap a photo, see the stamped class</h2>
+  <p class="sub">Violet marks the AI step. Each box says what runs, where it lives, and what you see on screen.</p>
+  <ol class="flow">
+    <li>
+      <div class="card">
+        <span class="tag">Phone</span>
+        <h3>Read the photo</h3>
+        <p>Fingerprint, capture time, and metadata-free copies (one stored, a small one for the AI). The fingerprint also goes to <code>/api/receipt</code>.</p>
+        <p class="where"><code>src/<wbr>components/<wbr>snap/<wbr>SnapSheet.tsx</code> <code>takeFile()</code><br><code>src/<wbr>lib/<wbr>evidence.ts</code> <code>readEvidence()</code></p>
+        <p class="see hand"><b>You see</b>“Evidence &middot; on this device”: fingerprint, time taken, receipt, location removed.</p>
+      </div>
+    </li>
+    <li class="ai">
+      <div class="card ai">
+        <span class="tag ai">Server &rarr; AI model</span>
+        <h3>AI proposes</h3>
+        <p>The browser posts the small copy to <code>POST /api/classify</code>. The model must answer with one of seven ids, a confidence and one sentence, at temperature 0.</p>
+        <p class="where"><code>src/<wbr>app/<wbr>api/<wbr>classify/<wbr>route.ts</code> <code>POST</code><br><code>src/<wbr>lib/<wbr>classify.ts</code> <code>classifyImage()</code></p>
+        <p class="see hand"><b>You see</b>A pencil loader: “reading the photo…”</p>
+      </div>
+    </li>
+    <li>
+      <div class="card">
+        <span class="tag code">Server &middot; code</span>
+        <h3>Code checks confidence</h3>
+        <p>Below 0.7, code attaches one clarifying question. Otherwise the proposal goes through. The model never sees a class or a deadline.</p>
+        <p class="where"><code>src/<wbr>lib/<wbr>classify.ts</code> <code>decide()</code></p>
+        <p class="see hand" style="color:var(--violet)"><b>You see</b>A violet “AI proposes” card with a confidence bar, or one question. <code>src/<wbr>components/<wbr>snap/<wbr>ProposalCard.tsx</code></p>
+      </div>
+    </li>
+    <li>
+      <div class="card">
+        <span class="tag code">Phone &middot; rules table</span>
+        <h3>Code disposes</h3>
+        <p>The browser runs the table. If a rule needs a fact a photo can't show, it asks first.</p>
+        <p class="where"><code>src/<wbr>lib/<wbr>rules.ts</code> <code>evaluate()</code><br><code>src/<wbr>lib/<wbr>rules.json</code></p>
+        <p class="see hand"><b>You see</b>“The rule needs one fact the photo can't show”: for a leak, “Is water actively dripping or flowing right now?”</p>
+      </div>
+    </li>
+    <li>
+      <div class="card">
+        <span class="tag">Phone</span>
+        <h3>Stamped result</h3>
+        <p>The card shows the class, window and citation. The repair-by date is counted from the moment you add the photo.</p>
+        <p class="where"><code>src/<wbr>components/<wbr>snap/<wbr>RuleCard.tsx</code><br><code>src/<wbr>lib/<wbr>countdown.ts</code> <code>repairByDate()</code></p>
+        <p class="see hand"><b>You see</b><span class="stamp">Class C</span> “24-hour correction window” and a live countdown (active leak).</p>
+      </div>
+    </li>
+  </ol>
+  <div class="light">
+    <div><b>Storage &middot; shown lightly</b>“Add to my log” saves the issue on the device: <code>saveIssue()</code> in <code>src/lib/store.ts</code> (IndexedDB, with an in-memory fallback).</div>
+    <div><b>NYC Open Data &middot; shown lightly</b><code>GET /api/building</code> (<code>src/app/api/building/route.ts</code>, <code>src/lib/building.ts</code>) adds a line like “… open HPD violations &mdash; 37 for leaks.” under the card.</div>
+  </div>
+</section>
+
+<section id="route" aria-labelledby="h-route">
+  <h2 id="h-route">A three-stop route through the code</h2>
+  <p class="badge">Reference route &middot; written from reading the code, not toured interactively</p>
+  <p class="sub">Search for the quoted symbol instead of scrolling; line numbers move.</p>
+  <ol class="route">
+    <li class="card stop">
+      <h3><span class="num">1</span>The step machine</h3>
+      <p class="path">src/<wbr>components/<wbr>snap/<wbr>SnapSheet.tsx</p>
+      <p class="anchor">Search: <code>async function takeFile</code></p>
+      <p>The sheet walks Photo &rarr; AI proposal &rarr; Rule &rarr; Log (<code>STEPS</code>). <code>takeFile()</code> reads the photo, starts the receipt request, and calls <code>/api/classify</code>. Further down it calls <code>evaluate()</code> and renders the cards.</p>
+      <details>
+        <summary>What to notice</summary>
+        <ul>
+          <li>Search <code>const outcome = chosen</code>: the rules run here, in the browser, from the chosen type plus <code>known</code> facts.</li>
+          <li>The renter can correct the AI (<code>IssuePicker</code> in <code>ProposalCard.tsx</code>); the pick goes through the same <code>evaluate()</code>.</li>
+          <li>If the AI is unavailable, <code>apply()</code> switches to the manual picker and the rest still works.</li>
+        </ul>
+      </details>
+    </li>
+    <li class="card stop ai">
+      <h3><span class="num">2</span>Where the AI stops</h3>
+      <p class="path">src/<wbr>lib/<wbr>classify.ts</p>
+      <p class="anchor">Search: <code>export function decide(</code></p>
+      <p><code>decide()</code> is pure: it applies the <code>CONFIDENCE_THRESHOLD</code> (0.7) in code and adds one clarifying question when the model is unsure. The model's whole job is <code>ProposalSchema</code>.</p>
+      <details>
+        <summary>What to notice</summary>
+        <ul>
+          <li>The check itself:
+<pre>if (!answered &amp;&amp; raw.confidence &lt; CONFIDENCE_THRESHOLD) {</pre></li>
+          <li><code>classifyImage()</code> tries models in order, rests one that answers 429, and caches identical requests.</li>
+          <li>The caller is <code>POST</code> in <code>src/app/api/classify/route.ts</code>: input checks, rate limits, and saved demo answers through the same <code>decide()</code>.</li>
+        </ul>
+      </details>
+    </li>
+    <li class="card stop">
+      <h3><span class="num">3</span>The table decides</h3>
+      <p class="path">src/<wbr>lib/<wbr>rules.ts &middot; src/<wbr>lib/<wbr>rules.json</p>
+      <p class="anchor">Search: <code>export function evaluate(</code> &middot; <code>"leak-active"</code></p>
+      <p><code>evaluate()</code> walks an issue's <code>variants</code> in table order. The first whose <code>when</code> facts all hold wins. A missing fact returns questions instead of a class.</p>
+      <details>
+        <summary>One rule, trimmed</summary>
+<pre>{
+  "ruleId": "leak-active",
+  "when": { "activeLeak": "yes" },
+  "hazardClass": "C",
+  "window": { "hours": 24, "text": "24 hours" },
+  "citation": "NYC Admin. Code §27-2005(a), §27-2026"
+}</pre>
+        <p class="muted">Each real rule also carries <code>sourceUrl</code>, a short <code>quote</code> and a plain-English line.</p>
+      </details>
+    </li>
+  </ol>
+</section>
+
+<section id="change" aria-labelledby="h-change">
+  <h2 id="h-change">To change this, start here</h2>
+  <ul class="changes">
+    <li>
+      <strong>Add or correct a legal rule</strong>
+      <span class="go"><code>src/lib/rules.json</code> (a variant with <code>ruleId</code>, <code>when</code>, class, window, citation, source) <mark>plus</mark> a case in <code>src/lib/rules.test.ts</code>. Run <code>npm test</code>.</span>
+    </li>
+    <li>
+      <strong>Change the notice wording (English or Spanish)</strong>
+      <span class="go"><code>src/lib/notice-text.ts</code> (<code>STRINGS</code>). The preview and the PDF both render this text; layout is in <code>src/components/notice/NoticeDocument.tsx</code>.</span>
+    </li>
+    <li>
+      <strong>Change the AI models, threshold or rate limits</strong>
+      <span class="go">Models, cooldowns and cache, shared by every AI feature: <code>src/lib/ai.ts</code> (<code>GOOGLE_MODELS</code>, <code>GATEWAY_MODELS</code>, <code>generateObjectWithFallback</code>). Limits: the <code>createLimiter</code> call at the top of each AI route (<code>src/app/api/classify</code>, <code>ask</code>, <code>coach</code>). The 0.7 threshold lives in <code>src/lib/types.ts</code> (<code>CONFIDENCE_THRESHOLD</code>), shared by the server and the proposal card.</span>
+    </li>
+    <li>
+      <strong>Change the look</strong>
+      <span class="go"><code>src/app/globals.css</code> (the <code>--color-*</code> tokens) and <code>src/components/doodle/</code> (the hand-drawn kit).</span>
+    </li>
+    <li>
+      <strong>Fix how a building's violations map to a problem type</strong>
+      <span class="go"><code>src/lib/building.ts</code> (<code>violationIssue()</code> and its local <code>RULES</code> pattern list; first match wins), tested in <code>src/lib/building.test.ts</code>.</span>
+    </li>
+    <li>
+      <strong>Added after the first build: where each newer feature lives</strong>
+      <span class="go">Heat log: <code>src/lib/heat.ts</code> + <code>/api/outdoor</code>. Landlord track record: <code>src/lib/portfolio.ts</code> + <code>/api/landlord</code>. Ask the law: <code>src/lib/law/</code> (corpus, BM25 <code>retrieve.ts</code>, quote <code>verify.ts</code>) + <code>/api/ask</code>. Message coach: <code>src/lib/coach.ts</code> (<code>validateDraft</code>) + <code>/api/coach</code>. Same rule as the kernel: the model proposes, plain tested code checks. The spec's "Round 2 additions" records the scope change.</span>
+    </li>
+  </ul>
+</section>
+
+<section id="reuse" class="two" aria-label="Practice and run instructions">
+  <div id="practice" class="card">
+    <h2>A practice to reuse</h2>
+    <p><mark>Let the AI choose from a closed list; let a cited, tested table decide everything that matters.</mark></p>
+    <ul class="facts">
+      <li><b>The decision</b>The model may only return <code>ProposalSchema</code> (<code>z.enum(PROPOSAL_IDS)</code>, a confidence, a short rationale) in <code>src/lib/classify.ts</code>. Class, window and deadline come only from <code>src/lib/rules.json</code> via <code>evaluate()</code>.</li>
+      <li><b>The evidence</b><code>src/lib/rules.test.ts</code>, test “every combination of every fact option reaches an outcome, and each one is cited”. It walks every issue and answer combination, in and out of heat season, and asserts a status, a <code>§</code> citation, an official source URL and a positive window.</li>
+    </ul>
+    <details>
+      <summary>How this helps on another project</summary>
+      <ul>
+        <li>Anywhere an AI sorts things that carry consequences (support tickets, expense categories, eligibility checks): have it pick a label from a fixed enum and validate the answer with a schema.</li>
+        <li>Keep thresholds, prices or policies in a data file with a source link per row, then write one exhaustive test that fails when an option has no outcome.</li>
+        <li>A wrong AI answer can then only pick the wrong row, never invent an outcome, and changing a rule is a small reviewable data edit.</li>
+      </ul>
+    </details>
+  </div>
+
+  <div id="run" class="card">
+    <h2>Run it again</h2>
+    <p class="muted">Needs Node.js 20+ and npm. No keys for the demo.</p>
+<pre><span class="p">$</span> npm install
+<span class="p">$</span> npm run dev</pre>
+    <p>Open <a href="http://localhost:3000">http://localhost:3000</a> &rarr; <b>Try the demo building</b> &rarr; <b>Snap a problem</b> &rarr; pick a sample scene (saved answers in <code>src/lib/demo/</code>).</p>
+<pre><span class="p">$</span> npm test
+<span class="p">$</span> npm run test:e2e</pre>
+    <p class="muted"><code>npm test</code> runs the Vitest unit tests. <code>test:e2e</code> runs Playwright, builds and starts the app itself, and blanks the AI keys.</p>
+    <details>
+      <summary>Live AI and receipts (optional)</summary>
+      <p>Put <code>GOOGLE_GENERATIVE_AI_API_KEY</code> or <code>AI_GATEWAY_API_KEY</code> in <code>.env.local</code> for live photos, and <code>RECEIPT_SECRET</code> to sign receipts. See <code>.env.example</code> and the README.</p>
+    </details>
+    <p class="drift"><b>Snapshot, not a promise.</b> This map was written against commit <code>28814de</code>. Code moves and names drift: if a path or symbol is missing, search for the nearest name, or see what changed:</p>
+<pre><span class="p">$</span> git diff --stat 28814de HEAD -- src</pre>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Habitable documents conditions and cites the rules HPD publishes. It is not legal advice. This page is one static file: no scripts, no network, readable offline.</p>
+  </div>
+</footer>
+</body>
+</html>

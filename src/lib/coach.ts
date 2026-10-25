@@ -207,7 +207,14 @@ export const FORBIDDEN: Rule[] = [
 const TIME_WORDS =
   /\b(?:(?:zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|dozen|un|uno|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce|trece|catorce|quince|veinte|treinta|cuarenta|cincuenta|sesenta|noventa|cien|ciento)[ -](?:hours?|days?|weeks?|months?|years?|horas?|dias?|semanas?|meses|mes|anos?)|monday|tuesday|wednesday|thursday|friday|saturday|sunday|january|february|march|april|june|july|august|september|october|november|december|lunes|martes|miercoles|jueves|viernes|sabado|domingo|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)\b/;
 
-export type CheckCode = "empty" | "placeholder" | "forbidden" | "digits" | "time-words" | "links" | "length" | "lines";
+// Claims the facts don't support: the first-documented date is not when the problem started, and HPD's class is
+// a published rule for this kind of problem, not a ruling HPD made about this apartment.
+const OVERCLAIM: Rule[] = [
+  { name: "start date", re: /\b(?:start\w*|began|begun|begin\w*|since|empez\w*|comenz\w*|desde)\s+(?:on\s+|el\s+)?\{\{FIRST_DATE\}\}/i, example: "It started on {{FIRST_DATE}}." },
+  { name: "HPD ruling", re: /\bHPD\s+(?:has\s+)?(?:list(?:s|ed)|classif\w*|rat(?:es|ed)|consider(?:s|ed)|label(?:s|ed)|clasific\w*|consider[oó]|consider[ae]|catalog\w*)\b/i, example: "HPD lists this as {{CLASS}}." },
+];
+
+export type CheckCode = "empty" | "placeholder" | "forbidden" | "overclaim" | "digits" | "time-words" | "links" | "length" | "lines";
 export type Check = { ok: true } | { ok: false; code: CheckCode; detail?: string };
 
 const fail = (code: CheckCode, detail?: string): Check => ({ ok: false, code, detail });
@@ -232,6 +239,7 @@ export function validateDraft(draft: Draft, facts: CoachFacts, lang: Lang, chann
 
   const said = plain(words);
   for (const r of FORBIDDEN) if (r.re.test(said)) return fail("forbidden", r.name);
+  for (const r of OVERCLAIM) if (r.re.test(written)) return fail("overclaim", r.name);
   if (/\p{Nd}/u.test(words)) return fail("digits");
   if (TIME_WORDS.test(said)) return fail("time-words");
   if (/https?:|www\.|@|\.com\b/.test(said)) return fail("links");
@@ -254,6 +262,7 @@ export function describeCheck(c: Extract<Check, { ok: false }>): string {
     empty: "it was empty",
     placeholder: "it used a fact placeholder wrongly",
     forbidden: "it used wording we don't allow",
+    overclaim: "it said more than your log shows",
     digits: "it wrote a number or date itself",
     "time-words": "it wrote a date or time itself",
     links: "it added a link or address",

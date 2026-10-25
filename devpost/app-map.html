@@ -307,7 +307,7 @@ footer { padding: 22px 0 36px; color: var(--muted); font-size: .88rem; }
     </li>
     <li>
       <strong>Change the AI models, threshold or rate limits</strong>
-      <span class="go">Models and threshold: <code>src/lib/classify.ts</code> (<code>GOOGLE_MODELS</code>, <code>GATEWAY_MODELS</code>). Limits: <code>src/app/api/classify/route.ts</code> (<code>PER_IP_LIMIT</code>, <code>GLOBAL_LIMIT</code>). The 0.7 threshold lives in <code>src/lib/types.ts</code> (<code>CONFIDENCE_THRESHOLD</code>), shared by the server and the proposal card.</span>
+      <span class="go">Models, cooldowns and cache, shared by every AI feature: <code>src/lib/ai.ts</code> (<code>GOOGLE_MODELS</code>, <code>GATEWAY_MODELS</code>, <code>generateObjectWithFallback</code>). Limits: the <code>createLimiter</code> call at the top of each AI route (<code>src/app/api/classify</code>, <code>ask</code>, <code>coach</code>). The 0.7 threshold lives in <code>src/lib/types.ts</code> (<code>CONFIDENCE_THRESHOLD</code>), shared by the server and the proposal card.</span>
     </li>
     <li>
       <strong>Change the look</strong>
@@ -316,6 +316,10 @@ footer { padding: 22px 0 36px; color: var(--muted); font-size: .88rem; }
     <li>
       <strong>Fix how a building's violations map to a problem type</strong>
       <span class="go"><code>src/lib/building.ts</code> (<code>violationIssue()</code> and its local <code>RULES</code> pattern list; first match wins), tested in <code>src/lib/building.test.ts</code>.</span>
+    </li>
+    <li>
+      <strong>Added after the first build: where each newer feature lives</strong>
+      <span class="go">Heat log: <code>src/lib/heat.ts</code> + <code>/api/outdoor</code>. Landlord track record: <code>src/lib/portfolio.ts</code> + <code>/api/landlord</code>. Ask the law: <code>src/lib/law/</code> (corpus, BM25 <code>retrieve.ts</code>, quote <code>verify.ts</code>) + <code>/api/ask</code>. Message coach: <code>src/lib/coach.ts</code> (<code>validateDraft</code>) + <code>/api/coach</code>. Same rule as the kernel: the model proposes, plain tested code checks. The spec's "Round 2 additions" records the scope change.</span>
     </li>
   </ul>
 </section>
