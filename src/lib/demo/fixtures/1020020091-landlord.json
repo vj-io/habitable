@@ -1,0 +1,128 @@
+{
+  "bbl": "1020020091",
+  "source": "live",
+  "fetchedAt": "2026-10-25T06:44:14.832Z",
+  "portfolio": {
+    "asOf": "2026-07-31",
+    "registered": true,
+    "keys": [
+      {
+        "kind": "headOfficer",
+        "name": "EDWIN SHIRAZ"
+      },
+      {
+        "kind": "owner",
+        "name": "COLUMBIA HEIGHTS 136 LLC"
+      },
+      {
+        "kind": "agent",
+        "name": "EDWIN SHIRAZIAN"
+      }
+    ],
+    "buildings": [
+      {
+        "bbl": "1020020091",
+        "address": "618-620 WEST 136 STREET",
+        "links": [
+          "headOfficer",
+          "owner",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1020020093",
+        "address": "622 WEST 136 STREET",
+        "links": [
+          "headOfficer",
+          "owner",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1019400045",
+        "address": "234-240 WEST 135 STREET",
+        "links": [
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2032760035",
+        "address": "357 EAST 193 STREET",
+        "links": [
+          "agent"
+        ]
+      }
+    ],
+    "found": 4,
+    "capped": false
+  },
+  "season": {
+    "start": "2025-10-01",
+    "end": "2026-05-31"
+  },
+  "open": {
+    "byClass": {
+      "A": 154,
+      "B": 466,
+      "C": 324
+    },
+    "total": 948
+  },
+  "units": {
+    "total": 84,
+    "buildings": 4
+  },
+  "bcPer100": 940.5,
+  "baseline": {
+    "bc": 1974942,
+    "units": 3736645,
+    "per100": 52.9,
+    "asOf": "2026-10-25"
+  },
+  "ratio": 17.8,
+  "heat311": 94,
+  "litigations": 56,
+  "aep": 3,
+  "worst": [
+    {
+      "bbl": "1019400045",
+      "address": "234-240 WEST 135 STREET",
+      "c": 140,
+      "units": 29,
+      "links": [
+        "agent"
+      ]
+    },
+    {
+      "bbl": "1020020091",
+      "address": "618-620 WEST 136 STREET",
+      "c": 82,
+      "units": 28,
+      "links": [
+        "headOfficer",
+        "owner",
+        "agent"
+      ]
+    },
+    {
+      "bbl": "2032760035",
+      "address": "357 EAST 193 STREET",
+      "c": 80,
+      "units": 10,
+      "links": [
+        "agent"
+      ]
+    },
+    {
+      "bbl": "1020020093",
+      "address": "622 WEST 136 STREET",
+      "c": 22,
+      "units": 17,
+      "links": [
+        "headOfficer",
+        "owner",
+        "agent"
+      ]
+    }
+  ]
+}
