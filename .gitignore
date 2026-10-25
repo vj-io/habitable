@@ -39,4 +39,4 @@ npm-debug.log*
 .claude/worktrees/
 
 # demo video build (deliverables are uploaded, not committed)
-brag-output/
+brag-output*/
