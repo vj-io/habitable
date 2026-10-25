@@ -364,8 +364,9 @@ export function IssueDetail({ id }: { id: string }) {
 
   return (
     <Shell demo={caseFile?.demo}>
-      <div className="mt-2 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:gap-10">
-        <div className="space-y-6">
+      {/* From lg: the evidence on the left and the rule beside it, the rest (message, manage) under the evidence so both columns are about as tall. */}
+      <div className="mt-2 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:grid-rows-[auto_1fr] lg:gap-x-10">
+        <div className="space-y-6 lg:col-start-1 lg:row-start-1">
           <SketchBox seed={61} strokeWidth={2.5} fill="#fff" padding="6px" className="rotate-[-0.6deg]">
             <Image
               src={issue.evidence.photo}
@@ -412,7 +413,7 @@ export function IssueDetail({ id }: { id: string }) {
           <Evidence issue={issue} />
         </div>
 
-        <div className="space-y-8">
+        <div className="space-y-8 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
           {o.status === "classified" && issue.repairBy ? (
             <RuleCard
               outcome={o}
@@ -454,7 +455,9 @@ export function IssueDetail({ id }: { id: string }) {
               </p>
             )}
           </DoodleCard>
+        </div>
 
+        <div className="space-y-8 lg:col-start-1 lg:row-start-2">
           {caseFile && now && !issue.fixedAt && <MessageCoach caseFile={caseFile} issue={issue} now={now} />}
 
           <section aria-label="Manage this issue" className="flex flex-wrap items-start gap-3 border-t-2 border-dashed border-ink/20 pt-5">

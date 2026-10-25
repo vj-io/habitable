@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { classICount } from "@/lib/building";
 import {
   PORTFOLIO_CAP,
   SAVED_BASELINE,
@@ -276,6 +277,7 @@ describe("scorePortfolio", () => {
   it("adds up the portfolio's own lots and compares B+C per 100 apartments with the city", () => {
     const r = scorePortfolio(portfolio, rows, meta);
     expect(r.open).toEqual({ byClass: { A: 54, B: 164, C: 189 }, total: 408 });
+    expect(classICount(408, r.open!.byClass)).toBe(1); // the one class I row is in the total only
     expect(r.units).toEqual({ total: 100, buildings: 5 });
     // B+C at lots with a unit count: 236 + 30 + 82 + 3 + 1 = 352 over 100 apartments; the 1 at 2000010002 is left out
     expect(r.bcPer100).toBe(352);
