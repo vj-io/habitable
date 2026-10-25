@@ -167,7 +167,8 @@ describe("notice PDF", () => {
       expect(text).toContain(s);
   });
 
-  it("maps every glyph to exactly one character, so every PDF reader extracts the same text", () => {
+  // `<>` (an empty entry) and `<0066 006c>` (a ligature) are valid PDF, but some readers shift or cut text on them.
+  it("maps every glyph to exactly one character in the ToUnicode tables", () => {
     for (const [key, pdf] of Object.entries(pdfs)) {
       expect(pdf.toUnicodeEntries.length, key).toBeGreaterThan(0);
       expect(pdf.toUnicodeEntries.filter((dst) => !/^[0-9a-f]{4}$/.test(dst)), key).toEqual([]);
