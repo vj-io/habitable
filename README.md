@@ -39,7 +39,7 @@ The same rule runs through all three: the model proposes, plain code checks.
 
 A New York City renter — often in an older, rent-stabilized building — with a leak, mold, no heat, pests, a broken lock or peeling paint, who usually complains by text, keeps no dated record, and doesn't know what the Housing Maintenance Code requires. Secondary: tenant organizers and legal-aid intake workers who need structured evidence.
 
-**The scale, from the same NYC Open Data set the app reads** ([HPD Housing Maintenance Code Violations](https://data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Violations/wvxf-dwi5), queried 2026-10-25): about **2.65 million open violations** citywide — 587,952 Class C (immediately hazardous), 1,386,990 Class B and 676,016 Class A — and **85,096 buildings** with at least one open Class C violation. Each one is a condition someone documented.
+**The scale, from the same NYC Open Data set the app reads** ([HPD Housing Maintenance Code Violations](https://data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Violations/wvxf-dwi5), queried 2026-10-25): about **2.65 million open violations** citywide — 587,952 Class C (immediately hazardous), 1,386,990 Class B and 676,016 Class A — and **85,096 buildings** with at least one open Class C violation. Each one is a condition someone documented. Renters keep reporting more: **341,824 heat and hot water complaints to 311** in the last heating season (Oct 1, 2025 – May 31, 2026, [311 Service Requests](https://data.cityofnewyork.us/d/erm2-nwe9)), and about **1 million problems reported to HPD** in the 12 months to Oct 25, 2026 ([HPD Complaints and Problems](https://data.cityofnewyork.us/d/ygpa-z7cr)).
 
 ## How it differs
 
