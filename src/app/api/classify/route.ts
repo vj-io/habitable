@@ -14,6 +14,7 @@ import {
   pickModels,
 } from "@/lib/classify";
 import { DEMO_MODEL_LABEL, DEMO_SAMPLES } from "@/lib/demo/samples";
+import { clientIp, createLimiter } from "@/lib/rate-limit";
 import type { ClassifyResponse } from "@/lib/types";
 
 export const maxDuration = 30;
@@ -33,33 +34,9 @@ const BodySchema = z
   })
   .refine((b) => b.image || b.sampleId, { message: "Send an image or a sampleId." });
 
-// ponytail: per-instance memory only. Each serverless instance counts on its own and a cold start
-// resets it, so this slows casual abuse but is not a hard limit. Use a shared store (KV/Redis) or
-// Vercel's firewall rate limit if it ever needs to be strict.
 // Per person: 12 live photos per 10 minutes. Whole instance: 16 per minute, under the combined
 // free-tier per-minute quota of the two Gemini models, so one busy visitor can't drain it for everyone.
-const PER_IP_LIMIT = 12;
-const PER_IP_WINDOW_MS = 10 * 60 * 1000;
-const GLOBAL_LIMIT = 16;
-const GLOBAL_WINDOW_MS = 60 * 1000;
-const hits = new Map<string, number[]>();
-
-function limited(key: string, limit: number, windowMs: number, now: number): boolean {
-  const recent = (hits.get(key) ?? []).filter((t) => now - t < windowMs);
-  hits.set(key, recent);
-  return recent.length >= limit;
-}
-
-function rateLimited(ip: string, now = Date.now()): "ip" | "global" | null {
-  if (limited(`ip:${ip}`, PER_IP_LIMIT, PER_IP_WINDOW_MS, now)) return "ip";
-  if (limited("global", GLOBAL_LIMIT, GLOBAL_WINDOW_MS, now)) return "global";
-  hits.get(`ip:${ip}`)!.push(now);
-  hits.get("global")!.push(now);
-  if (hits.size > 5000) {
-    for (const [key, times] of hits) if (times.every((t) => now - t >= PER_IP_WINDOW_MS)) hits.delete(key);
-  }
-  return null;
-}
+const rateLimited = createLimiter({ perIp: { limit: 12, windowMs: 10 * 60 * 1000 }, global: { limit: 16, windowMs: 60 * 1000 } });
 
 const unavailable = (reason: string, status = 200) =>
   Response.json({ status: "unavailable", reason } satisfies ClassifyResponse, { status });
@@ -106,8 +83,7 @@ export async function POST(request: Request) {
   }
 
   // Only real model calls count toward the limit; saved demo answers cost nothing.
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-  const limit = rateLimited(ip);
+  const limit = rateLimited(clientIp(request));
   if (limit === "ip") {
     return unavailable("Too many photos in a short time — try again in a few minutes. You can pick the problem yourself; the rules still apply.", 429);
   }
