@@ -197,7 +197,7 @@
           "hazardClass": "B",
           "classLabel": "Hazardous",
           "window": { "days": 30, "text": "30 days" },
-          "citation": "NYC Admin. Code §27-2017.4(a); bedbugs also §27-2018",
+          "citation": "NYC Admin. Code §27-2017.4(a)",
           "sourceUrl": "https://www.nyc.gov/site/hpd/services-and-information/indoor-allergen-hazards-mold-and-pests.page",
           "lawUrl": "https://www.nyc.gov/assets/buildings/local_laws/ll55of2018.pdf",
           "quote": "pests other than cockroaches, mice, or rats … shall be a hazardous violation",

@@ -73,8 +73,7 @@ function citationText(citation: string, lang: Lang): string {
     .replace("NYC Admin. Code", "Código Administrativo de NYC")
     .replace("NYC Housing Maintenance Code", "Código de Mantenimiento de Viviendas de NYC")
     .replace("as amended by", "modificado por la")
-    .replace(/Local Law (\d+) of (\d{4})/g, "Ley Local $1 de $2")
-    .replace("bedbugs also", "chinches, también");
+    .replace(/Local Law (\d+) of (\d{4})/g, "Ley Local $1 de $2");
 }
 
 export function buildFacts(c: Pick<CaseFile, "address" | "unit">, issue: Issue, lang: Lang, now: Date): CoachFacts {
