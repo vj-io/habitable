@@ -1,5 +1,6 @@
 import { cacheLife } from "next/cache";
 import { demoLandlord } from "@/lib/portfolio-demo";
+import { clientIp, createLimiter } from "@/lib/rate-limit";
 import {
   fetchBaseline,
   fetchMetric,
@@ -57,6 +58,8 @@ async function loadBaseline() {
   return fetchBaseline(socrata);
 }
 
+const rateLimited = createLimiter({ perIp: { limit: 20, windowMs: 10 * 60 * 1000 }, global: { limit: 60, windowMs: 60 * 1000 } });
+
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
   const bbl = params.get("bbl") ?? "";
@@ -65,6 +68,10 @@ export async function GET(request: Request) {
   }
   const fixture = demoLandlord(bbl);
   if (fixture && params.get("demo") === "1") return Response.json(fixture, { headers: CACHEABLE });
+  // A live lookup fans out to dozens of Socrata queries; cap it per visitor and per instance (cached answers
+  // still cost a check, which is cheap). The saved demo snapshot above never counts.
+  const limit = rateLimited(clientIp(request));
+  if (limit) return Response.json({ error: "Too many landlord lookups right now. Try again in a few minutes." }, { status: 429, headers: NO_STORE });
 
   let found: Awaited<ReturnType<typeof loadPortfolio>>;
   try {
