@@ -2,7 +2,7 @@
 
 **Snap what's broken in your NYC apartment. Get a dated, housing-code-classified evidence log and a ready-to-send repair notice.**
 
-**Live app:** https://habitable-blush.vercel.app · **Demo video (74 s):** [habitable demo](https://github.com/vj-io/habitable/releases/tag/v1.0-demo) · **Try it in 30 seconds:** open the link → *Try the demo building* → *Snap a problem* → pick the ceiling-leak sample.
+**Live app:** https://habitable-blush.vercel.app · **Demo video (2 min, narrated):** [watch](https://github.com/vj-io/habitable/releases/tag/v2.0-demo) ([storyboard and script](devpost-demo-script.md)) · **Try it in 30 seconds:** open the link → *Try the demo building* → *Snap a problem* → pick the ceiling-leak sample.
 
 Built for the Devpost **Build With AI: Basics** hackathon with the Devpost Learn skill pack. The planning documents are in [`devpost/`](devpost/).
 
