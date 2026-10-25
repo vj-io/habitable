@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { Camera, Chip, Cross, Doc, DoodleButton, DoodleCard, Drop, Flame, Highlight, MonoLabel, PencilLoader, Tag } from "@/components/doodle";
 import { HeatStamp, summaryText } from "@/components/heat/HeatLogCard";
+import { Columns } from "@/components/site/Columns";
 import { Field, SketchInput, inputClass } from "@/components/site/Field";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { formatNY, nyDay } from "@/lib/countdown";
@@ -80,19 +81,25 @@ export function HeatClient() {
         </p>
       </header>
 
-      <ReadingForm />
-      <Readings readings={heatReadings} demo={caseFile.demo} />
+      {/* From lg: the form on the left, the readings on the right, the notice prompt and the rules under the form. */}
+      <Columns
+        left={<ReadingForm />}
+        right={<Readings readings={heatReadings} demo={caseFile.demo} />}
+        more={
+          <>
+            {below && (
+              <DoodleCard tone="marker" seed={19} padding="1.25rem" appear={false} className="space-y-3">
+                <p className="font-display text-xl leading-snug font-bold">Readings below the minimum go into your repair notice.</p>
+                <DoodleButton href="/notice" size="lg" icon={<Doc size={24} />} className="w-full sm:w-auto">
+                  Make the notice
+                </DoodleButton>
+              </DoodleCard>
+            )}
 
-      {below && (
-        <DoodleCard tone="marker" seed={19} padding="1.25rem" appear={false} className="space-y-3">
-          <p className="font-display text-xl leading-snug font-bold">Readings below the minimum go into your repair notice.</p>
-          <DoodleButton href="/notice" size="lg" icon={<Doc size={24} />} className="w-full sm:w-auto">
-            Make the notice
-          </DoodleButton>
-        </DoodleCard>
-      )}
-
-      <Rules />
+            <Rules />
+          </>
+        }
+      />
       <p className="font-mono text-xs uppercase tracking-[0.12em] text-muted">Not legal advice</p>
     </Shell>
   );

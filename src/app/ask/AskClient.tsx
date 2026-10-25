@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useRef, useState, type ReactNode } from "react";
 import { DoodleButton, DoodleCard, Highlight, MonoLabel, PencilLoader, Stamp, Tag } from "@/components/doodle";
+import { Columns, useLg } from "@/components/site/Columns";
 import { SketchInput, inputClass } from "@/components/site/Field";
 import type { AskPassage, AskResult } from "@/lib/law/ask";
 
@@ -88,7 +89,6 @@ function Notes({ result }: { result: AskResult }) {
 
 function Answer({ result }: { result: AskResult }) {
   const byId = new Map(result.passages.map((p) => [p.id, p]));
-  const quoted = (p: AskPassage) => result.claims.filter((c) => c.passageId === p.id).map((c) => [c.start, c.end] as [number, number]);
   return (
     <section aria-labelledby="answer-title" className="space-y-5">
       <div className="space-y-1">
@@ -126,16 +126,25 @@ function Answer({ result }: { result: AskResult }) {
         })}
       </ol>
       <Notes result={result} />
-      <details className="group">
-        <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 font-display font-bold underline decoration-2 underline-offset-4 [&::-webkit-details-marker]:hidden">
-          <span className="group-open:hidden">Show the {plural(result.passages.length, "passage", "passages")} the AI was given</span>
-          <span className="hidden group-open:inline">Hide the passages</span>
-        </summary>
-        <div className="mt-3">
-          <Passages passages={result.passages} spansFor={quoted} />
-        </div>
-      </details>
     </section>
+  );
+}
+
+/** What the AI was given, with the quoted spans marked. A fold-out under the answer on phones; open beside it from lg. */
+function PassagesUsed({ result }: { result: AskResult }) {
+  const wide = useLg();
+  const quoted = (p: AskPassage) => result.claims.filter((c) => c.passageId === p.id).map((c) => [c.start, c.end] as [number, number]);
+  return (
+    <details open={wide || undefined} className="group">
+      <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 font-display font-bold underline decoration-2 underline-offset-4 lg:hidden [&::-webkit-details-marker]:hidden">
+        <span className="group-open:hidden">Show the {plural(result.passages.length, "passage", "passages")} the AI was given</span>
+        <span className="hidden group-open:inline">Hide the passages</span>
+      </summary>
+      <h2 className="mb-3 hidden font-display text-2xl font-extrabold lg:block">The passages the AI was given</h2>
+      <div className="mt-3 lg:mt-0">
+        <Passages passages={result.passages} spansFor={quoted} />
+      </div>
+    </details>
   );
 }
 
@@ -172,7 +181,8 @@ function Result({ result }: { result: AskResult }) {
   );
 }
 
-export function AskClient() {
+/** `aside` is the page's note on what the law text is; it goes under the passages in the right column from lg. */
+export function AskClient({ aside }: { aside: ReactNode }) {
   const params = useSearchParams();
   const [question, setQuestion] = useState(() => (params.get("q") ?? "").slice(0, MAX));
   const [result, setResult] = useState<AskResult | null>(null);
@@ -203,67 +213,77 @@ export function AskClient() {
   }
 
   return (
-    <div className="space-y-8">
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          void ask(question);
-        }}
-        className="space-y-3"
-      >
-        <label htmlFor="ask-q" className="block font-display text-lg font-bold">
-          Your question
-        </label>
-        <SketchInput>
-          <textarea
-            id="ask-q"
-            rows={3}
-            maxLength={MAX}
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="e.g. Does my landlord have to fix a leak?"
-            aria-describedby="ask-count"
-            className={`${inputClass} resize-none text-lg`}
-          />
-        </SketchInput>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <DoodleButton type="submit" size="lg" loading={busy}>
-            Ask
-          </DoodleButton>
-          <span id="ask-count" className="font-mono text-xs text-muted">
-            {question.length}/{MAX}
-          </span>
-        </div>
-        {error && (
-          <p role="alert" className="font-hand text-lg leading-snug text-red-ink">
-            {error}
-          </p>
-        )}
-        <div className="space-y-1 pt-2">
-          <MonoLabel as="p">Or try one</MonoLabel>
-          <ul className="flex flex-wrap gap-2">
-            {EXAMPLES.map((q) => (
-              <li key={q}>
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => {
-                    setQuestion(q);
-                    void ask(q);
-                  }}
-                  className="min-h-11 cursor-pointer text-left disabled:cursor-not-allowed"
-                >
-                  <Tag className="hover:bg-marker-tint">{q}</Tag>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </form>
+    <Columns
+      left={
+        <div className="space-y-8">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              void ask(question);
+            }}
+            className="space-y-3"
+          >
+            <label htmlFor="ask-q" className="block font-display text-lg font-bold">
+              Your question
+            </label>
+            <SketchInput>
+              <textarea
+                id="ask-q"
+                rows={3}
+                maxLength={MAX}
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                placeholder="e.g. Does my landlord have to fix a leak?"
+                aria-describedby="ask-count"
+                className={`${inputClass} resize-none text-lg`}
+              />
+            </SketchInput>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <DoodleButton type="submit" size="lg" loading={busy}>
+                Ask
+              </DoodleButton>
+              <span id="ask-count" className="font-mono text-xs text-muted">
+                {question.length}/{MAX}
+              </span>
+            </div>
+            {error && (
+              <p role="alert" className="font-hand text-lg leading-snug text-red-ink">
+                {error}
+              </p>
+            )}
+            <div className="space-y-1 pt-2">
+              <MonoLabel as="p">Or try one</MonoLabel>
+              <ul className="flex flex-wrap gap-2">
+                {EXAMPLES.map((q) => (
+                  <li key={q}>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => {
+                        setQuestion(q);
+                        void ask(q);
+                      }}
+                      className="min-h-11 cursor-pointer text-left disabled:cursor-not-allowed"
+                    >
+                      <Tag className="hover:bg-marker-tint">{q}</Tag>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </form>
 
-      <div ref={resultRef} aria-live="polite" className="scroll-mt-6">
-        {busy ? <PencilLoader caption="reading the law text…" /> : result && <Result result={result} />}
-      </div>
-    </div>
+          <div ref={resultRef} aria-live="polite" className="scroll-mt-6">
+            {busy ? <PencilLoader caption="reading the law text…" /> : result && <Result result={result} />}
+          </div>
+        </div>
+      }
+      right={
+        <>
+          {!busy && result?.mode === "answer" && <PassagesUsed result={result} />}
+          {aside}
+        </>
+      }
+    />
   );
 }

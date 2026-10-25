@@ -19,6 +19,7 @@ import { HPD_ONLINE_URL, snapshotLabel, suggestAddressee } from "@/lib/registrat
 import { updateCase, useCaseData } from "@/lib/store";
 import type { CaseFile, HeatReading, Issue, RegistrationInfo } from "@/lib/types";
 import { BackLink } from "@/components/site/BackLink";
+import { Columns } from "@/components/site/Columns";
 
 const HPD_WRITE_TO_LANDLORD_URL = "https://www.nyc.gov/site/hpd/services-and-information/tenants-rights-and-responsibilities.page";
 const WOBBLE = "14px 4px 12px 5px / 5px 12px 4px 14px";
@@ -192,94 +193,107 @@ function NoticeBuilder({ caseFile, issues, heatReadings }: { caseFile: CaseFile;
         <p className="font-hand text-xl leading-snug text-muted">A dated letter for your landlord. Check it, then download or share it.</p>
       </header>
 
-      <DoodleCard className="space-y-5" appear={false} seed={5}>
-        <div className="space-y-1.5">
-          <MonoLabel as="p">Language</MonoLabel>
-          <LangToggle lang={lang} onChange={setLang} />
-        </div>
-        <Field label="Your name" value={tenant} onChange={edit("tenant")} onBlur={persistNames} autoComplete="name" />
-        {/* the "To:" block */}
-        <div className="space-y-4 border-t-2 border-dashed border-ink/20 pt-4">
-          <MonoLabel as="p">Send it to</MonoLabel>
-          <RegistrationHint status={building.status} registration={registration} prefilled={prefilled} demo={building.record?.source === "demo-fixture"} />
-          <Field label="Landlord or managing agent" value={landlord} onChange={edit("name")} onBlur={persistNames} autoComplete="off" />
-          <Field label="Their mailing address" value={landlordAddress} onChange={edit("address")} onBlur={persistNames} autoComplete="off" />
-          <Field label="Copy to the owner" value={landlordCc} onChange={edit("cc")} onBlur={persistNames} autoComplete="off" />
-        </div>
-      </DoodleCard>
-
-      {!hasItems ? (
-        <DoodleCard tone="marker" className="space-y-3">
-          <h2 className="font-display text-2xl font-extrabold leading-tight">Nothing to put in a notice yet</h2>
-          <p>
-            {text.fixedCount > 0
-              ? "Everything you logged is marked fixed, so there is nothing left to ask for."
-              : "Snap a problem on your case file and it will show up here, dated and classified."}
-          </p>
-          <DoodleButton href="/" variant="secondary">
-            Back to your case file
-          </DoodleButton>
-        </DoodleCard>
-      ) : (
-        <>
-          <section aria-label="Notice preview" className="space-y-2">
-            <MonoLabel as="p">Preview · the PDF says exactly this</MonoLabel>
-            <NoticePreview text={text} />
-            {text.fixedCount > 0 && (
-              <p className="font-mono text-xs text-muted">
-                {text.fixedCount} fixed {text.fixedCount === 1 ? "problem is" : "problems are"} left out.
-              </p>
-            )}
-          </section>
-
-          <section aria-label="Download or share" className="space-y-3">
-            <div className="flex flex-wrap items-center gap-4">
-              <DoodleButton size="lg" icon={<Doc />} loading={busy === "download"} disabled={busy !== null} onClick={() => void run("download")}>
-                {busy === "download" ? "Making your PDF…" : "Download PDF"}
-              </DoodleButton>
-              {canShare && (
-                <DoodleButton
-                  size="lg"
-                  variant="secondary"
-                  icon={<Arrow direction="up" size={22} />}
-                  loading={busy === "share"}
-                  disabled={busy !== null}
-                  onClick={() => void run("share")}
-                >
-                  {busy === "share" ? "Making your PDF…" : "Share"}
-                </DoodleButton>
-              )}
+      {/* From lg: the form on the left, the live preview and its buttons on the right, what comes after under the form. */}
+      <Columns
+        cols="lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)]"
+        sticky
+        left={
+          <DoodleCard className="space-y-5" appear={false} seed={5}>
+            <div className="space-y-1.5">
+              <MonoLabel as="p">Language</MonoLabel>
+              <LangToggle lang={lang} onChange={setLang} />
             </div>
-            {error && (
-              <p role="alert" className="font-hand text-xl text-red-ink">
-                {error}
+            <Field label="Your name" value={tenant} onChange={edit("tenant")} onBlur={persistNames} autoComplete="name" />
+            {/* the "To:" block */}
+            <div className="space-y-4 border-t-2 border-dashed border-ink/20 pt-4">
+              <MonoLabel as="p">Send it to</MonoLabel>
+              <RegistrationHint status={building.status} registration={registration} prefilled={prefilled} demo={building.record?.source === "demo-fixture"} />
+              <Field label="Landlord or managing agent" value={landlord} onChange={edit("name")} onBlur={persistNames} autoComplete="off" />
+              <Field label="Their mailing address" value={landlordAddress} onChange={edit("address")} onBlur={persistNames} autoComplete="off" />
+              <Field label="Copy to the owner" value={landlordCc} onChange={edit("cc")} onBlur={persistNames} autoComplete="off" />
+            </div>
+          </DoodleCard>
+        }
+        right={
+          !hasItems ? (
+            <DoodleCard tone="marker" className="space-y-3">
+              <h2 className="font-display text-2xl font-extrabold leading-tight">Nothing to put in a notice yet</h2>
+              <p>
+                {text.fixedCount > 0
+                  ? "Everything you logged is marked fixed, so there is nothing left to ask for."
+                  : "Snap a problem on your case file and it will show up here, dated and classified."}
               </p>
-            )}
-            {hint && (
-              <p role="status" className="font-hand text-xl text-violet-ink">
-                {hint}
-              </p>
-            )}
-          </section>
+              <DoodleButton href="/" variant="secondary">
+                Back to your case file
+              </DoodleButton>
+            </DoodleCard>
+          ) : (
+            <>
+              <section aria-label="Notice preview" className="space-y-2">
+                <MonoLabel as="p">Preview · the PDF says exactly this</MonoLabel>
+                <NoticePreview text={text} />
+                {text.fixedCount > 0 && (
+                  <p className="font-mono text-xs text-muted">
+                    {text.fixedCount} fixed {text.fixedCount === 1 ? "problem is" : "problems are"} left out.
+                  </p>
+                )}
+              </section>
 
-          {caseFile.noticeMadeAt && <AfterNotice />}
+              <section aria-label="Download or share" className="space-y-3">
+                <div className="flex flex-wrap items-center gap-4">
+                  <DoodleButton size="lg" icon={<Doc />} loading={busy === "download"} disabled={busy !== null} onClick={() => void run("download")}>
+                    {busy === "download" ? "Making your PDF…" : "Download PDF"}
+                  </DoodleButton>
+                  {canShare && (
+                    <DoodleButton
+                      size="lg"
+                      variant="secondary"
+                      icon={<Arrow direction="up" size={22} />}
+                      loading={busy === "share"}
+                      disabled={busy !== null}
+                      onClick={() => void run("share")}
+                    >
+                      {busy === "share" ? "Making your PDF…" : "Share"}
+                    </DoodleButton>
+                  )}
+                </div>
+                {error && (
+                  <p role="alert" className="font-hand text-xl text-red-ink">
+                    {error}
+                  </p>
+                )}
+                {hint && (
+                  <p role="status" className="font-hand text-xl text-violet-ink">
+                    {hint}
+                  </p>
+                )}
+              </section>
+            </>
+          )
+        }
+        more={
+          hasItems && (caseFile.noticeMadeAt || text.items.length > 0) ? (
+            <>
+              {caseFile.noticeMadeAt && <AfterNotice />}
 
-          {text.items.length > 0 && (
-            <section aria-labelledby="h311" className="space-y-3">
-              <MonoLabel as="h2">
-                <span id="h311">Also tell NYC 311</span>
-              </MonoLabel>
-              <p className="text-[0.9375rem] leading-snug">Copy the text, then paste it into the 311 complaint form.</p>
-              <ul className="space-y-3">
-                {text.items.map((item) => {
-                  const issue = byId.get(item.issueId);
-                  return issue && <Row311 key={item.issueId} item={item} issue={issue} caseFile={caseFile} now={now} heatReadings={heatReadings} />;
-                })}
-              </ul>
-            </section>
-          )}
-        </>
-      )}
+              {text.items.length > 0 && (
+                <section aria-labelledby="h311" className="space-y-3">
+                  <MonoLabel as="h2">
+                    <span id="h311">Also tell NYC 311</span>
+                  </MonoLabel>
+                  <p className="text-[0.9375rem] leading-snug">Copy the text, then paste it into the 311 complaint form.</p>
+                  <ul className="space-y-3">
+                    {text.items.map((item) => {
+                      const issue = byId.get(item.issueId);
+                      return issue && <Row311 key={item.issueId} item={item} issue={issue} caseFile={caseFile} now={now} heatReadings={heatReadings} />;
+                    })}
+                  </ul>
+                </section>
+              )}
+            </>
+          ) : undefined
+        }
+      />
 
       <p className="space-y-1 text-sm text-muted">
         <span className="block font-mono text-xs uppercase tracking-[0.12em]">Not legal advice</span>

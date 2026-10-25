@@ -54,9 +54,9 @@ test("verified quotes render with their stamp and section link, and the dropped 
   await expect(answer.getByText("Quote checked")).toHaveCount(2);
   await expect(answer.getByRole("link", { name: "§27-2029(a) ↗" }).first()).toHaveAttribute("href", heat.url);
   await expect(answer.getByText("2 sentences dropped — their quotes weren't in the law text.")).toBeVisible();
-  // The passages the AI saw are one tap away, with the quoted words highlighted.
-  await answer.getByText("Show the 1 passage the AI was given").click();
-  await expect(answer.locator("details mark", { hasText: SEASON })).toBeVisible();
+  // The passages the AI saw are one tap away (under the answer on a phone, beside it from lg), with the quoted words highlighted.
+  await page.getByText("Show the 1 passage the AI was given").click();
+  await expect(page.locator("details mark", { hasText: SEASON })).toBeVisible();
 });
 
 test("nothing verified says so plainly", async ({ page }) => {

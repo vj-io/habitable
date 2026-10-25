@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Highlight, MonoLabel, PencilLoader } from "@/components/doodle";
+import { Columns } from "@/components/site/Columns";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { PASSAGES, isLawText } from "@/lib/law/corpus";
 import { AskClient } from "./AskClient";
@@ -16,6 +17,23 @@ export const metadata: Metadata = {
 const linkClass = "underline decoration-2 underline-offset-4 hover:decoration-wavy";
 const lawCount = PASSAGES.filter(isLawText).length;
 const hpdCount = PASSAGES.length - lawCount;
+
+// The note on what the law text is: under the passages in the right column from lg, under the answer below that.
+const corpus = (
+  <section aria-labelledby="corpus-title" className="space-y-2 border-t-2 border-dashed border-ink/20 pt-5 text-[0.9375rem] lg:first:border-t-0 lg:first:pt-0 leading-relaxed text-muted">
+    <h2 id="corpus-title" className="font-display text-base font-bold text-ink">
+      What the law text is
+    </h2>
+    <p>
+      {lawCount} passages of the NYC Housing Maintenance Code (Admin. Code Title 27, Chapter 2), split at subdivisions, from{" "}
+      <a href="https://www.nyc.gov/assets/buildings/pdf/HousingMaintenanceCode.pdf" target="_blank" rel="noreferrer" className={linkClass}>
+        the city&apos;s compilation dated Apr 17, 2026
+      </a>
+      , and {hpdCount} excerpts of HPD pages on nyc.gov. All copied word for word on Oct 25, 2026; each passage links to its page.
+    </p>
+    <p>New York State law, like the warranty of habitability or the rule against retaliation, isn&apos;t in it yet.</p>
+  </section>
+);
 
 export default function AskPage() {
   return (
@@ -42,23 +60,9 @@ export default function AskPage() {
           </p>
         </header>
 
-        <Suspense fallback={<PencilLoader caption="loading…" />}>
-          <AskClient />
+        <Suspense fallback={<Columns left={<PencilLoader caption="loading…" />} right={corpus} />}>
+          <AskClient aside={corpus} />
         </Suspense>
-
-        <section aria-labelledby="corpus-title" className="space-y-2 border-t-2 border-dashed border-ink/20 pt-5 text-[0.9375rem] leading-relaxed text-muted">
-          <h2 id="corpus-title" className="font-display text-base font-bold text-ink">
-            What the law text is
-          </h2>
-          <p>
-            {lawCount} passages of the NYC Housing Maintenance Code (Admin. Code Title 27, Chapter 2), split at subdivisions, from{" "}
-            <a href="https://www.nyc.gov/assets/buildings/pdf/HousingMaintenanceCode.pdf" target="_blank" rel="noreferrer" className={linkClass}>
-              the city&apos;s compilation dated Apr 17, 2026
-            </a>
-            , and {hpdCount} excerpts of HPD pages on nyc.gov. All copied word for word on Oct 25, 2026; each passage links to its page.
-          </p>
-          <p>New York State law, like the warranty of habitability or the rule against retaliation, isn&apos;t in it yet.</p>
-        </section>
       </main>
     </>
   );

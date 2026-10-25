@@ -74,6 +74,13 @@ export function cleanDescription(raw: string): string {
 export const isoDate = (v?: string): string | null => (v && /^\d{4}-\d{2}-\d{2}/.test(v) ? v.slice(0, 10) : null);
 const hazard = (v?: string): HazardClass | null => (v === "A" || v === "B" || v === "C" ? v : null);
 
+/**
+ * Open violations in no A/B/C class, so they have no bar of their own. The HPD violations file has exactly one more
+ * class, I ("information orders", https://data.cityofnewyork.us/d/wvxf-dwi5; live query 2026-10-25: A, B, C, I only),
+ * so this is the Class I count. Showing it keeps the class rows adding up to the total.
+ */
+export const classICount = (total: number, byClass: Record<HazardClass, number>) => total - byClass.A - byClass.B - byClass.C;
+
 /** PLUTO `yearbuilt` is text; "0" means unknown. */
 export function parseYearBuilt(v: unknown): number | null {
   const n = Number(v);
