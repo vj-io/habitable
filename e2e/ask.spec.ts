@@ -56,7 +56,7 @@ test("verified quotes render with their stamp and section link, and the dropped 
   await expect(answer.getByText("2 sentences dropped — their quotes weren't in the law text.")).toBeVisible();
   // The passages the AI saw are one tap away, with the quoted words highlighted.
   await answer.getByText("Show the 1 passage the AI was given").click();
-  await expect(answer.locator("mark", { hasText: SEASON })).toBeVisible();
+  await expect(answer.locator("details mark", { hasText: SEASON })).toBeVisible();
 });
 
 test("nothing verified says so plainly", async ({ page }) => {
