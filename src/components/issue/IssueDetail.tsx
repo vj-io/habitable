@@ -32,6 +32,7 @@ import { repairByFileName, repairByIcs } from "@/lib/ics";
 import { RULES } from "@/lib/rules";
 import { addFollowUp, deleteIssue, markFixed, useCaseData } from "@/lib/store";
 import type { CaseFile, Issue } from "@/lib/types";
+import { MessageCoach } from "./MessageCoach";
 import { CLASS_TONE, IssueIcon, issueName, pct } from "./meta";
 
 const linkClass = "underline decoration-2 underline-offset-4 hover:decoration-wavy";
@@ -455,6 +456,8 @@ export function IssueDetail({ id }: { id: string }) {
               </p>
             )}
           </DoodleCard>
+
+          {caseFile && now && !issue.fixedAt && <MessageCoach caseFile={caseFile} issue={issue} now={now} />}
 
           <section aria-label="Manage this issue" className="flex flex-wrap items-start gap-3 border-t-2 border-dashed border-ink/20 pt-5">
             {!issue.fixedAt && (
