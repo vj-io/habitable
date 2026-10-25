@@ -119,6 +119,16 @@ Mobile-first single column (375px and up); on desktop the same column sits centr
 ## What We're Building
 Everything under **Features and Behavior**: address setup, snap + AI proposal (with clarifying question and manual correction), rules card with countdown and "why" drawer, building history, evidence timeline with follow-ups, notice PDF (EN/ES, download, share, 311 text), demo mode, how-it-works/rules page, trust copy, installable on a phone home screen.
 
+## Added After the First Build (scope change pending the builder's approval)
+These features were added after the PoC shipped, at the builder's request. Each keeps the same rule: the AI proposes, cited code decides. Technical detail is in `spec.md`, "Round 2 additions".
+- **Heat and hot water log:** dated indoor readings, the outdoor temperature from the National Weather Service, each reading checked against §27-2029/§27-2031; readings below the minimum go into the notice.
+- **Landlord on record:** HPD's registered managing agent and owner; the notice is addressed to them (editable).
+- **Landlord track record:** every building linked by the same head officer, managing agent or corporate owner, scored from seven NYC Open Data sets against the citywide rate per apartment.
+- **Ask the law:** questions answered only with quotes from the Housing Maintenance Code and HPD pages, each checked word for word by code.
+- **Message coach:** a text, email or call script for the hazard class, where code fills in and checks every fact.
+- **Next steps:** the escalation ladder (letter, 311, HP Action) and rights, each linked to its official page.
+- **Keep it safe:** backup and restore, calendar reminders, offline use, dark theme.
+
 ## Deferred From the POC
 - **Email sending** — needs a verified domain; download/share covers it.
 - **Shareable evidence link for an organizer** — needs hosted storage and access control.

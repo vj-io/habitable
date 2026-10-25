@@ -50,6 +50,9 @@ On a phone: enter an address once, photograph a stained ceiling that is no longe
 - **Rent-withholding or legal strategy advice** — legal risk; the app documents and cites, it doesn't advise.
 - **Filing 311 complaints automatically** — no public filing API; we hand the user pre-filled text and the link instead.
 
+## Scope Change After the First Build (pending the builder's approval)
+The proof of concept above shipped first and is unchanged. The builder then asked for more functionality and, later, advanced features beyond this plan. These additions now ship alongside the PoC: a heat and hot water log, the landlord on record with an addressed notice, a next-steps page, backup/restore, calendar reminders, offline use, the landlord track record, Ask the law (quote-checked answers) and the message coach. They sit outside the boundary above. They are recorded here, in `prd.md` and in `spec.md` ("Round 2 additions") so the plan matches what was built. The checklist's Revisions log gives the reasons. The builder still has to review and approve them.
+
 ## How This Plan Was Made
 "The builder" in these documents is the author of the private research brief (which calls them BD).
 
