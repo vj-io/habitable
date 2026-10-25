@@ -203,6 +203,20 @@ Versions are the ones installed in `node_modules/` (read from each package's `pa
 | `typescript` | `^5` | 5.9.3 | Apache-2.0 | dev |
 | `vitest` | `^5.0.5` | 5.0.5 | MIT | dev |
 
-## 8. Everything else
+## 8. Demo sample photos
+
+The seven sample photos in demo mode are real photos from Wikimedia Commons. Each was cropped, resized and re-encoded (which removes its original metadata) by `scripts/render-samples.mjs`, which then adds a demo capture time. Each file keeps its original license; the cropped versions in `scripts/samples/` and `public/samples/` are shared under the same license.
+
+| File | Original | Author | License |
+|---|---|---|---|
+| `leak-ceiling.jpg` | [Ceiling water damage.jpg](https://commons.wikimedia.org/wiki/File:Ceiling_water_damage.jpg) | Atomicdragon136 | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) |
+| `mold-bathroom.jpg` | [Moldy Shower - Black Mold Growth in Bathroom](https://commons.wikimedia.org/wiki/File:Moldy_Shower_-_Black_Mold_Growth_in_Bathroom_(46195388355).jpg) | Tony Webster | [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/) |
+| `cold-radiator.jpg` | [Ornate Cast Iron Radiator](https://commons.wikimedia.org/wiki/File:Ornate_Cast_Iron_Radiator_-_Brian_Eno_Speaker_Flowers_Sound_Installation_at_Marlborough_House.jpg) | Dominic Alves | [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/) |
+| `mice-kitchen.jpg` | [Caught a mouse.jpg](https://commons.wikimedia.org/wiki/File:Caught_a_mouse.jpg) | Rathfelder | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) |
+| `broken-lock.jpg` | [Broken door lock.JPG](https://commons.wikimedia.org/wiki/File:Broken_door_lock.JPG) | SeppVei | Public domain |
+| `peeling-paint.jpg` | [Peinture blc.jpg](https://commons.wikimedia.org/wiki/File:Peinture_blc.jpg) | Lamiot | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+| `ambiguous-stain.jpg` | [Water Damage.JPG](https://commons.wikimedia.org/wiki/File:Water_Damage.JPG) | Ed! (Photography Gallery) | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) |
+
+## 9. Everything else
 
 No other pre-existing code, images or text were copied into this project. If something here is wrong or missing, please open an issue so it can be corrected.

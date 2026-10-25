@@ -1,7 +1,7 @@
 // Habitable service worker: the app opens with no signal (basements, stairwells), using what this phone
 // has already loaded. The case itself lives in IndexedDB; this only keeps the app's pages and code.
 // Network first for pages (fresh when online), cache first for hashed static files, never for /api.
-const VERSION = "v1";
+const VERSION = "v2"; // bump when a file under the same URL changes (v2: real sample photos)
 const STATIC = `habitable-static-${VERSION}`;
 const PAGES = `habitable-pages-${VERSION}`;
 
@@ -24,7 +24,7 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(req.url);
   if (req.method !== "GET" || url.origin !== self.location.origin || url.pathname.startsWith("/api/")) return;
 
-  // Content-hashed build output, fonts and sample images never change under the same URL.
+  // Content-hashed build output, fonts and sample images: cache first (bump VERSION if one changes under its URL).
   if (url.pathname.startsWith("/_next/static/") || url.pathname.startsWith("/fonts/") || url.pathname.startsWith("/samples/")) {
     event.respondWith(
       caches.match(req).then(

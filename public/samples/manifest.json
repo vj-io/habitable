@@ -2,50 +2,85 @@
   {
     "id": "leak-ceiling",
     "file": "/samples/leak-ceiling.jpg",
-    "label": "Ceiling stain with drips",
+    "label": "Water-stained ceiling tile",
     "expectedIssue": "leak",
-    "capturedAt": "2026-10-15T07:42:10-04:00"
+    "capturedAt": "2026-10-15T07:42:10-04:00",
+    "credit": {
+      "author": "Atomicdragon136",
+      "license": "CC BY 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Ceiling_water_damage.jpg"
+    }
   },
   {
     "id": "mold-bathroom",
     "file": "/samples/mold-bathroom.jpg",
-    "label": "Black mold above the tub",
+    "label": "Black mold along the tub's edge",
     "expectedIssue": "mold",
-    "capturedAt": "2026-10-12T19:05:33-04:00"
+    "capturedAt": "2026-10-12T19:05:33-04:00",
+    "credit": {
+      "author": "Tony Webster",
+      "license": "CC BY-SA 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Moldy_Shower_-_Black_Mold_Growth_in_Bathroom_(46195388355).jpg"
+    }
   },
   {
     "id": "cold-radiator",
     "file": "/samples/cold-radiator.jpg",
-    "label": "Cold radiator and frosted window",
+    "label": "Old cast-iron radiator, no heat",
     "expectedIssue": "heat_hot_water",
-    "capturedAt": "2026-10-20T06:58:02-04:00"
+    "capturedAt": "2026-10-20T06:58:02-04:00",
+    "credit": {
+      "author": "Dominic Alves",
+      "license": "CC BY 2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Ornate_Cast_Iron_Radiator_-_Brian_Eno_Speaker_Flowers_Sound_Installation_at_Marlborough_House.jpg"
+    }
   },
   {
     "id": "mice-kitchen",
     "file": "/samples/mice-kitchen.jpg",
-    "label": "Mouse, droppings and chewed cereal box",
+    "label": "Mouse caught in a snap trap",
     "expectedIssue": "pests",
-    "capturedAt": "2026-10-18T22:14:47-04:00"
+    "capturedAt": "2026-10-18T22:14:47-04:00",
+    "credit": {
+      "author": "Rathfelder",
+      "license": "CC BY-SA 4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Caught_a_mouse.jpg"
+    }
   },
   {
     "id": "broken-lock",
     "file": "/samples/broken-lock.jpg",
-    "label": "Broken deadbolt and splintered door frame",
+    "label": "Door with the lock torn out",
     "expectedIssue": "lock_door",
-    "capturedAt": "2026-10-21T23:31:09-04:00"
+    "capturedAt": "2026-10-21T23:31:09-04:00",
+    "credit": {
+      "author": "SeppVei",
+      "license": "Public domain",
+      "source": "https://commons.wikimedia.org/wiki/File:Broken_door_lock.JPG"
+    }
   },
   {
     "id": "peeling-paint",
     "file": "/samples/peeling-paint.jpg",
-    "label": "Peeling paint on window sill",
+    "label": "Cracked, peeling paint",
     "expectedIssue": "peeling_paint",
-    "capturedAt": "2026-10-09T16:20:55-04:00"
+    "capturedAt": "2026-10-09T16:20:55-04:00",
+    "credit": {
+      "author": "Lamiot",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Peinture_blc.jpg"
+    }
   },
   {
     "id": "ambiguous-stain",
     "file": "/samples/ambiguous-stain.jpg",
-    "label": "Faint stain on wall by window",
+    "label": "Faint stain where wall meets ceiling",
     "expectedIssue": "ambiguous",
-    "capturedAt": "2026-10-22T12:03:40-04:00"
+    "capturedAt": "2026-10-22T12:03:40-04:00",
+    "credit": {
+      "author": "Ed! (Photography Gallery)",
+      "license": "CC BY-SA 3.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Water_Damage.JPG"
+    }
   }
 ]

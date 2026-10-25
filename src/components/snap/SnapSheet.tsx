@@ -400,9 +400,20 @@ export function SnapSheet({ open, onClose, caseFile, building, onSaved }: Props)
                 <div className="flex flex-wrap items-center gap-2">
                   <Chip lead="Demo">sample</Chip>
                   <h3 id="samples-title" className="font-display text-lg font-bold">
-                    Sample scenes — illustrated
+                    Sample photos
                   </h3>
                 </div>
+                <p className="text-sm">
+                  Real photos from Wikimedia Commons, each under its own license.{" "}
+                  <a
+                    href="https://github.com/vj-io/habitable/blob/main/THIRD-PARTY-NOTICES.md#8-demo-sample-photos"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline decoration-2 underline-offset-4 hover:decoration-wavy"
+                  >
+                    Photo credits
+                  </a>
+                </p>
                 <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                   {Object.entries(DEMO_SAMPLES).map(([id, s], i) => {
                     const tricky = id === "ambiguous-stain";

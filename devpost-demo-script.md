@@ -44,7 +44,7 @@ On-screen captions use the app's own words. The voiceover is burned in as subtit
 | 0:02 | Welcome screen: what it is, who it's for; the cursor points at "The AI only names the problem…" | Your repair problem, on the record. | (continues) |
 | 0:05 | Tap **Just looking? Try the demo building** → case file (618 West 136th Street) | A real Harlem building, public HPD record | More than 2.5 million housing violations are open in New York City right now. |
 | 0:12 | Tap **Snap a problem** | Snap the problem | Snap the leak. The photo is fingerprinted, dated from its own data, and its location is stripped. |
-| 0:15 | Tap the **ceiling stain with drips** sample → evidence list | Fingerprinted, dated, location removed | (continues) |
+| 0:15 | Tap the **water-stained ceiling tile** sample (a real photo from Wikimedia Commons) → evidence list | Fingerprinted, dated, location removed | (continues) |
 | 0:18 | The AI proposal in violet pencil: Leak / water damage, 93% | The AI proposes: leak, 93% sure | The AI proposes what it sees: a leak, 93% sure. In the demo that's a saved answer; your own photos go to the live model. |
 | 0:28 | Tap **Yes, that's it** → "Is water actively dripping or flowing right now?" | The rule asks what photos can't show | Then code takes over. The rules table asks the one fact a photo can't show. Water is dripping, so it stamps Class C: 24 hours. |
 | 0:33 | Tap **Yes, it's dripping or flowing** → red **CLASS C** stamp, 24-hour window, countdown | Class C · 24-hour correction window | (continues) |

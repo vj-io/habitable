@@ -2,13 +2,13 @@ import { expect, type Locator, type Page } from "@playwright/test";
 
 /** Button label of each demo sample photo (src/lib/demo/samples.ts), keyed by sample id. */
 export const SAMPLE = {
-  "leak-ceiling": "Ceiling stain with drips",
-  "mold-bathroom": "Black mold above the tub",
-  "cold-radiator": "Cold radiator and frosted window",
-  "mice-kitchen": "Mouse, droppings and chewed cereal box",
-  "broken-lock": "Broken deadbolt and splintered door frame",
-  "peeling-paint": "Peeling paint on window sill",
-  "ambiguous-stain": "Faint stain on wall by window",
+  "leak-ceiling": "Water-stained ceiling tile",
+  "mold-bathroom": "Black mold along the tub's edge",
+  "cold-radiator": "Old cast-iron radiator, no heat",
+  "mice-kitchen": "Mouse caught in a snap trap",
+  "broken-lock": "Door with the lock torn out",
+  "peeling-paint": "Cracked, peeling paint",
+  "ambiguous-stain": "Faint stain where wall meets ceiling",
 } as const;
 export type SampleId = keyof typeof SAMPLE;
 

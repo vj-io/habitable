@@ -1,9 +1,9 @@
-// Renders scripts/samples/*.svg -> public/samples/*.jpg (+ EXIF) and writes manifest.json.
+// Renders scripts/samples/*.jpg (real photos, credited below) -> public/samples/*.jpg (+ EXIF) and writes manifest.json.
 // Usage: node scripts/render-samples.mjs   (needs `npx playwright install chromium` once)
 import { chromium } from '@playwright/test';
 import exifr from 'exifr';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -11,15 +11,23 @@ const srcDir = path.join(root, 'scripts/samples');
 const outDir = path.join(root, 'public/samples');
 const MAX_BYTES = 250 * 1024;
 
-// id, label, expectedIssue, EXIF capture time (NYC local, EDT = -04:00 on all of these dates)
+// id, label, expectedIssue, EXIF capture time (NYC local, EDT = -04:00 on all of these dates), output size, credit
+// Photos from Wikimedia Commons, cropped and resized; each keeps its own license (listed in THIRD-PARTY-NOTICES.md).
 const SCENES = [
-  ['leak-ceiling', 'Ceiling stain with drips', 'leak', '2026:10:15 07:42:10'],
-  ['mold-bathroom', 'Black mold above the tub', 'mold', '2026:10:12 19:05:33'],
-  ['cold-radiator', 'Cold radiator and frosted window', 'heat_hot_water', '2026:10:20 06:58:02'],
-  ['mice-kitchen', 'Mouse, droppings and chewed cereal box', 'pests', '2026:10:18 22:14:47'],
-  ['broken-lock', 'Broken deadbolt and splintered door frame', 'lock_door', '2026:10:21 23:31:09'],
-  ['peeling-paint', 'Peeling paint on window sill', 'peeling_paint', '2026:10:09 16:20:55'],
-  ['ambiguous-stain', 'Faint stain on wall by window', 'ambiguous', '2026:10:22 12:03:40'],
+  ['leak-ceiling', 'Water-stained ceiling tile', 'leak', '2026:10:15 07:42:10', [1200, 900],
+    { author: 'Atomicdragon136', license: 'CC BY 3.0', source: 'https://commons.wikimedia.org/wiki/File:Ceiling_water_damage.jpg' }],
+  ['mold-bathroom', "Black mold along the tub's edge", 'mold', '2026:10:12 19:05:33', [1200, 900],
+    { author: 'Tony Webster', license: 'CC BY-SA 2.0', source: 'https://commons.wikimedia.org/wiki/File:Moldy_Shower_-_Black_Mold_Growth_in_Bathroom_(46195388355).jpg' }],
+  ['cold-radiator', 'Old cast-iron radiator, no heat', 'heat_hot_water', '2026:10:20 06:58:02', [1200, 900],
+    { author: 'Dominic Alves', license: 'CC BY 2.0', source: 'https://commons.wikimedia.org/wiki/File:Ornate_Cast_Iron_Radiator_-_Brian_Eno_Speaker_Flowers_Sound_Installation_at_Marlborough_House.jpg' }],
+  ['mice-kitchen', 'Mouse caught in a snap trap', 'pests', '2026:10:18 22:14:47', [900, 1200],
+    { author: 'Rathfelder', license: 'CC BY-SA 4.0', source: 'https://commons.wikimedia.org/wiki/File:Caught_a_mouse.jpg' }],
+  ['broken-lock', 'Door with the lock torn out', 'lock_door', '2026:10:21 23:31:09', [900, 1200],
+    { author: 'SeppVei', license: 'Public domain', source: 'https://commons.wikimedia.org/wiki/File:Broken_door_lock.JPG' }],
+  ['peeling-paint', 'Cracked, peeling paint', 'peeling_paint', '2026:10:09 16:20:55', [1200, 900],
+    { author: 'Lamiot', license: 'CC BY-SA 3.0', source: 'https://commons.wikimedia.org/wiki/File:Peinture_blc.jpg' }],
+  ['ambiguous-stain', 'Faint stain where wall meets ceiling', 'ambiguous', '2026:10:22 12:03:40', [1200, 900],
+    { author: 'Ed! (Photography Gallery)', license: 'CC BY-SA 3.0', source: 'https://commons.wikimedia.org/wiki/File:Water_Damage.JPG' }],
 ];
 
 // Minimal EXIF APP1: little-endian TIFF, IFD0 {Make, Model, DateTime, ExifIFD ptr} + Exif IFD {DateTimeOriginal}. No GPS.
@@ -59,11 +67,11 @@ const browser = await chromium.launch({ channel: 'chromium' });
 const manifest = [];
 let failed = false;
 
-for (const [id, label, expectedIssue, dt] of SCENES) {
-  const file = path.join(srcDir, `${id}.svg`);
-  const [, w, h] = readFileSync(file, 'utf8').match(/viewBox="0 0 (\d+) (\d+)"/);
-  const page = await browser.newPage({ viewport: { width: +w, height: +h }, deviceScaleFactor: 1 });
-  await page.goto(pathToFileURL(file).href);
+for (const [id, label, expectedIssue, dt, [w, h], credit] of SCENES) {
+  const file = path.join(srcDir, `${id}.jpg`);
+  const page = await browser.newPage({ viewport: { width: w, height: h }, deviceScaleFactor: 1 });
+  await page.setContent(`<style>html,body{margin:0}img{display:block;width:${w}px;height:${h}px;object-fit:cover}</style><img src="data:image/jpeg;base64,${readFileSync(file).toString('base64')}">`);
+  await page.locator('img').evaluate((img) => img.decode());
   let jpg;
   for (const quality of [85, 80, 75, 70, 65]) {
     jpg = await page.screenshot({ type: 'jpeg', quality });
@@ -81,7 +89,7 @@ for (const [id, label, expectedIssue, dt] of SCENES) {
   console.log(`${ok ? 'ok ' : 'BAD'} ${id}.jpg ${w}x${h} ${(jpg.length / 1024).toFixed(1)} KB DateTimeOriginal=${tags?.DateTimeOriginal} (revived ${revived?.toString()}) ModifyDate(DateTime)=${tags?.ModifyDate} Make=${tags?.Make} Model=${tags?.Model} gps=${gps ? 'PRESENT' : 'none'}`);
 
   const [d, tm] = dt.split(' ');
-  manifest.push({ id, file: `/samples/${id}.jpg`, label, expectedIssue, capturedAt: `${d.replaceAll(':', '-')}T${tm}-04:00` });
+  manifest.push({ id, file: `/samples/${id}.jpg`, label, expectedIssue, capturedAt: `${d.replaceAll(':', '-')}T${tm}-04:00`, credit });
 }
 
 await browser.close();

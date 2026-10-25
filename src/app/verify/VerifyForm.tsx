@@ -8,7 +8,7 @@ import { Field, inputClass } from "@/components/site/Field";
 type Result = { key: string; valid: boolean | null };
 
 /** SHA-256 of public/samples/leak-ceiling.jpg: a stand-in photo fingerprint for "Try a real receipt". */
-const SAMPLE_SHA256 = "97f1f7ffe504df3df811f9c14dcaa48022ab40c0211ac38e4a2ada656429890e";
+const SAMPLE_SHA256 = "f69fe499c1331ccdc6530b1fb7124a1f880ff64effdf25f98a105a48470514f8";
 
 /** Asks the server to sign the sample fingerprint now, exactly as it does for a photo being logged. */
 async function stampSample(): Promise<{ receivedAt: string; receipt: string } | null> {

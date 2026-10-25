@@ -164,9 +164,9 @@ All on the device (IndexedDB via idb-keyval), shapes in `src/lib/types.ts`:
 ├── devpost/                    # Devpost learning workspace: scope, prd, spec, checklist, app map
 ├── .agents/skills/             # Devpost Learn skill pack (MIT)
 ├── public/
-│   ├── samples/                # illustrated demo "photos" (EXIF capture time, no GPS) + manifest.json
+│   ├── samples/                # real demo photos (Wikimedia Commons, credited; EXIF capture time, no GPS) + manifest.json
 │   └── fonts/                  # WOFF fonts embedded in the PDF
-├── scripts/render-samples.mjs  # rebuilds the sample photos from scripts/samples/*.svg
+├── scripts/render-samples.mjs  # rebuilds the sample photos from scripts/samples/*.jpg
 ├── src/
 │   ├── app/
 │   │   ├── layout.tsx, globals.css   # fonts, doodle tokens, grid paper
@@ -222,7 +222,7 @@ All on the device (IndexedDB via idb-keyval), shapes in `src/lib/types.ts`:
 
 ## What Was Simplified and Why
 - **On-device storage** instead of accounts + database — the kernel needs neither; also the privacy story. Fuller version: hosted Postgres + auth for organizer sharing.
-- **Illustrated sample scenes** instead of real demo photos — no licensing risk and no private photos in a public repo; real photos still work live. The video uses the builder's real photos.
+- **Openly licensed photos from Wikimedia Commons** for the samples instead of anyone's own photos — no private photos in a public repo, and each is credited in `THIRD-PARTY-NOTICES.md`; real photos still work live. (The first build used illustrated scenes; they were replaced with real photos after review.)
 - **Saved AI answers for samples** instead of a live call in demo mode — the demo never depends on a quota.
 - **Receipt = HMAC over the hash and time** instead of a timestamping authority — proves Habitable's server saw the fingerprint then; a fuller version would anchor to an RFC 3161 timestamp service.
 - **One city, six problem types** — keeps every rule citable.
