@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
-  Arrow,
   Camera,
   Check,
   Chip,
@@ -34,6 +33,7 @@ import { addFollowUp, deleteIssue, markFixed, useCaseData } from "@/lib/store";
 import type { CaseFile, Issue } from "@/lib/types";
 import { MessageCoach } from "./MessageCoach";
 import { CLASS_TONE, IssueIcon, issueName, pct } from "./meta";
+import { BackLink } from "@/components/site/BackLink";
 
 const linkClass = "underline decoration-2 underline-offset-4 hover:decoration-wavy";
 
@@ -41,10 +41,8 @@ function Shell({ demo, children }: { demo?: boolean; children: React.ReactNode }
   return (
     <>
       <SiteHeader>{demo && <Chip lead="Demo"><span className="max-[420px]:sr-only">building</span></Chip>}</SiteHeader>
-      <main id="main" className="mx-auto w-full max-w-[1100px] flex-1 px-4 pt-2 pb-6 sm:px-6">
-        <Link href="/" className="inline-flex min-h-11 items-center gap-1.5 font-display font-bold">
-          <Arrow direction="left" size={22} /> Your case
-        </Link>
+      <main id="main" className="mx-auto w-full max-w-[1100px] flex-1 px-4 pt-4 pb-10 sm:px-6">
+        <BackLink />
         {children}
       </main>
     </>

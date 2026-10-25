@@ -18,6 +18,7 @@ import {
 import { HPD_ONLINE_URL, snapshotLabel, suggestAddressee } from "@/lib/registration";
 import { updateCase, useCaseData } from "@/lib/store";
 import type { CaseFile, HeatReading, Issue, RegistrationInfo } from "@/lib/types";
+import { BackLink } from "@/components/site/BackLink";
 
 const HPD_WRITE_TO_LANDLORD_URL = "https://www.nyc.gov/site/hpd/services-and-information/tenants-rights-and-responsibilities.page";
 const WOBBLE = "14px 4px 12px 5px / 5px 12px 4px 14px";
@@ -26,14 +27,8 @@ function Shell({ children }: { children: ReactNode }) {
   return (
     <>
       <SiteHeader />
-      <main id="main" className="mx-auto w-full max-w-xl space-y-6 px-4 pt-4 pb-20 sm:px-6">
-        <Link
-          href="/"
-          className="inline-flex min-h-11 items-center gap-2 font-mono text-xs font-medium uppercase tracking-[0.12em] underline decoration-2 underline-offset-4 hover:decoration-wavy"
-        >
-          <Arrow direction="left" size={20} />
-          Back to your case file
-        </Link>
+      <main id="main" className="mx-auto w-full max-w-[1100px] flex-1 space-y-6 px-4 pt-4 pb-10 sm:px-6 *:max-w-2xl">
+        <BackLink />
         {children}
       </main>
     </>

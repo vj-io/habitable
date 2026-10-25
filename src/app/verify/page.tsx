@@ -13,7 +13,7 @@ export default function Page() {
   return (
     <>
       <SiteHeader />
-      <main id="main" className="mx-auto w-full max-w-2xl flex-1 space-y-6 px-4 pt-6 pb-6 sm:px-6">
+      <main id="main" className="mx-auto w-full max-w-[1100px] flex-1 space-y-6 px-4 pt-4 pb-10 sm:px-6 *:max-w-2xl">
         <MonoLabel as="p">Receipt check</MonoLabel>
         <h1 className="font-display text-[2.25rem] leading-[1.05] font-extrabold sm:text-5xl">Did Habitable really see this photo then?</h1>
         <p className="text-lg leading-relaxed text-ink/85">

@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import type { ReactNode } from "react";
-import { Arrow, Building, DoodleButton, DoodleCard, Highlight, MonoLabel, Tag } from "@/components/doodle";
+import { Building, DoodleButton, DoodleCard, Highlight, MonoLabel, Tag } from "@/components/doodle";
 import { CLASS_ROWS, TallyBar } from "@/components/case/BuildingPanel";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { formatNY } from "@/lib/countdown";
@@ -22,6 +21,7 @@ import { useLandlord } from "@/lib/portfolio-client";
 import { HPD_ONLINE_URL, REGISTRATION_SOURCE_URL, dayLabel, snapshotLabel } from "@/lib/registration";
 import { AEP_URL, LITIGATIONS_URL } from "@/lib/signals";
 import { useCaseData } from "@/lib/store";
+import { BackLink } from "@/components/site/BackLink";
 
 const linkClass = "underline decoration-2 underline-offset-4 hover:decoration-wavy";
 const int = (n: number) => n.toLocaleString("en-US");
@@ -32,14 +32,8 @@ function Shell({ children }: { children: ReactNode }) {
   return (
     <>
       <SiteHeader />
-      <main id="main" className="mx-auto w-full max-w-2xl space-y-6 px-4 pt-4 pb-20 sm:px-6">
-        <Link
-          href="/"
-          className="inline-flex min-h-11 items-center gap-2 font-mono text-xs font-medium tracking-[0.12em] uppercase underline decoration-2 underline-offset-4 hover:decoration-wavy"
-        >
-          <Arrow direction="left" size={20} />
-          Back to your case file
-        </Link>
+      <main id="main" className="mx-auto w-full max-w-[1100px] flex-1 space-y-6 px-4 pt-4 pb-10 sm:px-6 *:max-w-2xl">
+        <BackLink />
         {children}
       </main>
     </>

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { Arrow, Highlight, MonoLabel, PencilLoader } from "@/components/doodle";
+import { Highlight, MonoLabel, PencilLoader } from "@/components/doodle";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { PASSAGES, isLawText } from "@/lib/law/corpus";
 import { AskClient } from "./AskClient";
+import { BackLink } from "@/components/site/BackLink";
 
 export const metadata: Metadata = {
   title: "Ask the law — Habitable",
@@ -20,14 +21,8 @@ export default function AskPage() {
   return (
     <>
       <SiteHeader />
-      <main id="main" className="mx-auto w-full max-w-3xl flex-1 space-y-8 px-4 pt-4 pb-6 sm:px-6">
-        <Link
-          href="/"
-          className="inline-flex min-h-11 items-center gap-2 font-mono text-xs font-medium tracking-[0.12em] uppercase underline decoration-2 underline-offset-4 hover:decoration-wavy"
-        >
-          <Arrow direction="left" size={20} />
-          Back to your case file
-        </Link>
+      <main id="main" className="mx-auto w-full max-w-[1100px] flex-1 space-y-6 px-4 pt-4 pb-10 sm:px-6 *:max-w-2xl">
+        <BackLink />
 
         <header className="space-y-4">
           <MonoLabel as="p">Law text · quotes checked by code</MonoLabel>

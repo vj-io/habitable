@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { Arrow, Doc, DoodleButton, DoodleCard, Highlight, MonoLabel, NumberCircle } from "@/components/doodle";
 import { SiteHeader } from "@/components/site/SiteHeader";
+import { BackLink } from "@/components/site/BackLink";
 
 export const metadata: Metadata = {
   title: "Next steps and your rights — Habitable",
@@ -85,14 +85,8 @@ export default function NextStepsPage() {
   return (
     <>
       <SiteHeader />
-      <main id="main" className="mx-auto w-full max-w-[1100px] flex-1 space-y-10 px-4 pt-4 pb-6 sm:px-6">
-        <Link
-          href="/"
-          className="inline-flex min-h-11 items-center gap-2 font-mono text-xs font-medium tracking-[0.12em] uppercase underline decoration-2 underline-offset-4 hover:decoration-wavy"
-        >
-          <Arrow direction="left" size={20} />
-          Back to your case file
-        </Link>
+      <main id="main" className="mx-auto w-full max-w-[1100px] flex-1 space-y-10 px-4 pt-4 pb-10 sm:px-6">
+        <BackLink />
 
         <header className="max-w-3xl space-y-4">
           <MonoLabel as="p">After the notice</MonoLabel>

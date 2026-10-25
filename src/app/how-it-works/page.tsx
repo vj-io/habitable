@@ -21,6 +21,7 @@ import { CLASS_TONE, IssueIcon } from "@/components/issue/meta";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { CLASS_TABLE, CLOCK_NOTE, CLOCK_SOURCE_URL, RULES, RULES_VERSION, type IssueRules } from "@/lib/rules";
 import { ISSUE_IDS, type IssueId } from "@/lib/types";
+import { BackLink } from "@/components/site/BackLink";
 
 const REPO_URL = "https://github.com/vj-io/habitable";
 
@@ -159,7 +160,7 @@ function RulesTable() {
                     {"outcome" in v ? (
                       <p>{v.reason}</p>
                     ) : (
-                      <a href={v.sourceUrl} target="_blank" rel="noreferrer" className={`${linkClass} font-mono text-[0.8125rem]`}>
+                      <a href={v.sourceUrl} target="_blank" rel="noreferrer" className={`${linkClass} inline-block py-3 font-mono text-[0.8125rem]`}>
                         {v.citation}
                       </a>
                     )}
@@ -201,7 +202,8 @@ export default function Page() {
   return (
     <>
       <SiteHeader />
-      <main id="main" className="mx-auto w-full max-w-[1100px] flex-1 space-y-16 px-4 pt-8 pb-6 sm:px-6">
+      <main id="main" className="mx-auto w-full max-w-[1100px] flex-1 space-y-16 px-4 pt-4 pb-10 sm:px-6">
+        <BackLink />
         <header className="max-w-3xl space-y-5">
           <MonoLabel as="p">How it works</MonoLabel>
           <h1 className="font-display text-[2.75rem] leading-[1.02] font-extrabold sm:text-6xl">
