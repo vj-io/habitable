@@ -142,7 +142,7 @@ Planning and the build followed the Devpost Learn skill pack (`.agents/skills/`,
 | `2-scope` | [`devpost/scope.md`](devpost/scope.md) · [visual companion](https://habitable-blush.vercel.app/plan/scope.html) |
 | `3-prd` | [`devpost/prd.md`](devpost/prd.md) · [visual companion](https://habitable-blush.vercel.app/plan/prd.html) |
 | `4-spec` | [`devpost/spec.md`](devpost/spec.md) · [visual companion](https://habitable-blush.vercel.app/plan/spec.html) |
-| `5-build` | [`devpost/checklist.md`](devpost/checklist.md) (slices, checkpoints, revisions) · [app map](https://habitable-blush.vercel.app/plan/app-map.html) |
+| `5-build` | [`devpost/checklist.md`](devpost/checklist.md) (slices, checkpoints, revisions) · [rendered](https://habitable-blush.vercel.app/plan/checklist.html) · [app map](https://habitable-blush.vercel.app/plan/app-map.html) |
 
 The commit history follows the plan: scope → PRD → spec → checklist → one commit per build slice. The slices were built in parallel by subagents and committed together after integration checks, so the intermediate slice commits were not each built and tested on their own; later work (palette and dark theme, heat log, landlord on record, next steps, case tools, offline, then the landlord track record, Ask the law and the message coach) landed as feature branches merged into main. That later work went beyond the approved PoC boundary. The spec records it as a scope change under **Round 2 additions**, awaiting the builder's review. What the build discovered that changed the plan is recorded under **Revisions** in the checklist.
 
