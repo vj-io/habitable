@@ -1,0 +1,164 @@
+{
+  "bbl": "3051900075",
+  "source": "live",
+  "fetchedAt": "2026-10-25T06:44:41.547Z",
+  "portfolio": {
+    "asOf": "2026-07-31",
+    "registered": true,
+    "keys": [
+      {
+        "kind": "headOfficer",
+        "name": "JOSHUA POMERANTZ"
+      },
+      {
+        "kind": "owner",
+        "name": "2505 BEDFORD 2015 LLC"
+      },
+      {
+        "kind": "agent",
+        "name": "JOSHUA POMERANTZ"
+      }
+    ],
+    "buildings": [
+      {
+        "bbl": "3051900075",
+        "address": "2499-2507 BEDFORD AVENUE",
+        "links": [
+          "headOfficer",
+          "owner",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2031430130",
+        "address": "2160-2184 TIEBOUT AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "3045980009",
+        "address": "2 EAST 96 STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2023810049",
+        "address": "454 EAST 160 STREET",
+        "links": [
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2024640001",
+        "address": "1215 GRAND CONCOURSE",
+        "links": [
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2027630160",
+        "address": "711 FAILE STREET",
+        "links": [
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2031470070",
+        "address": "315-317 EAST 187 STREET",
+        "links": [
+          "agent"
+        ]
+      },
+      {
+        "bbl": "3031060001",
+        "address": "64 GRAHAM AVENUE",
+        "links": [
+          "agent"
+        ]
+      }
+    ],
+    "found": 8,
+    "capped": false
+  },
+  "season": {
+    "start": "2025-10-01",
+    "end": "2026-05-31"
+  },
+  "open": {
+    "byClass": {
+      "A": 150,
+      "B": 447,
+      "C": 348
+    },
+    "total": 955
+  },
+  "units": {
+    "total": 322,
+    "buildings": 8
+  },
+  "bcPer100": 246.9,
+  "baseline": {
+    "bc": 1974942,
+    "units": 3736645,
+    "per100": 52.9,
+    "asOf": "2026-10-25"
+  },
+  "ratio": 4.7,
+  "heat311": 268,
+  "litigations": 137,
+  "aep": 1,
+  "worst": [
+    {
+      "bbl": "3051900075",
+      "address": "2499-2507 BEDFORD AVENUE",
+      "c": 116,
+      "units": 48,
+      "links": [
+        "headOfficer",
+        "owner",
+        "agent"
+      ]
+    },
+    {
+      "bbl": "2031430130",
+      "address": "2160-2184 TIEBOUT AVENUE",
+      "c": 54,
+      "units": 60,
+      "links": [
+        "headOfficer",
+        "agent"
+      ]
+    },
+    {
+      "bbl": "2024640001",
+      "address": "1215 GRAND CONCOURSE",
+      "c": 49,
+      "units": 45,
+      "links": [
+        "agent"
+      ]
+    },
+    {
+      "bbl": "2031470070",
+      "address": "315-317 EAST 187 STREET",
+      "c": 34,
+      "units": 47,
+      "links": [
+        "agent"
+      ]
+    },
+    {
+      "bbl": "3031060001",
+      "address": "64 GRAHAM AVENUE",
+      "c": 32,
+      "units": 30,
+      "links": [
+        "agent"
+      ]
+    }
+  ]
+}

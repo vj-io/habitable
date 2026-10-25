@@ -3,6 +3,8 @@
 import { Building, DoodleButton, DoodleCard, Highlight, MonoLabel, PencilLoader, Tag, rough } from "@/components/doodle";
 import { ISSUE_FOR, IssueBadge, IssueIcon } from "@/components/issue/meta";
 import { formatNY } from "@/lib/countdown";
+import { LINK_LABEL, linkCounts } from "@/lib/portfolio";
+import { useLandlord } from "@/lib/portfolio-client";
 import { HPD_ONLINE_URL, REGISTRATION_SOURCE_URL, dayLabel, isOldRegistration, snapshotLabel } from "@/lib/registration";
 import { RULES } from "@/lib/rules";
 import { AEP_URL, COMPLAINTS_URL, LITIGATIONS_URL, categoryLabel } from "@/lib/signals";
@@ -12,13 +14,13 @@ import type { BuildingState } from "./useBuilding";
 /** HPD dates are calendar days ("2026-10-12"); read them at noon UTC so no timezone shifts the day. */
 const day = (d: string | null) => (d ? formatNY(`${d}T12:00:00Z`, "date") : "undated");
 
-const CLASS_ROWS: { c: HazardClass; label: string; color: string }[] = [
+export const CLASS_ROWS: { c: HazardClass; label: string; color: string }[] = [
   { c: "C", label: "Immediately hazardous", color: "var(--color-red)" },
   { c: "B", label: "Hazardous", color: "var(--color-amber)" },
   { c: "A", label: "Non-hazardous", color: "var(--color-sky)" },
 ];
 
-function TallyBar({ value, max, color, seed }: { value: number; max: number; color: string; seed: number }) {
+export function TallyBar({ value, max, color, seed }: { value: number; max: number; color: string; seed: number }) {
   const w = value === 0 ? 0 : Math.max(4, Math.round((196 * value) / Math.max(max, 1)));
   const r = rough(seed);
   return (
@@ -80,6 +82,8 @@ export function BuildingPanel({ state, related }: { state: BuildingState; relate
         {record && record.openTotal > 0 && <Record record={record} related={related} />}
 
         {record?.signals && <Signals signals={record.signals} />}
+
+        {record && <Landlord bbl={record.bbl} demo={record.source === "demo-fixture"} />}
       </div>
     </DoodleCard>
   );
@@ -298,6 +302,62 @@ function Signals({ signals }: { signals: BuildingSignals }) {
           AEP list
         </a>
       </p>
+    </section>
+  );
+}
+
+/**
+ * The landlord's other buildings in one line (count, open violations, rate against the city), linking to /landlord.
+ * A saved building snapshot reads the saved landlord snapshot too. Hidden when the building has no HPD registration.
+ */
+function Landlord({ bbl, demo }: { bbl: string; demo: boolean }) {
+  const { status, record, retry } = useLandlord(bbl, demo);
+  if (record && !record.portfolio.registered) return null;
+  const n = record?.portfolio.buildings.length ?? 0;
+  const links = record ? linkCounts(record.portfolio.buildings).filter((l) => l.buildings > 1) : [];
+  return (
+    <section aria-labelledby="landlord-title" className="space-y-3 border-t-2 border-dashed border-ink/20 pt-5">
+      <MonoLabel as="h3">
+        <span id="landlord-title">This landlord&apos;s buildings</span>
+      </MonoLabel>
+
+      {status === "loading" && (
+        <p role="status" className="font-hand text-lg leading-snug text-muted">
+          Following the registration to the landlord&apos;s other buildings…
+        </p>
+      )}
+
+      {status === "error" && (
+        <div className="space-y-2">
+          <p className="text-muted">The landlord&apos;s other buildings are unavailable right now.</p>
+          <DoodleButton variant="secondary" onClick={retry}>
+            Try again
+          </DoodleButton>
+        </div>
+      )}
+
+      {record && (
+        <>
+          <p className="font-display text-xl leading-snug font-bold">
+            <Highlight>{n.toLocaleString("en-US")}</Highlight> {n === 1 ? "building" : "buildings"}
+            {record.open && <> · {record.open.total.toLocaleString("en-US")} open violations</>}
+            {record.ratio !== null && (
+              <>
+                {" "}
+                · <Highlight>{record.ratio.toFixed(1)}×</Highlight> the NYC rate per apartment
+              </>
+            )}
+          </p>
+          <p className="text-[0.9375rem] leading-snug text-muted">
+            {links.length > 0
+              ? links.map((l) => `${LINK_LABEL[l.kind]}: ${l.buildings} buildings`).join(" · ")
+              : "No other buildings found under the same head officer, owner or managing agent."}
+          </p>
+          <DoodleButton href="/landlord" variant="secondary" icon={<Building size={22} />}>
+            See the landlord&apos;s record
+          </DoodleButton>
+        </>
+      )}
     </section>
   );
 }

@@ -1,0 +1,612 @@
+{
+  "bbl": "2043220010",
+  "source": "live",
+  "fetchedAt": "2026-10-25T06:44:30.266Z",
+  "portfolio": {
+    "asOf": "2026-07-31",
+    "registered": true,
+    "keys": [
+      {
+        "kind": "headOfficer",
+        "name": "ADAM PARKOFF"
+      },
+      {
+        "kind": "owner",
+        "name": "BP ASSETS 46, LLC"
+      },
+      {
+        "kind": "agent",
+        "name": "DAVID FRIEDMAN, NEW PARK MANAGEMENT, LLC"
+      }
+    ],
+    "buildings": [
+      {
+        "bbl": "2043220010",
+        "address": "2140-2148 BARNES AVENUE",
+        "links": [
+          "headOfficer",
+          "owner",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1008770057",
+        "address": "144-148 EAST 22 STREET",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "1009010021",
+        "address": "237-245 EAST 20 STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1009110001",
+        "address": "431-439 3 AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1009110065",
+        "address": "441 3 AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1009150027",
+        "address": "623 2 AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1010330018",
+        "address": "327 WEST 42 STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1013817501",
+        "address": "3 EAST 66 STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1014090042",
+        "address": "192-194 EAST 75 STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1014310005",
+        "address": "207 EAST 76 STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1014310006",
+        "address": "209 EAST 76 STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1014310009",
+        "address": "217 EAST 76 STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1014720002",
+        "address": "1482 1 AVENUE",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "1015130016",
+        "address": "133 EAST 84 STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1015760049",
+        "address": "1510 YORK AVENUE",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "1015770027",
+        "address": "28-30 EAST END AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1021750039",
+        "address": "100-108 THAYER STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1021750053",
+        "address": "192-206 DYCKMAN STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1021750150",
+        "address": "93-99 ARDEN STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1021750170",
+        "address": "88-98 THAYER STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1021750192",
+        "address": "73-79 THAYER STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1022220035",
+        "address": "104-116 POST AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1022370008",
+        "address": "1-9 SEAMAN AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1022370012",
+        "address": "11-19 SEAMAN AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1022380023",
+        "address": "4861-4879 BROADWAY",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1022420005",
+        "address": "161-171 SEAMAN AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "1022470056",
+        "address": "2-12 SEAMAN AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2032940053",
+        "address": "2705 BAINBRIDGE AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2033180081",
+        "address": "2780-2784 MORRIS AVENUE",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "2042860013",
+        "address": "2084-2086 BRONX PARK EAST",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2042910024",
+        "address": "2131-2137 WALLACE AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2042920024",
+        "address": "2132-2138 WALLACE AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2043210038",
+        "address": "774-780 PELHAM PARKWAY",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2043210058",
+        "address": "2161 BARNES AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2043220018",
+        "address": "2162-2164 BARNES AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2043220025",
+        "address": "2182-2184 BARNES AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2045130033",
+        "address": "2765-2769 MATTHEWS AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2057320941",
+        "address": "2728 HENRY HUDSON PARKWAY EAST",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2057840340",
+        "address": "500 WEST 235 STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "2057870154",
+        "address": "3300 NETHERLAND AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "3012200047",
+        "address": "751 ST MARKS AVENUE",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "3012540057",
+        "address": "745 LINCOLN PLACE",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "3014240001",
+        "address": "401 SCHENECTADY AVENUE",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "3021020008",
+        "address": "249-255 CUMBERLAND STREET",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "3050850041",
+        "address": "254-260 LENOX ROAD",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "3051210034",
+        "address": "1713 BEVERLY ROAD",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "3051510012",
+        "address": "394-400 EAST 21 STREET",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "3051600058",
+        "address": "381-397 EAST 17 STREET",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "3052060054",
+        "address": "979-985 OCEAN AVENUE",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "3058810003",
+        "address": "7005-7019 SHORE ROAD",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "3059270024",
+        "address": "142-158 74 STREET",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "3063780019",
+        "address": "8633-8635 21 AVENUE",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "3065120001",
+        "address": "900-924 AVENUE H",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "3065870017",
+        "address": "1416-1430 OCEAN PARKWAY",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "3066540001",
+        "address": "1701-1729 WEST 3 STREET",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "3067600062",
+        "address": "1561 EAST 13 STREET",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "3068780048",
+        "address": "8686-8700 25 AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "3075770001",
+        "address": "3115-3123 AVENUE I",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "3075770006",
+        "address": "3101-3111 AVENUE I",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "3076740047",
+        "address": "2016 AVENUE N",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "4022340031",
+        "address": "110-56 71 AVENUE",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "4030830085",
+        "address": "64-21 BOOTH STREET",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "4030850002",
+        "address": "64-45 BOOTH STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "4033210037",
+        "address": "83-46 118 STREET",
+        "links": [
+          "headOfficer",
+          "agent"
+        ]
+      },
+      {
+        "bbl": "4097730005",
+        "address": "162-15-162-31 HIGHLAND AVENUE",
+        "links": [
+          "headOfficer"
+        ]
+      },
+      {
+        "bbl": "4098450001",
+        "address": "175-27 87 DRIVE",
+        "links": [
+          "headOfficer"
+        ]
+      }
+    ],
+    "found": 66,
+    "capped": false
+  },
+  "season": {
+    "start": "2025-10-01",
+    "end": "2026-05-31"
+  },
+  "open": {
+    "byClass": {
+      "A": 538,
+      "B": 1642,
+      "C": 962
+    },
+    "total": 3143
+  },
+  "units": {
+    "total": 4380,
+    "buildings": 65
+  },
+  "bcPer100": 59.5,
+  "baseline": {
+    "bc": 1974942,
+    "units": 3736645,
+    "per100": 52.9,
+    "asOf": "2026-10-25"
+  },
+  "ratio": 1.1,
+  "heat311": 1266,
+  "litigations": 291,
+  "aep": 0,
+  "worst": [
+    {
+      "bbl": "2043220025",
+      "address": "2182-2184 BARNES AVENUE",
+      "c": 138,
+      "units": 71,
+      "links": [
+        "headOfficer",
+        "agent"
+      ]
+    },
+    {
+      "bbl": "2042920024",
+      "address": "2132-2138 WALLACE AVENUE",
+      "c": 97,
+      "units": 172,
+      "links": [
+        "headOfficer",
+        "agent"
+      ]
+    },
+    {
+      "bbl": "2043220010",
+      "address": "2140-2148 BARNES AVENUE",
+      "c": 73,
+      "units": 70,
+      "links": [
+        "headOfficer",
+        "owner",
+        "agent"
+      ]
+    },
+    {
+      "bbl": "4098450001",
+      "address": "175-27 87 DRIVE",
+      "c": 63,
+      "units": 66,
+      "links": [
+        "headOfficer"
+      ]
+    },
+    {
+      "bbl": "2045130033",
+      "address": "2765-2769 MATTHEWS AVENUE",
+      "c": 51,
+      "units": 72,
+      "links": [
+        "headOfficer",
+        "agent"
+      ]
+    }
+  ]
+}
