@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { ReactNode } from "react";
 import { Check, Chip, CircleMark, DoodleCard, Highlight, MonoLabel, Stamp, Tag } from "@/components/doodle";
 import { CLASS_TONE, IssueIcon, factLines } from "@/components/issue/meta";
@@ -84,6 +85,12 @@ export function RuleCard({
           {outcome.citation}
         </a>
       </p>
+      <Link
+        href={`/ask?q=${encodeURIComponent(`What does the law say about ${RULES[outcome.issue].short.toLowerCase()}? (${outcome.citation})`)}`}
+        className={`${linkClass} inline-flex min-h-11 items-center font-hand text-lg`}
+      >
+        Ask about this rule →
+      </Link>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <Chip lead="Set by code">not the AI</Chip>

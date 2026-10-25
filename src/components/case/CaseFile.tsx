@@ -140,6 +140,11 @@ function Menu() {
                   </Link>
                 </li>
                 <li>
+                  <Link href="/ask" className="flex min-h-11 items-center gap-2.5 rounded px-3 font-display font-bold hover:bg-ink/5">
+                    <Doc size={20} /> Ask the law
+                  </Link>
+                </li>
+                <li>
                   <Link href="/how-it-works" className="flex min-h-11 items-center gap-2.5 rounded px-3 font-display font-bold hover:bg-ink/5">
                     <Doc size={20} /> How it works
                   </Link>
