@@ -14,6 +14,7 @@
 - fast-render.
 
 **Files:** `brag-output-2026-10-25-165500/` (git-ignored). `work/` holds the recording plan, the player and the timings.
+**Published:** https://youtu.be/i_7LGIVXXac (public on YouTube; this cut shows the real, openly licensed sample photos).
 
 > **Before you submit — your voice, your words.** The skill pack's ship step says the learner presents the demo in their own words. This voiceover was drafted for you on request and read by a synthetic voice. Rewrite any line that isn't how you'd say it, then record yourself over the same cut:
 > - `work/score.wav` is the music alone.
