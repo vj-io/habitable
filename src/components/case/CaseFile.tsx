@@ -13,6 +13,7 @@ import { clearAll } from "@/lib/store";
 import { ISSUE_IDS, type CaseFile as CaseFileT, type HeatReading, type Issue, type IssueId } from "@/lib/types";
 import { BuildingPanel } from "./BuildingPanel";
 import { NextStepsCard } from "./NextStepsCard";
+import { ToolsCard } from "./ToolsCard";
 import { Timeline } from "./Timeline";
 import { useBuilding } from "./useBuilding";
 
@@ -265,6 +266,8 @@ export function CaseFile({
             <HeatLogCard />
 
             <NextStepsCard caseFile={caseFile} issues={issues} heatReadings={heatReadings} />
+
+            <ToolsCard />
           </div>
 
           <aside className="lg:self-start">

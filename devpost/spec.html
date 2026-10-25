@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Habitable Spec (planning companion)</title>
 <meta name="description" content="Visual companion to Habitable’s technical spec: architecture and data flow, a journey stepper, the cited rules table and component reveals.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23c8ff00'/%3E%3Cpath d='M7 25V8l9 7 9-7v17' fill='none' stroke='%230a0a0a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23ffcf3f'/%3E%3Cpath d='M7 25V8l9 7 9-7v17' fill='none' stroke='%231d1b20' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=JetBrains+Mono:wght@500;700&family=Patrick+Hand&display=swap">
 <style>
-:root{--paper:#f0ede8;--paper2:#faf8f4;--ink:#0a0a0a;--muted:#5d5a54;--lime:#c8ff00;--lime-tint:#f1ffc2;
+:root{--paper:#f3eee5;--paper2:#fcf9f3;--ink:#1d1b20;--muted:#5d5a54;--lime:#ffcf3f;--lime-tint:#fff0c2;
 --violet:#5534e6;--violet-stroke:#6b4eff;--violet-tint:#e8e2ff;--red:#d63a2a;--red-ink:#b3261a;--red-tint:#ffe1dc;
 --amber:#b85c00;--amber-ink:#9c4c00;--amber-tint:#ffedd1;--yellow-tint:#fff4a8;
 --f-head:"Archivo","Helvetica Neue",Arial,sans-serif;--f-hand:"Patrick Hand","Comic Neue","Segoe Print",cursive;--f-mono:ui-monospace,"JetBrains Mono",Menlo,monospace}
@@ -335,7 +335,7 @@ footer.foot .wrap{display:flex;flex-wrap:wrap;gap:.6rem 1.5rem;align-items:cente
 <li>Tests: <code>npm test</code> (Vitest), <code>npm run test:e2e</code> (Playwright, starts the app itself).</li>
 <li>Deploy (chosen): Vercel — <code>vercel --prod</code>. Public GitHub repo for the submission. The demo video records the deployed app on a phone.</li></ul></div>
 <div class="card" style="margin-top:1.1rem"><h3>Look and feel</h3><p class="src-line">Carried from <a href="prd.html#look-and-feel">prd.md &gt; Look and Feel</a></p>
-<div class="swatches"><div class="swatch"><i style="background:#f0ede8"></i>paper<br>#f0ede8</div><div class="swatch"><i style="background:#0a0a0a"></i>ink<br>#0a0a0a</div><div class="swatch"><i style="background:#c8ff00"></i>lime<br>#c8ff00</div><div class="swatch"><i style="background:#6b4eff"></i>violet<br>#6b4eff</div></div>
+<div class="swatches"><div class="swatch"><i style="background:#f3eee5"></i>paper<br>#f3eee5</div><div class="swatch"><i style="background:#1d1b20"></i>ink<br>#1d1b20</div><div class="swatch"><i style="background:#ffcf3f"></i>lime<br>#ffcf3f</div><div class="swatch"><i style="background:#6b4eff"></i>violet<br>#6b4eff</div></div>
 <ul class="plain"><li><strong>Palette:</strong> paper with a faint ink grid and grain; ink; lime highlighter (primary actions, key words, “verified by code”); <span class="ai-t"><strong>violet</strong></span> (text-safe darker shade) for everything the AI proposes — the builder’s complementary colour; stamp red for Class C / deadlines and amber for Class B, ink for Class A; pastel tints for sticky notes. Colour is always paired with a word or number.</li>
 <li><strong>Type:</strong> Archivo 800 for claims, Patrick Hand for handwriting (notes, labels, the AI’s voice), JetBrains Mono for numbers, dates, hashes and countdowns.</li>
 <li><strong>Motion:</strong> strokes draw themselves on appear, highlighter swipes, cards spring in, stamps thud; all disabled under <code>prefers-reduced-motion</code>.</li>
@@ -415,6 +415,7 @@ footer.foot .wrap{display:flex;flex-wrap:wrap;gap:.6rem 1.5rem;align-items:cente
 <li><strong>Learner uncertainty discussed:</strong> when does the legal clock start? Resolved from HPD’s own page: correction periods run from HPD’s service of a violation, so the countdown is labelled as the repair-by date the notice requests, mirroring that window.</li>
 <li>Resolved by research: mold area thresholds (Local Law 55), pests split B/C, self-closing doors are §27-2041.1 (not 2041/2042), ordinary peeling paint is Class A, night heat is 62°F regardless of outside temperature. <strong>Still unverified (and not claimed):</strong> what makes HPD escalate a leak or lock to Class C; whether a tenant letter starts any clock.</li>
 <li>Carried from <a href="prd.html#decisions">prd.md &gt; Open Questions</a>: both resolved above.</li></ul></div></div></section>
+<section id="round2"><h2><span class="num" aria-hidden="true">10</span><span>Round 2 additions</span></h2><div class="card"><p>A scope change recorded after the build, awaiting the builder's review and approval. It is listed here so the spec matches what ships.</p><ul><li><strong>Screens:</strong> /heat, /landlord, /ask, /next-steps; the issue page gains the message coach and a calendar reminder; the case file gains the heat-log, next-steps and tools cards, the landlord block and backup/restore.</li><li><strong>Heat:</strong> <code>src/lib/heat.ts</code> + <code>GET /api/outdoor</code> (freshest of KNYC, KLGA, KJFK).</li><li><strong>Landlord:</strong> <code>registration.ts</code>; <code>portfolio.ts</code> + <code>GET /api/landlord</code> (seven datasets, citywide baseline).</li><li><strong>Ask the law:</strong> <code>src/lib/law/</code> (verbatim corpus, BM25, <code>verify.ts</code>) + <code>POST /api/ask</code>.</li><li><strong>Coach:</strong> <code>coach.ts</code> (placeholders, validator, templates) + <code>POST /api/coach</code>.</li><li><strong>Shared:</strong> <code>ai.ts</code> (models, cooldowns, cache), <code>rate-limit.ts</code>, <code>backup.ts</code>, <code>ics.ts</code>, <code>public/sw.js</code>.</li></ul></div></section>
 </main>
 <footer class="foot"><div class="wrap">
 <span>Companion to <a href="spec.md"><code>devpost/spec.md</code></a>. Markdown stays canonical; this page is regenerated after revisions.</span>

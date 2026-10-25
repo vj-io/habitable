@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Habitable PRD (planning companion)</title>
 <meta name="description" content="Visual companion to Habitable’s PRD: the eight-step journey, acceptance criteria, screens and states.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23c8ff00'/%3E%3Cpath d='M7 25V8l9 7 9-7v17' fill='none' stroke='%230a0a0a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23ffcf3f'/%3E%3Cpath d='M7 25V8l9 7 9-7v17' fill='none' stroke='%231d1b20' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=JetBrains+Mono:wght@500;700&family=Patrick+Hand&display=swap">
 <style>
-:root{--paper:#f0ede8;--paper2:#faf8f4;--ink:#0a0a0a;--muted:#5d5a54;--lime:#c8ff00;--lime-tint:#f1ffc2;
+:root{--paper:#f3eee5;--paper2:#fcf9f3;--ink:#1d1b20;--muted:#5d5a54;--lime:#ffcf3f;--lime-tint:#fff0c2;
 --violet:#5534e6;--violet-stroke:#6b4eff;--violet-tint:#e8e2ff;--red:#d63a2a;--red-ink:#b3261a;--red-tint:#ffe1dc;
 --amber:#b85c00;--amber-ink:#9c4c00;--amber-tint:#ffedd1;--yellow-tint:#fff4a8;
 --f-head:"Archivo","Helvetica Neue",Arial,sans-serif;--f-hand:"Patrick Hand","Comic Neue","Segoe Print",cursive;--f-mono:ui-monospace,"JetBrains Mono",Menlo,monospace}
@@ -320,6 +320,7 @@ footer.foot .wrap{display:flex;flex-wrap:wrap;gap:.6rem 1.5rem;align-items:cente
 <div class="card"><h3>Signature move</h3><p>Strokes draw themselves when something appears (the box around the rules card, check marks, arrows), a highlighter swipes under the key word, and the hazard stamp thuds down. Motion is skipped for people who prefer reduced motion.</p></div>
 <div class="card"><h3>Tone of copy</h3><p>Plain, warm, direct, a little wry. Never alarmist, never legal-sounding advice.</p></div>
 <div class="card haz"><h3>Avoid</h3><p>Default component-library look, glossy gradients, clip-art, stock illustrations.</p></div></div></section>
+<section id="round2"><h2><span class="num" aria-hidden="true">9</span><span>Added after the first build</span></h2><div class="card"><p>Added at the builder's request after the PoC shipped; each keeps the rule that the AI proposes and cited code decides. A scope change awaiting the builder's approval; details in the spec's "Round 2 additions".</p><ul><li><strong>Heat log</strong> — dated readings, NWS outdoor temperature, legal minimums; readings below the minimum go into the notice.</li><li><strong>Landlord on record</strong> — the notice is addressed to HPD's registered managing agent (editable).</li><li><strong>Landlord track record</strong> — the owner's other buildings scored against the citywide rate per apartment.</li><li><strong>Ask the law</strong> — quote-only answers from the Housing Maintenance Code and HPD pages, checked by code.</li><li><strong>Message coach</strong> — text, email or call script for the hazard class; code owns every fact.</li><li><strong>Next steps</strong>, backup, calendar reminders, offline, dark theme.</li></ul></div></section>
 </main>
 <footer class="foot"><div class="wrap">
 <span>Companion to <a href="https://github.com/vj-io/habitable/blob/main/devpost/prd.md"><code>devpost/prd.md</code></a>. Markdown stays canonical; this page is regenerated after revisions.</span>
