@@ -94,7 +94,7 @@ function Diagram() {
       </ol>
       <figcaption className="font-hand text-xl leading-snug">
         <span className="text-violet-ink">Violet is the AI&apos;s pencil</span> — a guess you can correct.{" "}
-        <Highlight animate={false}>Lime and ink are the code</Highlight> — the same answer every time, with a source.
+        <Highlight animate={false}>Marker and ink are the code</Highlight> — the same answer every time, with a source.
       </figcaption>
     </figure>
   );
@@ -347,7 +347,7 @@ export default function Page() {
               violation — where that&apos;s a judgment call (leaks, locks, plaster), the card says so and shows how HPD has classed similar cases.
             </p>
             <p>
-              NYC only, six problem types. For what usually comes after the notice (311, Housing Court, free legal help, your rights as a tenant),
+              NYC only, six problem types for photos, plus a heat log, a landlord track record, Ask the law (quote-checked answers) and a message coach — each with the same split: the AI proposes, code decides. For what usually comes after the notice (311, Housing Court, free legal help, your rights as a tenant),
               see{" "}
               <Link href="/next-steps" className={linkClass}>
                 next steps &amp; your rights

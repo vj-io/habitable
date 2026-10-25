@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Building, DoodleButton, DoodleCard, Highlight, MonoLabel, PencilLoader, Tag, rough } from "@/components/doodle";
 import { ISSUE_FOR, IssueBadge, IssueIcon } from "@/components/issue/meta";
 import { classICount } from "@/lib/building";
@@ -76,6 +77,7 @@ function SourceLine({ record }: { record: BuildingRecord }) {
 /** The building's public record: open HPD violations by class and by problem, plus the newest ones. */
 export function BuildingPanel({ state, related }: { state: BuildingState; related: IssueId[] }) {
   const { status, record, retry } = state;
+  const [more, setMore] = useState(false);
   return (
     <DoodleCard as="section" seed={21} padding="1.25rem" aria-labelledby="building-title" className="space-y-5">
       <div className="flex items-center justify-between gap-3">
@@ -107,9 +109,24 @@ export function BuildingPanel({ state, related }: { state: BuildingState; relate
           </>
         )}
 
-        {record && record.openTotal > 0 && <Record record={record} related={related} />}
+        {record && record.openTotal > 0 && <Record record={record} related={related} more={more} />}
 
-        {record?.signals && <Signals signals={record.signals} />}
+        {record?.signals && (
+          <div className={more ? "" : "hidden lg:block"}>
+            <Signals signals={record.signals} />
+          </div>
+        )}
+
+        {record && (record.openTotal > 0 || record.signals) && (
+          <button
+            type="button"
+            aria-expanded={more}
+            onClick={() => setMore((m) => !m)}
+            className="inline-flex min-h-11 cursor-pointer items-center gap-2 font-display font-bold underline decoration-2 underline-offset-4 hover:decoration-wavy lg:hidden"
+          >
+            {more ? "Show less of the public record" : "Show the full public record"}
+          </button>
+        )}
 
         {record && <Landlord bbl={record.bbl} demo={record.source === "demo-fixture"} />}
       </div>
@@ -117,7 +134,8 @@ export function BuildingPanel({ state, related }: { state: BuildingState; relate
   );
 }
 
-function Record({ record, related }: { record: BuildingRecord; related: IssueId[] }) {
+/** `more`: on phones the long lists stay folded until asked for (desktop always shows them), so the renter's own log isn't buried. */
+function Record({ record, related, more }: { record: BuildingRecord; related: IssueId[]; more: boolean }) {
   const recent = [...record.recent]
     .sort((a, b) => Number(!!b.issue && related.includes(b.issue)) - Number(!!a.issue && related.includes(a.issue)))
     .slice(0, 5);
@@ -131,7 +149,7 @@ function Record({ record, related }: { record: BuildingRecord; related: IssueId[
       <ClassBars byClass={record.byClass} total={record.openTotal} label="Open violations by class" seed={60} />
 
       {issues.length > 0 && (
-        <div className="space-y-2">
+        <div className={`space-y-2 ${more ? "" : "hidden lg:block"}`}>
           <MonoLabel as="h3">By problem</MonoLabel>
           <ul className="grid grid-cols-1 gap-x-4 gap-y-1.5 min-[400px]:grid-cols-2">
             {issues.map((id) => (
@@ -149,7 +167,7 @@ function Record({ record, related }: { record: BuildingRecord; related: IssueId[
       <Registered record={record} />
 
       {recent.length > 0 && (
-        <div className="space-y-2">
+        <div className={`space-y-2 ${more ? "" : "hidden lg:block"}`}>
           <MonoLabel as="h3">Most recent{related.length > 0 ? " · yours first" : ""}</MonoLabel>
           <ol className="space-y-3">
             {recent.map((v) => (

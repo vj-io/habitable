@@ -35,6 +35,15 @@ test("demo building shows who it is registered with at HPD, managing agent first
 
 test("demo building shows recent HPD complaints by category, litigation, and the AEP flag", async ({ page }) => {
   await startDemo(page);
+  // On phones the longer lists are folded behind one button; desktop shows them (the button is hidden there).
+  const more = page.getByRole("button", { name: "Show the full public record" });
+  await more.waitFor({ state: "attached", timeout: 20_000 });
+  if (await more.isVisible()) {
+    await expect(page.getByText("By problem")).toBeHidden();
+    await more.click();
+    await expect(page.getByRole("button", { name: "Show less of the public record" })).toHaveAttribute("aria-expanded", "true");
+    await expect(page.getByText("By problem")).toBeVisible();
+  }
   const panel = page.getByRole("region", { name: "Also on HPD's record" });
   await expect(panel).toBeVisible({ timeout: 20_000 });
   await expect(panel).toContainText("In HPD's Alternative Enforcement Program");
