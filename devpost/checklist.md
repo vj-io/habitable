@@ -15,7 +15,7 @@ Build mode: fast
   PRD ref: `prd.md > The Core Journey` (steps 3–5), `prd.md > Rules card and countdown`, `prd.md > Demo mode`, `prd.md > Look and Feel`
   Spec ref: `spec.md > Doodle UI kit`, `spec.md > Rules engine (code disposes)`, `spec.md > Rules Table`, `spec.md > Countdown`, `spec.md > Demo mode`
   Build: Scaffold Next.js; doodle tokens and primitives; sample scenes with EXIF; `rules.json` + `rules.ts` + tests; `countdown.ts` + tests; demo answers; SnapSheet with ProposalCard, FactQuestions, RuleCard, Countdown, IssuePicker.
-  Verify (mechanical): `npm test` passes rules and countdown suites; `npm run build` passes; Playwright screenshot of the rules card for the leak sample shows "CLASS B" and a ticking countdown.
+  Verify (mechanical): `npm test` passes rules and countdown suites; `npm run build` passes; Playwright screenshot of the rules card for the leak sample shows "CLASS B" and a ticking countdown. (At the time the demo answered "not dripping"; it now follows the photo — dripping, Class C · 24 h — see Revisions.)
   Learner check: Open the app, try the demo, snap the ceiling-leak sample, and say whether the stamp moment feels like the wow beat you pictured.
   Commit: `Slice 1: sample photo to stamped rules card (kernel)`
 

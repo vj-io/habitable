@@ -22,6 +22,7 @@ def flush_items():
 cur = None
 for line in src.splitlines():
     if m := re.match(r"^(#{1,3}) (.*)", line):
+        if len(m.group(1)) == 1: continue  # the page supplies its own styled title
         flush_para(); flush_items(); n = len(m.group(1)); slug = re.sub(r"[^a-z0-9]+", "-", m.group(2).lower()).strip("-")
         out.append(f'<h{n} id="{slug}">{inline(m.group(2))}</h{n}>'); continue
     if m := re.match(r"^- (\[[ x]\] )?(.*)", line):
