@@ -135,8 +135,10 @@ async function mockAi(page: Page, answer: (channel: string) => { subject?: strin
 
 const AI_TEXT = "Hi, I'm in {{UNIT}}. The {{PROBLEM}} needs fixing and it is day {{DAYS}}. Could someone come by {{REPAIR_BY}}?";
 
-test("AI path: the AI's words in violet pencil, the code's facts in marker; the AI is never sent more than the facts; Copy and sms/mailto", async ({ page, context }) => {
-  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+test("AI path: the AI's words in violet pencil, the code's facts in marker; the AI is never sent more than the facts; Copy and sms/mailto", async ({ page, context, browserName }) => {
+  // Playwright can grant clipboard access only in Chromium; WebKit and Firefox check the same text via the sms link.
+  const clipboard = browserName === "chromium";
+  if (clipboard) await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   const seen: { facts: Record<string, unknown>; channel: string; tone: string; lang: string; note?: string }[] = [];
   await mockAi(
     page,
@@ -160,9 +162,13 @@ test("AI path: the AI's words in violet pencil, the code's facts in marker; the 
   expect("note" in seen[0]).toBe(false); // the demo issue has no note
 
   // Copy puts the finished text, facts filled in, on the clipboard.
-  await coach.getByRole("button", { name: "Copy" }).click();
-  await expect(coach.getByRole("button", { name: "Copied" })).toBeVisible();
-  const copied = await page.evaluate(() => navigator.clipboard.readText());
+  const smsHref = (await coach.getByRole("link", { name: "Open in Messages" }).getAttribute("href"))!;
+  let copied = decodeURIComponent(smsHref.replace("sms:?&body=", ""));
+  if (clipboard) {
+    await coach.getByRole("button", { name: "Copy" }).click();
+    await expect(coach.getByRole("button", { name: "Copied" })).toBeVisible();
+    copied = await page.evaluate(() => navigator.clipboard.readText());
+  }
   expect(copied).toMatch(/^Hi, I'm in 4B \(demo\)\. The leak \/ water damage needs fixing and it is day 1\. Could someone come by [A-Z][a-z]{2} \d{1,2}, \d{4}\?$/);
 
   // "Open in Messages" hands the same text to the phone's own app.
