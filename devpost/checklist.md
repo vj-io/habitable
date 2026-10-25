@@ -71,24 +71,24 @@ Build mode: fast
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — after slice 1 (the kernel). Pending the builder: the build ran end to end on the builder's instruction; agent-side checks were Playwright walk-throughs and screenshots, which don't replace the builder trying it.
-- [ ] Final kick-the-tires exploration and feedback completed — pending the builder on the live URL (https://habitable-blush.vercel.app) on a phone.
+- [ ] Early usable behavior explored — after slice 1 (the kernel). Not done at that point: the build ran end to end on the builder's instruction; agent-side checks were Playwright walk-throughs and screenshots. The builder's phone test below (2026-10-25) covered the same journey on the finished app.
+- [x] Final kick-the-tires exploration and feedback completed — the builder tested the live URL (https://habitable-blush.vercel.app) on a phone on 2026-10-25: "The mobile test on my phone went smoothly; the UI is polished and everything is working perfectly on mobile screens." No issues reported.
 
 ## Final Review
 
-- [ ] Final review complete — feedback resolved and learner confirms ready to ship
+- [x] Final review complete — feedback resolved and learner confirms ready to ship (no open feedback; the builder confirmed "Yes" on 2026-10-25)
 
 ## Code Tour and App Map
 
-- [ ] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
-- [ ] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate
-- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse
+- [x] Learning activity complete — guided route, focused alternative, prior practice connected, or brief recap
+- [x] Optional edit and transfer reflection addressed — offered/declined/already covered/not applicable as appropriate (not applicable: brief-recap route)
+- [ ] `devpost/app-map.html` generated from finished code, checked, and shown, including a project-grounded practice to reuse (generated from the finished code and checked by the agent; published at /plan/app-map.html; not toured with the builder)
 
-Activity and evidence: not yet done with the builder; `devpost/app-map.html` prepared from the finished code as a reference.
+Activity and evidence: brief recap, in the builder's words (2026-10-25): "I learned how to effectively direct an AI coding agent to handle full-stack development, from scaffolding a UI to deploying on Vercel, and how to iterate on prompts to get precise, functional code."
 Route and stops: reference route in the app map (snap sheet → `decide()` → `evaluate()`); not toured.
-Edit outcome: not applicable yet.
-Reflection: not offered yet.
-Activity mode: pending.
+Edit outcome: not applicable.
+Reflection: covered by the recap.
+Activity mode: brief recap.
 
 ## Revisions
 
