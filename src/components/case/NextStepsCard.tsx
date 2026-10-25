@@ -12,7 +12,14 @@ const linkClass = "underline decoration-2 underline-offset-4 hover:decoration-wa
 
 /** "What you can do next": one short suggestion that follows the renter's place on the ladder. Details live on /next-steps. */
 export function NextStepsCard({ caseFile, issues, heatReadings }: { caseFile: CaseFile; issues: Issue[]; heatReadings: HeatReading[] }) {
-  const step = nextStep(caseFile, issues, useNow(), heatSummary(heatReadings).below);
+  const heatBelow = heatSummary(heatReadings).below;
+  const step = nextStep(caseFile, issues, useNow(), heatBelow);
+  // nextStep counts a heat log with readings below the minimum as one open item; name it as what it is.
+  const listing = (open: number) => {
+    const n = open - (heatBelow > 0 ? 1 : 0);
+    const items = n === 0 ? "" : n === 1 ? "your open issue" : `all ${n} open issues`;
+    return heatBelow > 0 ? (items ? `${items} and your heat log` : "your heat log") : items;
+  };
   const tone = step.kind === "notice" || step.kind === "file" ? "marker" : "paper";
   return (
     <DoodleCard as="section" tone={tone} seed={19} padding="1.25rem" appear={false} aria-labelledby="next-title" className="space-y-3">
@@ -31,7 +38,7 @@ export function NextStepsCard({ caseFile, issues, heatReadings }: { caseFile: Ca
       {step.kind === "notice" && (
         <>
           <p className="font-display text-xl leading-snug font-bold">
-            Tell your landlord in writing: a dated notice listing {step.open === 1 ? "your open issue" : `all ${step.open} open issues`}.
+            Tell your landlord in writing: a dated notice listing {listing(step.open)}.
           </p>
           <DoodleButton href="/notice" size="lg" icon={<Doc size={24} />} className="w-full sm:w-auto">
             Make the notice

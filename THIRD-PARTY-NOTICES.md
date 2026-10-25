@@ -142,7 +142,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 ## 5. Data and services
 
-Public data and public web services, used at runtime. No data files are redistributed in this repository other than short fixtures of public building records for the demo building.
+Public data and public web services, used at runtime. The repository redistributes three kinds of data files: short fixtures of public building records for the demo buildings (`src/lib/demo/fixtures/`), and `src/lib/law/corpus.json`, which holds 65 passages copied word for word from the NYC Housing Maintenance Code (NYC Department of Buildings compilation, Apr 17 2026, <https://www.nyc.gov/assets/buildings/pdf/HousingMaintenanceCode.pdf>) and from HPD pages on nyc.gov. Statutory text is public law. The HPD excerpts are short quotations of public government pages; each passage links to its source.
 
 | Source | What Habitable uses | Terms |
 |---|---|---|
@@ -150,9 +150,10 @@ Public data and public web services, used at runtime. No data files are redistri
 | NYC Open Data / NYC Planning, PLUTO (`64uk-42ks`) | year built for the tax lot | same Open Data terms; NYC Planning data page: <https://www.nyc.gov/site/planning/data-maps/open-data.page> (dataset page: <https://data.cityofnewyork.us/City-Government/Primary-Land-Use-Tax-Lot-Output-PLUTO-/64uk-42ks>) |
 | NYC Open Data, HPD Multiple Dwelling Registrations (`tesw-yqqr`) and Registration Contacts (`feu5-w2e2`) | the building's registered managing agent, owner and head officer (names and business addresses as published) | same Open Data terms |
 | NYC Open Data, HPD Complaints and Problems (`ygpa-z7cr`), HPD Litigations (`59kj-x8nc`), Alternative Enforcement Program (`hcir-3275`) | aggregate counts per building (no apartments, no names) and the AEP flag | same Open Data terms |
+| NYC Open Data, 311 Service Requests from 2020 to Present (`erm2-nwe9`) | heat and hot water complaint counts per building for the landlord track record (aggregates only) | same Open Data terms |
 | National Weather Service API (`api.weather.gov`) | latest outdoor temperature at Central Park, LaGuardia or JFK for the heat log | US government work, public domain; docs: <https://www.weather.gov/documentation/services-web-api> |
 | NYC Planning Labs GeoSearch | address autocomplete, borough, BBL and BIN | public API, no key; docs and terms: <https://geosearch.planninglabs.nyc/docs/> |
-| Vercel AI Gateway; Anthropic and Google vision models | the AI proposes a problem type for a photo | commercial services used under the account holder's own agreements; model output is not redistributed |
+| Google Gemini API (direct key), or Vercel AI Gateway (Anthropic and Google models) | proposes a problem type for a photo; answers law questions only in quotes that code checks; drafts message wording around facts code fills in | commercial services used under the account holder's own agreements; model output is not redistributed |
 | Vercel | hosting | Vercel's terms, under the account holder's plan |
 
 Terms links on nyc.gov were not machine-checked when this file was written (the site rejects automated requests); please confirm them in a browser before relying on them.

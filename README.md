@@ -39,7 +39,7 @@ The same rule runs through all three: the model proposes, plain code checks.
 
 A New York City renter — often in an older, rent-stabilized building — with a leak, mold, no heat, pests, a broken lock or peeling paint, who usually complains by text, keeps no dated record, and doesn't know what the Housing Maintenance Code requires. Secondary: tenant organizers and legal-aid intake workers who need structured evidence.
 
-**The scale, from the same NYC Open Data set the app reads** ([HPD Housing Maintenance Code Violations](https://data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Violations/wvxf-dwi5), queried 2026-10-25): about **2.65 million open violations** citywide — 587,952 Class C (immediately hazardous), 1,386,990 Class B and 676,016 Class A — and **85,096 buildings** with at least one open Class C violation. Every one of those started with someone documenting a condition.
+**The scale, from the same NYC Open Data set the app reads** ([HPD Housing Maintenance Code Violations](https://data.cityofnewyork.us/Housing-Development/Housing-Maintenance-Code-Violations/wvxf-dwi5), queried 2026-10-25): about **2.65 million open violations** citywide — 587,952 Class C (immediately hazardous), 1,386,990 Class B and 676,016 Class A — and **85,096 buildings** with at least one open Class C violation. Each one is a condition someone documented.
 
 ## How it differs
 
@@ -128,21 +128,21 @@ npm run test:e2e
 ```
 
 - **Vitest — 451 tests:** rules engine (every fact combination reaches a cited outcome), heat and hot water minimums (hour edges, season edges, the 55°F outdoor line, DST days), countdown and DST, EXIF time zones, receipts (known-answer HMAC, tamper checks), classifier threshold/fallback/rate-limit cooldown/cache with a mock model, HPD violation text → issue mapping on real wordings, HPD registration parsing on real rows (multi-building lots, duplicates, addressee priority), weather-station fallback, backup validation, calendar files (escaping, folding, CRLF), GeoSearch parsing, notice text in English and Spanish, storage fallback.
-- **Playwright — 61 phone tests on Chromium, 57 of them also on WebKit (iPhone 14) and Firefox, plus 11 desktop smoke checks (186 runs; the offline and API-contract specs are Chromium-only):** the landlord track record, Ask the law (search-only and verified-quote modes), the message coach (template and AI paths), the full demo journey (photo → stamp → log → reload → follow-up → PDF download → Spanish), every rules branch, the heat log into the notice, landlord on record and the addressed notice, next steps links, backup → delete → restore, the calendar file, receipt verification (valid and tampered), theme toggle, the case menu, offline, error and empty states, API contracts, security headers. The suite builds and starts the production server itself and blanks all AI keys, so it never spends quota.
+- **Playwright — 61 phone tests on Chromium, 57 of them also on WebKit (iPhone 14) and Firefox, plus 11 desktop smoke checks (186 runs: 184 run and pass, and 2 are skipped because the offline test runs only in Chromium; the API-contract spec is Chromium-only):** the landlord track record, Ask the law (search-only and verified-quote modes), the message coach (template and AI paths), the full demo journey (photo → stamp → log → reload → follow-up → PDF download → Spanish), every rules branch, the heat log into the notice, landlord on record and the addressed notice, next steps links, backup → delete → restore, the calendar file, receipt verification (valid and tampered), theme toggle, the case menu, offline, error and empty states, API contracts, security headers. The suite builds and starts the production server itself and blanks all AI keys, so it never spends quota.
 
 ## How it was planned and built
 
-Every step used the Devpost Learn skill pack (`.agents/skills/`, MIT):
+Planning and the build followed the Devpost Learn skill pack (`.agents/skills/`, MIT). The checklist tracks what is done and what is still open. The hands-on checkpoints and the final review are the builder's own, and they stay unchecked until the builder has done them.
 
 | Step | Output |
 |---|---|
 | `1-start` | learner profile (kept out of git) |
-| `2-scope` | [`devpost/scope.md`](devpost/scope.md) · [visual companion](devpost/scope.html) |
-| `3-prd` | [`devpost/prd.md`](devpost/prd.md) · [visual companion](devpost/prd.html) |
-| `4-spec` | [`devpost/spec.md`](devpost/spec.md) · [visual companion](devpost/spec.html) |
-| `5-build` | [`devpost/checklist.md`](devpost/checklist.md) (slices, checkpoints, revisions) · [`devpost/app-map.html`](devpost/app-map.html) |
+| `2-scope` | [`devpost/scope.md`](devpost/scope.md) · [visual companion](https://habitable-blush.vercel.app/plan/scope.html) |
+| `3-prd` | [`devpost/prd.md`](devpost/prd.md) · [visual companion](https://habitable-blush.vercel.app/plan/prd.html) |
+| `4-spec` | [`devpost/spec.md`](devpost/spec.md) · [visual companion](https://habitable-blush.vercel.app/plan/spec.html) |
+| `5-build` | [`devpost/checklist.md`](devpost/checklist.md) (slices, checkpoints, revisions) · [app map](https://habitable-blush.vercel.app/plan/app-map.html) |
 
-The commit history follows the plan: scope → PRD → spec → checklist → one commit per build slice. The slices were built in parallel by subagents and committed together after integration checks, so the intermediate slice commits were not each built and tested on their own; later work (palette and dark theme, heat log, landlord on record, next steps, case tools, offline) landed as feature branches merged into main. What the build discovered that changed the plan is recorded under **Revisions** in the checklist.
+The commit history follows the plan: scope → PRD → spec → checklist → one commit per build slice. The slices were built in parallel by subagents and committed together after integration checks, so the intermediate slice commits were not each built and tested on their own; later work (palette and dark theme, heat log, landlord on record, next steps, case tools, offline, then the landlord track record, Ask the law and the message coach) landed as feature branches merged into main. That later work went beyond the approved PoC boundary. The spec records it as a scope change under **Round 2 additions**, awaiting the builder's review. What the build discovered that changed the plan is recorded under **Revisions** in the checklist.
 
 ## Stack
 
@@ -150,12 +150,16 @@ Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS 4 · AI SDK 7 
 
 ```
 src/
-├── app/            pages (/, /issue/[id], /notice, /heat, /next-steps, /how-it-works, /verify),
-│                   API routes (classify, receipt, building, outdoor), PWA manifest, service worker
+├── app/            pages (/, /issue/[id], /notice, /heat, /landlord, /ask, /next-steps, /how-it-works,
+│                   /verify), API routes (classify, receipt, building, outdoor, landlord, ask, coach),
+│                   PWA manifest, service worker (public/sw.js), planning companions (public/plan/)
 ├── components/     doodle/ (hand-drawn UI kit), case/, snap/, issue/, heat/, notice/, site/
-└── lib/            rules.json + rules.ts and heat.ts (the kernel), classify.ts, evidence.ts, receipt.ts,
-                    building.ts, registration.ts, signals.ts, outdoor.ts, geosearch.ts, countdown.ts,
+└── lib/            rules.json + rules.ts, heat.ts, law/verify.ts, coach.ts (the code that decides),
+                    ai.ts (shared models, cooldowns, cache), rate-limit.ts, classify.ts, evidence.ts,
+                    receipt.ts, building.ts, registration.ts, signals.ts, portfolio.ts, outdoor.ts,
+                    law/ (corpus, BM25 retrieval), coach-ai.ts, geosearch.ts, countdown.ts,
                     notice-text.ts, next-step.ts, backup.ts, ics.ts, store.ts, demo/
+scripts/law-corpus/ how the verbatim law corpus is built and checked
 e2e/                Playwright suite
 devpost/            planning documents
 ```
@@ -165,7 +169,10 @@ devpost/            planning documents
 - NYC only, six conditions. Classes for leaks, locks and plaster are assigned by HPD's inspector; the app shows the class matching HPD's published rules and examples.
 - Whether a tenant's own letter starts any legal clock was not researched, so the app never claims it does.
 - Receipts prove Habitable's server saw a fingerprint at a time; they are not a third-party timestamping service.
-- The Spanish notice has not been reviewed by a native speaker.
+- The Spanish notice and the coach's Spanish drafts have not been reviewed by a native speaker.
+- Ask the law covers the NYC Housing Maintenance Code (the city's April 2026 compilation) and HPD pages. It does not yet include New York State law (the warranty of habitability, RPL §235-b, or retaliation, §223-b), and it says so.
+- The landlord track record links buildings by a shared head officer or managing agent (name and business address) or a corporate owner name in HPD's registrations. That is a lead, not proof of ownership; the page says so. A first live lookup can take 10–20 s, and a slow dataset can leave one metric blank.
+- Rate limits and AI caches live in each server instance's memory, not in a shared store.
 
 ## Credits and licenses
 

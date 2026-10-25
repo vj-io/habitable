@@ -1,10 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { cleanDescription, parseYearBuilt, summarize, violationIssue, type SocrataViolation } from "@/lib/building";
+import { classICount, cleanDescription, parseYearBuilt, summarize, violationIssue, type SocrataViolation } from "@/lib/building";
 import { FIXTURE_BBLS } from "@/lib/demo/building";
 import v1020020091 from "@/lib/demo/fixtures/1020020091-violations.json";
 import v2043220010 from "@/lib/demo/fixtures/2043220010-violations.json";
 import v3051900075 from "@/lib/demo/fixtures/3051900075-violations.json";
 import { DEMO_BUILDINGS, demoBuilding } from "@/lib/demo/summaries";
+import { demoLandlord } from "@/lib/portfolio-demo";
 import type { IssueId } from "@/lib/types";
 
 const FIXTURES: Record<string, SocrataViolation[]> = {
@@ -148,6 +149,30 @@ describe("summarize", () => {
     const rec = summarize([], { ...opts, yearBuilt: null });
     expect(rec).toMatchObject({ openTotal: 0, byClass: { A: 0, B: 0, C: 0 }, recent: [], yearBuilt: null });
     expect(Object.values(rec.byIssue).every((n) => n === 0)).toBe(true);
+  });
+});
+
+describe("classICount", () => {
+  it("is the open total less A, B and C, so the class rows add up", () => {
+    expect(classICount(291, { A: 54, B: 154, C: 82 })).toBe(1);
+    expect(classICount(290, { A: 54, B: 154, C: 82 })).toBe(0);
+    // from the rows: class I counts toward openTotal only (summarize leaves it out of byClass)
+    const rec = summarize(
+      [
+        { violationid: "1", class: "I", novdescription: "ORDER" },
+        { violationid: "2", class: "I", novdescription: "ORDER" },
+        { violationid: "3", class: "B", novdescription: "REPAIR" },
+      ],
+      { bbl: "1020020091", yearBuilt: null, source: "live" },
+    );
+    expect(classICount(rec.openTotal, rec.byClass)).toBe(2);
+  });
+
+  it("explains the demo building's headline total and the saved landlord record's", () => {
+    const b = demoBuilding("1020020091")!; // 291 open in all, 54 + 154 + 82 in A, B and C
+    expect(classICount(b.openTotal, b.byClass)).toBe(1);
+    const l = demoLandlord("1020020091")!.open!; // 948 open in all, 324 + 466 + 154 in A, B and C
+    expect([l.total, classICount(l.total, l.byClass)]).toEqual([948, 4]);
   });
 });
 

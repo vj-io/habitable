@@ -114,6 +114,15 @@ PRD ref: `prd.md > Notice`.
 `src/lib/demo/`: the demo building (address + BBL + fixtures), `samples.ts` (saved AI answers for each sample photo in `public/samples/`). Every demo surface shows a DEMO chip.
 PRD ref: `prd.md > Demo mode`.
 
+### Round 2 additions (scope change recorded after the build; pending the builder's review and approval)
+These were built after the first full build. The builder asked for "more functionality" first, then for advanced features beyond the PRD. They are outside the approved PoC boundary in `scope.md` and `prd.md`. The checklist's Revisions log records why each was added. They are listed here so the spec matches what ships.
+- **Screens:** `/heat` (heat and hot water log), `/landlord` (landlord track record), `/ask` (Ask the law), `/next-steps` (escalation ladder and rights). The issue page gains the message coach and a calendar reminder. The case file gains the heat-log card, the next-steps card, the landlord block in `BuildingPanel`, and backup/restore in the menu.
+- **Heat log:** `src/lib/heat.ts` (Admin Code §27-2029/§27-2031 minimums, New York time) and `GET /api/outdoor`, which reads NWS observations from KNYC, KLGA or KJFK and picks the freshest. Readings are stored on the device; readings below the minimum go into the notice.
+- **Landlord on record and track record:** `src/lib/registration.ts` covers HPD registrations and contacts, and the notice "To:" block. `src/lib/portfolio.ts` + `GET /api/landlord` find the owner's other buildings and score them from seven NYC Open Data sets against a citywide per-apartment baseline.
+- **Ask the law:** `src/lib/law/` holds a verbatim corpus (Housing Maintenance Code compilation, Apr 2026, plus HPD pages), BM25 retrieval and `verify.ts`. `POST /api/ask` lets the model answer only in quotes, and code checks every quote word for word.
+- **Message coach:** `src/lib/coach.ts` (facts, placeholders, validator, templates) + `POST /api/coach`. The model writes words only; code fills and checks every fact.
+- **Case tools:** `src/lib/backup.ts` (versioned JSON backup, schema-validated restore), `src/lib/ics.ts` (calendar file), a one-tap receipt sample on `/verify`, `public/sw.js` (offline), and a shared `src/lib/ai.ts` + `src/lib/rate-limit.ts`.
+
 ## Rules Table
 The table lives in `src/lib/rules.json`; every row carries its citation, source URL, a short official quote and a plain-English line. Verified 2026-10-24 against HPD's "Clear Violations" page, HPD's indoor-allergen, heat/hot-water, lead-paint and self-closing-door pages, HPD's CY25 certification report, NYC311 articles, and the enacted texts of Local Law 55 of 2018 and Local Law 86 of 2017. Class counts quoted in notes come from live HPD Open Data rows (inspections since 2025-01-01).
 

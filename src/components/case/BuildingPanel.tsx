@@ -2,6 +2,7 @@
 
 import { Building, DoodleButton, DoodleCard, Highlight, MonoLabel, PencilLoader, Tag, rough } from "@/components/doodle";
 import { ISSUE_FOR, IssueBadge, IssueIcon } from "@/components/issue/meta";
+import { classICount } from "@/lib/building";
 import { formatNY } from "@/lib/countdown";
 import { LINK_LABEL, linkCounts } from "@/lib/portfolio";
 import { useLandlord } from "@/lib/portfolio-client";
@@ -14,7 +15,7 @@ import type { BuildingState } from "./useBuilding";
 /** HPD dates are calendar days ("2026-10-12"); read them at noon UTC so no timezone shifts the day. */
 const day = (d: string | null) => (d ? formatNY(`${d}T12:00:00Z`, "date") : "undated");
 
-export const CLASS_ROWS: { c: HazardClass; label: string; color: string }[] = [
+const CLASS_ROWS: { c: HazardClass; label: string; color: string }[] = [
   { c: "C", label: "Immediately hazardous", color: "var(--color-red)" },
   { c: "B", label: "Hazardous", color: "var(--color-amber)" },
   { c: "A", label: "Non-hazardous", color: "var(--color-sky)" },
@@ -28,6 +29,33 @@ export function TallyBar({ value, max, color, seed }: { value: number; max: numb
       <path d={r.line(2, 16, 198, 16, 0.8)} stroke="var(--color-ink)" strokeOpacity="0.25" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
       {w > 0 && <path d={r.rectFill(2, 3, w, 12)} fill={color} opacity={0.85} />}
     </svg>
+  );
+}
+
+/**
+ * Open violations by class, as bars. Class I (information orders) has no bar of its own in the data; it gets an
+ * "Other" row when it isn't zero, so the rows always add up to `total`.
+ */
+export function ClassBars({ byClass, total, label, seed }: { byClass: Record<HazardClass, number>; total: number; label: string; seed: number }) {
+  const other = classICount(total, byClass);
+  const rows = [
+    ...CLASS_ROWS.map((r) => ({ key: r.c, name: `Class ${r.c}`, sub: r.label, n: byClass[r.c], color: r.color })),
+    ...(other > 0 ? [{ key: "I", name: "Other", sub: "Class I (information orders)", n: other, color: "var(--color-muted)" }] : []),
+  ];
+  const max = Math.max(...rows.map((r) => r.n));
+  return (
+    <ul className="space-y-2.5" aria-label={label}>
+      {rows.map((row, i) => (
+        <li key={row.key} className="grid grid-cols-[5.5rem_1fr_3.5rem] items-center gap-3">
+          <span className="leading-tight">
+            <span className="block font-mono text-sm font-bold">{row.name}</span>
+            <span className="block font-hand text-sm leading-tight text-muted">{row.sub}</span>
+          </span>
+          <TallyBar value={row.n} max={max} color={row.color} seed={seed + i} />
+          <span className="text-right font-mono text-lg font-bold tabular-nums">{row.n.toLocaleString("en-US")}</span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -90,7 +118,6 @@ export function BuildingPanel({ state, related }: { state: BuildingState; relate
 }
 
 function Record({ record, related }: { record: BuildingRecord; related: IssueId[] }) {
-  const max = Math.max(...CLASS_ROWS.map((r) => record.byClass[r.c]));
   const recent = [...record.recent]
     .sort((a, b) => Number(!!b.issue && related.includes(b.issue)) - Number(!!a.issue && related.includes(a.issue)))
     .slice(0, 5);
@@ -101,18 +128,7 @@ function Record({ record, related }: { record: BuildingRecord; related: IssueId[
         This building has <Highlight>{record.openTotal.toLocaleString("en-US")}</Highlight> open HPD violations
       </p>
 
-      <ul className="space-y-2.5" aria-label="Open violations by class">
-        {CLASS_ROWS.map((row, i) => (
-          <li key={row.c} className="grid grid-cols-[5.5rem_1fr_3rem] items-center gap-3">
-            <span className="leading-tight">
-              <span className="block font-mono text-sm font-bold">Class {row.c}</span>
-              <span className="block font-hand text-sm leading-tight text-muted">{row.label}</span>
-            </span>
-            <TallyBar value={record.byClass[row.c]} max={max} color={row.color} seed={60 + i} />
-            <span className="text-right font-mono text-lg font-bold tabular-nums">{record.byClass[row.c]}</span>
-          </li>
-        ))}
-      </ul>
+      <ClassBars byClass={record.byClass} total={record.openTotal} label="Open violations by class" seed={60} />
 
       {issues.length > 0 && (
         <div className="space-y-2">

@@ -1,9 +1,15 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { startDemo } from "./helpers";
 
 // Landlord track record. The demo building answers from its saved snapshot (src/lib/demo/fixtures/1020020091-landlord.json,
 // read live from NYC Open Data on Oct 25, 2026): 4 buildings under EDWIN SHIRAZ / COLUMBIA HEIGHTS 136 LLC / EDWIN SHIRAZIAN.
 const card = (page: Page) => page.getByRole("region", { name: "This landlord's buildings" });
+
+/** The numbers at the end of each class row, added up. */
+async function classSum(rows: Locator) {
+  const texts = await rows.allInnerTexts();
+  return texts.reduce((t, row) => t + Number(row.trim().match(/([\d,]+)$/)![1].replace(/,/g, "")), 0);
+}
 
 async function noOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width);
@@ -26,7 +32,9 @@ test("building panel card -> /landlord: the portfolio's numbers, the links betwe
   await expect(rate.nth(1)).toContainText("52.9");
 
   const classes = page.getByRole("list", { name: "Open violations by class, all buildings" }).getByRole("listitem");
-  await expect(classes).toHaveText([/Class C[\s\S]*324/, /Class B[\s\S]*466/, /Class A[\s\S]*154/]);
+  // Class I (information orders) is in the 948 but has no A/B/C bar: it gets an "Other" row, so the rows add up to the total.
+  await expect(classes).toHaveText([/Class C[\s\S]*324/, /Class B[\s\S]*466/, /Class A[\s\S]*154/, /Other[\s\S]*Class I \(information orders\)[\s\S]*4$/]);
+  expect(await classSum(classes)).toBe(948);
 
   const worst = page.getByRole("region", { name: "Most open Class C violations" }).getByRole("listitem");
   await expect(worst).toHaveCount(4);
@@ -60,6 +68,14 @@ test("building panel card -> /landlord: the portfolio's numbers, the links betwe
   // Dark theme, same page, still no sideways scroll.
   await page.evaluate(() => document.documentElement.setAttribute("data-theme", "dark"));
   await noOverflow(page);
+});
+
+test("the building panel's class rows add up to its open total, Class I shown as Other", async ({ page }) => {
+  await startDemo(page);
+  await expect(page.getByText("This building has 291 open HPD violations")).toBeVisible({ timeout: 20_000 });
+  const rows = page.getByRole("list", { name: "Open violations by class", exact: true }).getByRole("listitem");
+  await expect(rows).toHaveText([/Class C[\s\S]*82/, /Class B[\s\S]*154/, /Class A[\s\S]*54/, /Other[\s\S]*Class I \(information orders\)[\s\S]*1$/]);
+  expect(await classSum(rows)).toBe(291);
 });
 
 test("when the landlord lookup fails, the card and the page say so and offer a retry", async ({ page }) => {

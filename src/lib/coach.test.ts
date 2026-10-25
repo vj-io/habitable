@@ -449,3 +449,19 @@ describe("templateDraft", () => {
     expect(templateDraft("email", base, "en", "firm")).toEqual(templateDraft("email", base, "en", "firm"));
   });
 });
+
+describe("validateDraft: claims the facts don't support", () => {
+  const f = facts("B leak (30 days)");
+  const check = (body: string) => validateDraft({ body }, f, "en", "text");
+  it("refuses a start date taken from the first-documented date", () => {
+    expect(check("Hi, the {{PROBLEM}} in {{UNIT}} started on {{FIRST_DATE}}. Could someone come by?")).toEqual({ ok: false, code: "overclaim", detail: "start date" });
+    expect(check("Hi, it began {{FIRST_DATE}} in {{UNIT}}.")).toMatchObject({ ok: false, code: "overclaim" });
+  });
+  it("refuses saying HPD classified this apartment's problem", () => {
+    expect(check("HPD lists this as {{CLASS}}. Please fix the {{PROBLEM}} in {{UNIT}}.")).toEqual({ ok: false, code: "overclaim", detail: "HPD ruling" });
+    expect(check("HPD has classified it {{CLASS}}.")).toMatchObject({ ok: false, code: "overclaim" });
+  });
+  it("accepts the careful wording the templates use", () => {
+    expect(check("Hi, I first documented the {{PROBLEM}} in {{UNIT}} on {{FIRST_DATE}}. HPD's published rules put this kind of problem in {{CLASS}}.")).toEqual({ ok: true });
+  });
+});

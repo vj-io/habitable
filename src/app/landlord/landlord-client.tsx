@@ -2,7 +2,8 @@
 
 import type { ReactNode } from "react";
 import { Building, DoodleButton, DoodleCard, Highlight, MonoLabel, Tag } from "@/components/doodle";
-import { CLASS_ROWS, TallyBar } from "@/components/case/BuildingPanel";
+import { ClassBars, TallyBar } from "@/components/case/BuildingPanel";
+import { Columns } from "@/components/site/Columns";
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { formatNY } from "@/lib/countdown";
 import {
@@ -103,7 +104,7 @@ export function LandlordClient() {
         </p>
       </header>
 
-      <div aria-live="polite" className="space-y-6">
+      <div aria-live="polite" className="space-y-6 lg:max-w-none!">
         {status === "loading" && (
           <p role="status" className="font-hand text-xl leading-snug text-muted">
             Following the registration to the landlord&apos;s other buildings… the first look-up can take half a minute.
@@ -130,7 +131,22 @@ export function LandlordClient() {
   );
 }
 
+/** The record on the left from lg up; how the buildings are connected, how it's counted and the sources on the right. */
 function Record({ record }: { record: LandlordRecord }) {
+  return (
+    <Columns
+      left={<Figures record={record} />}
+      right={
+        <>
+          <Links record={record} />
+          <Method record={record} />
+        </>
+      }
+    />
+  );
+}
+
+function Figures({ record }: { record: LandlordRecord }) {
   const { portfolio } = record;
   const n = portfolio.buildings.length;
   return (
@@ -152,18 +168,7 @@ function Record({ record }: { record: LandlordRecord }) {
 
       <Section title="Open violations by class" id="classes">
         {record.open ? (
-          <ul className="space-y-2.5" aria-label="Open violations by class, all buildings">
-            {CLASS_ROWS.map((row, i) => (
-              <li key={row.c} className="grid grid-cols-[5.5rem_1fr_3.5rem] items-center gap-3">
-                <span className="leading-tight">
-                  <span className="block font-mono text-sm font-bold">Class {row.c}</span>
-                  <span className="block font-hand text-sm leading-tight text-muted">{row.label}</span>
-                </span>
-                <TallyBar value={record.open!.byClass[row.c]} max={Math.max(...CLASS_ROWS.map((r) => record.open!.byClass[r.c]))} color={row.color} seed={80 + i} />
-                <span className="text-right font-mono text-lg font-bold tabular-nums">{int(record.open!.byClass[row.c])}</span>
-              </li>
-            ))}
-          </ul>
+          <ClassBars byClass={record.open.byClass} total={record.open.total} label="Open violations by class, all buildings" seed={80} />
         ) : (
           <Unavailable what="Violation counts are" />
         )}
@@ -232,9 +237,6 @@ function Record({ record }: { record: LandlordRecord }) {
           </li>
         </ul>
       </Section>
-
-      <Links record={record} />
-      <Method record={record} />
     </>
   );
 }
