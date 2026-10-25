@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Camera,
   Check,
@@ -335,6 +335,11 @@ export function IssueDetail({ id }: { id: string }) {
   const { caseFile, issues, ready } = useCaseData();
   const now = useNow();
   const issue = issues.find((i) => i.id === id);
+  // Each issue's tab names it ("Leak / water damage — Habitable"); the server title is a generic placeholder.
+  const title = issue ? `${issueName(issue.issue)} — Habitable` : null;
+  useEffect(() => {
+    if (title) document.title = title;
+  }, [title]);
 
   if (!ready) {
     return (
