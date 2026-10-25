@@ -2,15 +2,17 @@
 
 **Snap what's broken in your NYC apartment. Get a dated, housing-code-classified evidence log and a ready-to-send repair notice.**
 
-**Live app:** https://habitable-blush.vercel.app · **Demo video (2 min, narrated):** [watch](https://github.com/vj-io/habitable/releases/tag/v2.0-demo) ([storyboard and script](devpost-demo-script.md)) · **Try it in 30 seconds:** open the link → *Try the demo building* → *Snap a problem* → pick the ceiling-leak sample.
+**Live app:** https://habitable-blush.vercel.app · **Demo video (2 min, narrated):** [watch](https://github.com/vj-io/habitable/releases/tag/v2.0-demo) ([storyboard and script](devpost-demo-script.md)) · **Try it in 30 seconds:** open the link → *Try the demo building* (no account) → *Snap a problem* → pick the ceiling-leak sample → *Yes, it's dripping* → Class C, 24 hours.
 
 Built for the Devpost **Build With AI: Basics** hackathon with the Devpost Learn skill pack. The planning documents are in [`devpost/`](devpost/).
 
-| Welcome | AI proposes | Code disposes | Notice |
-|---|---|---|---|
-| ![Welcome screen](docs/screenshots/1-welcome.jpg) | ![AI proposal in violet pencil](docs/screenshots/2-ai-proposal.jpg) | ![Stamped Class B rules card with countdown](docs/screenshots/3-rule-card.jpg) | ![Notice preview](docs/screenshots/5-notice.jpg) |
+| Welcome | AI proposes | Code disposes | Case file | Notice |
+|---|---|---|---|---|
+| ![Welcome screen: what it is and who it's for](docs/screenshots/1-welcome.jpg) | ![The AI's proposal in violet pencil: leak, 93%](docs/screenshots/2-ai-proposal.jpg) | ![The rules table stamps Class C, 24-hour window, with the countdown](docs/screenshots/3-rule-card.jpg) | ![Case file with the dated log and the heat log card](docs/screenshots/4-case-file.jpg) | ![Notice addressed to the registered managing agent](docs/screenshots/5-notice.jpg) |
 
-![Case file with the building's public HPD record](docs/screenshots/4-case-file.jpg)
+| Landlord track record | Ask the law | Message coach | Heat log | Dark mode |
+|---|---|---|---|---|
+| ![The landlord's 4 buildings: 948 open violations, 17.8× the city rate](docs/screenshots/6-landlord.jpg) | ![Answers only in quotes, each stamped QUOTE CHECKED](docs/screenshots/7-ask.jpg) | ![AI words in violet, facts from the log in marker](docs/screenshots/8-coach.jpg) | ![Readings stamped below the legal minimum](docs/screenshots/9-heat.jpg) | ![Night-notebook dark theme](docs/screenshots/10-dark.jpg) |
 
 > **Not legal advice.** Habitable documents conditions and cites the rules HPD publishes. It doesn't represent you, and it never suggests withholding rent.
 
